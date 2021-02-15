@@ -9,6 +9,7 @@ class Game extends Phaser.Scene {
     this.load.image('mage', 'assets/mage/mage.png');
     this.load.spritesheet('idle-spritesheet', 'assets/mage/idle.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('walk-spritesheet', 'assets/mage/walk.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('run-spritesheet', 'assets/mage/run.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('jump-spritesheet', 'assets/mage/jump.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('double-jump-spritesheet', 'assets/mage/double-jump.png', { frameWidth: 171, frameHeight: 128 });
 
@@ -36,6 +37,13 @@ class Game extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers("walk-spritesheet", {}),
       frameRate: 6,
       repeat: -1
+    });
+
+    this.anims.create({
+      key: 'hero-run',
+      frames: this.anims.generateFrameNumbers('run-spritesheet', {}),
+      frameRate: 6,
+      repeat: -1,
     });
 
     this.anims.create({

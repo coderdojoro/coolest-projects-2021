@@ -22,6 +22,7 @@ class Hero extends Phaser.GameObjects.Sprite {
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyJump = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.keyShift = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
 
     }
 
@@ -55,11 +56,37 @@ class Hero extends Phaser.GameObjects.Sprite {
 
         }
 
+
+        if (this.keyLeft.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
+            this.body.setMaxVelocity(400, 400);
+            this.body.setAccelerationX(-500);
+            this.setFlipX(true);
+            this.heroState = 'run';
+        }
+
+        if (this.keyRight.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
+            this.body.setMaxVelocity(400, 400);
+            this.body.setAccelerationX(500);
+            this.setFlipX(false);
+            this.heroState = 'run';
+        }
+
         let justDown = Phaser.Input.Keyboard.JustDown(this.keyJump)
         if (justDown && this.heroState != 'jump' && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setVelocityY(-300);
             this.heroState = 'jump';
             justDown = false;
+        }
+
+        if (this.heroState == 'jump' || this.heroState == 'double-jump' || this.heroState == 'fall') {
+            if (this.keyRight.isDown) {
+                this.setFlipX(false);
+                this.body.setAccelerationX(500);
+            }
+            if (this.keyLeft.isDown) {
+                this.setFlipX(true);
+                this.body.setAccelerationX(-500);
+            }
         }
 
         if (justDown && this.heroState == 'jump') {
@@ -75,6 +102,10 @@ class Hero extends Phaser.GameObjects.Sprite {
         if (this.heroState == "walk" && this.animState != "walk") {
             this.anims.play("hero-walk");
             this.animState = "walk";
+        }
+        if (this.heroState == 'run' && this.animState != 'run' && this.animState != 'attack') {
+            this.animState = 'run';
+            this.anims.play('hero-run');
         }
         if (this.heroState == 'jump' && this.animState != 'jump') {
             this.anims.play('hero-jump');
