@@ -67,13 +67,14 @@ class Game extends Phaser.Scene {
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
 
     this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
-    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, this.groundTiles);
+    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
 
     this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
 
     this.physics.add.collider(hero, this.groundLayer);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
+    this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);
@@ -81,6 +82,8 @@ class Game extends Phaser.Scene {
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
 
+    //var debug = this.add.graphics();
+   // this.groundLayer.renderDebug(debug, {});
 
   }
 }
