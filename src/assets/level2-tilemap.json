@@ -55,13 +55,13 @@
  "nextobjectid":1,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.4.3",
+ "tiledversion":"1.4.2",
  "tileheight":32,
  "tilesets":[
         {
          "columns":18,
          "firstgid":1,
-         "image":"tiles\/tiles.png",
+         "image":"tiles\/level2-tiles.png",
          "imageheight":192,
          "imagewidth":576,
          "margin":0,
@@ -74,7 +74,7 @@
         {
          "columns":50,
          "firstgid":109,
-         "image":"tiles\/bush-and-trees.png",
+         "image":"tiles\/level2-bush.png",
          "imageheight":256,
          "imagewidth":1600,
          "margin":0,
