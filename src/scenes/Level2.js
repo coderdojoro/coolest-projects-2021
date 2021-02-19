@@ -2,9 +2,15 @@
 // @ts-check
 
 import Phaser from 'phaser';
-import Hero from '../entities/Hero.js';
+import Knight from '../entities/Knight.js';
+import Hero from '../entities/Knight.js';
 
-class Game extends Phaser.Scene {
+class Level2 extends Phaser.Scene {
+
+  constructor() {
+    super('Level2');
+  }
+
   preload() {
     this.load.image('mage', 'assets/mage/mage.png');
     this.load.spritesheet('idle-spritesheet', 'assets/mage/idle.png', { frameWidth: 171, frameHeight: 128 });
@@ -13,10 +19,10 @@ class Game extends Phaser.Scene {
     this.load.spritesheet('jump-spritesheet', 'assets/mage/jump.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('double-jump-spritesheet', 'assets/mage/double-jump.png', { frameWidth: 171, frameHeight: 128 });
 
-    this.load.tilemapTiledJSON('level1-tilemap', 'assets/tilemap.json');
+    this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
-    this.load.image('ground-image', 'assets/tiles/tiles.png ');
-    this.load.image('bush-image', 'assets/tiles/bush-and-trees.png');
+    this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
+    this.load.image('bush-image', 'assets/tiles/level2-bush.png');
   }
 
   create() {
@@ -59,7 +65,7 @@ class Game extends Phaser.Scene {
       repeat: 0
     });
 
-    let hero = new Hero(this, 400, 300);
+    let hero = new Knight(this, 400, 300);
 
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
@@ -83,9 +89,9 @@ class Game extends Phaser.Scene {
     this.physics.world.setBoundsCollision(true, true, false, true);
 
     //var debug = this.add.graphics();
-   // this.groundLayer.renderDebug(debug, {});
+    // this.groundLayer.renderDebug(debug, {});
 
   }
 }
 
-export default Game;
+export default Level2;
