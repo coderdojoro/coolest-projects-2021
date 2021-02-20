@@ -71,9 +71,23 @@ class Level2 extends Phaser.Scene {
       repeat: 0
     });
 
-    let hero = new Knight(this, 400, 300);
+
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
+
+    let heroX;
+    let heroY;
+
+    let objects = this.map.getObjectLayer('Objects').objects;
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.name == 'StartHero') {
+        heroX = object.x;
+        heroY = object.y;
+      }
+    }
+
+    let hero = new Knight(this, heroX, heroY);
 
     this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
     this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
