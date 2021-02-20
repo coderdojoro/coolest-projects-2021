@@ -63,9 +63,9 @@ class Level1 extends Phaser.Scene {
     this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
 
-    this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
+    let c1 = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, this.groundTiles);
-    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
+    let c2 = this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
 
     this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
 
@@ -77,6 +77,11 @@ class Level1 extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
+
+
+    // var debug = this.add.graphics();
+    // this.groundLayer.renderDebug(debug, {});
+
 
   }
 
