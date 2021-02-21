@@ -119,6 +119,29 @@ class Level2 extends Phaser.Scene {
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
+
+    // for (let a = this.groundTiles.firstgid; a < this.groundTiles.firstgid + this.groundTiles.total; a++) {
+    //   if (this.groundTiles.getTileProperties(a)) {
+    //     console.log(this.groundTiles.getTileProperties(a));
+    //     console.log(a);
+    //     this.groundLayer.setTileIndexCallback(a, function (f) {
+    //       console.log(f);
+    //     }, this);
+    //   }
+    // }
+
+    // this.map.forEachTile(function (pTile) {
+    //   console.log(pTile.properties);
+    // });
+
+    // console.log(this.map);
+
+
+    // this.groundLayer.forEachTile(function (tile) {
+    //   console.log(tile.properties.annotation);
+    // });
+
+
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
