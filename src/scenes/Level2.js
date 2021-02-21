@@ -69,7 +69,7 @@ class Level2 extends Phaser.Scene {
     this.anims.create({
       key: 'hero-double-jump',
       frames: this.anims.generateFrameNumbers("double-jump-spritesheet", {}),
-      frameRate: 6,//20
+      frameRate: 20,
       repeat: 0
     });
     this.anims.create({
@@ -77,7 +77,7 @@ class Level2 extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('fall-spritesheet', {}),
       frameRate: 10,//5
       repeat: 0,
-    }); 
+    });
 
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
