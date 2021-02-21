@@ -93,13 +93,18 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.body.setVelocityY(-300);
             this.heroState = 'jump';
             justDown = false;
-            this.body.setVelocityX(0);
+            if (!this.keyRight.isDown && !this.keyLeft.isDown) {
+                this.body.setVelocityX(0);
+            }
+
         }
 
         if (justDown && this.heroState == 'jump') {
             this.body.setVelocityY(-300);
             this.heroState = 'double-jump';
-            this.body.setVelocityX(0);
+            if (!this.keyRight.isDown && !this.keyLeft.isDown) {
+                this.body.setVelocityX(0);
+            }
         }
 
         if (!this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall' && this.animState != 'attack') {
