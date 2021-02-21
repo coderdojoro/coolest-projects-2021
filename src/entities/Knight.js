@@ -14,7 +14,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             return;
         }
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(30, 51)
+        this.body.setSize(30, 53)
         this.body.setOffset(70, 57)
         this.anims.play('hero-idle');
         this.body.setDragX(1100);
