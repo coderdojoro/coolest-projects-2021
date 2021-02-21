@@ -18,6 +18,7 @@ class Level2 extends Phaser.Scene {
     this.load.spritesheet('run-spritesheet', 'assets/mage/run.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('jump-spritesheet', 'assets/mage/jump.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('double-jump-spritesheet', 'assets/mage/double-jump.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('fall-spritesheet', `assets/mage/fall.png`, { frameWidth: 171, frameHeight: 128 });
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
@@ -71,7 +72,12 @@ class Level2 extends Phaser.Scene {
       frameRate: 6,//20
       repeat: 0
     });
-
+    this.anims.create({
+      key: 'hero-fall',
+      frames: this.anims.generateFrameNumbers('fall-spritesheet', {}),
+      frameRate: 10,//5
+      repeat: 0,
+    }); 
 
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
@@ -114,7 +120,7 @@ class Level2 extends Phaser.Scene {
 
     this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
 
-    this.physics.add.collider(hero, this.groundLayer);
+    this.physics.add.collider(hero, this.groundLayer, hero.colided, null, hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
@@ -141,7 +147,6 @@ class Level2 extends Phaser.Scene {
     //   console.log(tile.properties.annotation);
     // });
 
-
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -152,6 +157,8 @@ class Level2 extends Phaser.Scene {
     // this.groundLayer.renderDebug(debug, {});
 
   }
+
+
 }
 
 export default Level2;

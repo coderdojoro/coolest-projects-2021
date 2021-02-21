@@ -8,6 +8,8 @@ class Knight extends Phaser.GameObjects.Sprite {
     animState = "idle";
     constructor(scene, x, y) {
         super(scene, x, y, "mage");
+        this.initialX = x;
+        this.initialY = y;
         scene.add.existing(this);
         scene.physics.add.existing(this);
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
@@ -41,7 +43,11 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.keyLeft.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             // this.body.setVelocityX(-500);
             this.body.setMaxVelocity(200, 400);
-            this.body.setAccelerationX(-500);
+            if (this.onIce) {
+                this.body.setAccelerationX(-100);
+            } else {
+                this.body.setAccelerationX(-500);
+            }
             this.setFlipX(true);
             this.heroState = "walk"
         }
@@ -50,23 +56,34 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.keyRight.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             // this.body.setVelocityX(500);
             this.body.setMaxVelocity(200, 400);
-            this.body.setAccelerationX(500);
+            if (this.onIce) {
+                this.body.setAccelerationX(100);
+            } else {
+                this.body.setAccelerationX(500);
+            }
             this.setFlipX(false);
             this.heroState = "walk"
 
         }
 
-
         if (this.keyLeft.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setMaxVelocity(400, 400);
-            this.body.setAccelerationX(-500);
+            if (this.onIce) {
+                this.body.setAccelerationX(-100);
+            } else {
+                this.body.setAccelerationX(-500);
+            }
             this.setFlipX(true);
             this.heroState = 'run';
         }
 
         if (this.keyRight.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setMaxVelocity(400, 400);
-            this.body.setAccelerationX(500);
+            if (this.onIce) {
+                this.body.setAccelerationX(100);
+            } else {
+                this.body.setAccelerationX(500);
+            }
             this.setFlipX(false);
             this.heroState = 'run';
         }
@@ -76,21 +93,29 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.body.setVelocityY(-300);
             this.heroState = 'jump';
             justDown = false;
+            this.body.setVelocityX(0);
         }
 
         if (justDown && this.heroState == 'jump') {
             this.body.setVelocityY(-300);
             this.heroState = 'double-jump';
+            this.body.setVelocityX(0);
+        }
+
+        if (!this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall' && this.animState != 'attack') {
+            this.heroState = 'fall';
+            this.body.setVelocityX(0);
         }
 
         if (this.heroState == 'jump' || this.heroState == 'double-jump' || this.heroState == 'fall') {
             if (this.keyRight.isDown) {
                 this.setFlipX(false);
                 this.body.setAccelerationX(500);
-            }
-            if (this.keyLeft.isDown) {
+            } else if (this.keyLeft.isDown) {
                 this.setFlipX(true);
                 this.body.setAccelerationX(-500);
+            } else {
+                this.body.setVelocityX(0);
             }
         }
 
@@ -115,8 +140,28 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-double-jump');
             this.animState = 'double-jump';
         }
+        if (this.heroState == 'fall' && this.animState != 'fall' && this.animState != 'attack') {
+            this.animState = 'fall';
+            this.anims.play('hero-fall');
+        }
 
         console.log('heroState:' + this.heroState + ' animsState:' + this.animState);
+
+    }
+
+    colided(hero, tile) {
+        if (tile.properties && tile.properties.tileType == 'ice') {
+            this.body.setDragX(40);
+            this.onIce = true;
+        } else {
+            this.body.setDragX(1100);
+            this.onIce = false;
+        }
+
+        if (tile.properties && tile.properties.tileType == 'spike') {
+            this.setX(this.initialX);
+            this.setY(this.initialY - 32);
+        }
 
     }
 
