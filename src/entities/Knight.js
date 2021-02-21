@@ -20,6 +20,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.body.setOffset(70, 57)
         this.anims.play('hero-idle');
         this.body.setDragX(1100);
+        this.body.setGravityY(700);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -42,7 +43,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
         if (this.keyLeft.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             // this.body.setVelocityX(-500);
-            this.body.setMaxVelocity(200, 400);
+            this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(-100);
             } else {
@@ -55,7 +56,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         if (this.keyRight.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             // this.body.setVelocityX(500);
-            this.body.setMaxVelocity(200, 400);
+            this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(100);
             } else {
@@ -67,7 +68,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
         if (this.keyLeft.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
-            this.body.setMaxVelocity(400, 400);
+            this.body.setMaxVelocity(400, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(-100);
             } else {
@@ -78,7 +79,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
         if (this.keyRight.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
-            this.body.setMaxVelocity(400, 400);
+            this.body.setMaxVelocity(400, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(100);
             } else {
@@ -90,7 +91,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         let justDown = Phaser.Input.Keyboard.JustDown(this.keyJump)
         if (justDown && this.heroState != 'jump' && this.body.onFloor() && this.body.velocity.y == 0) {
-            this.body.setVelocityY(-300);
+            this.body.setVelocityY(-400);
             this.heroState = 'jump';
             justDown = false;
             if (!this.keyRight.isDown && !this.keyLeft.isDown) {
@@ -100,7 +101,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
         if (justDown && this.heroState == 'jump') {
-            this.body.setVelocityY(-300);
+            this.body.setVelocityY(-500);
             this.heroState = 'double-jump';
             if (!this.keyRight.isDown && !this.keyLeft.isDown) {
                 this.body.setVelocityX(0);
