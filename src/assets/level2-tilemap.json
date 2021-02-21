@@ -214,6 +214,19 @@
          "tilecount":2670,
          "tileheight":32,
          "tilewidth":32
+        }, 
+        {
+         "columns":112,
+         "firstgid":11189,
+         "image":"tiles\/level2-trees.png",
+         "imageheight":960,
+         "imagewidth":3610,
+         "margin":0,
+         "name":"trees",
+         "spacing":0,
+         "tilecount":3360,
+         "tileheight":32,
+         "tilewidth":32
         }],
  "tilewidth":32,
  "type":"map",
