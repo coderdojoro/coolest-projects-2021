@@ -23,6 +23,7 @@ class Level2 extends Phaser.Scene {
 
     this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
     this.load.image('bush-image', 'assets/tiles/level2-bush.png');
+    this.load.image('trees-image', 'assets/tiles/level2-trees.png');
 
     this.load.image('background4', 'assets/wallpapers/snowy-forest/background4.png');
     this.load.image('background3', 'assets/wallpapers/snowy-forest/background3.png');
@@ -105,16 +106,18 @@ class Level2 extends Phaser.Scene {
 
     this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
+    this.treesTiles = this.map.addTilesetImage('trees', 'trees-image');
 
-    this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
-    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
-    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
+    this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
 
     this.physics.add.collider(hero, this.groundLayer);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
+    this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);
