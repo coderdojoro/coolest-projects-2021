@@ -21,6 +21,7 @@ class Level1 extends Phaser.Scene {
 
     this.load.image('ground-image', 'assets/tiles/level1-tiles.png ');
     this.load.image('bush-image', 'assets/tiles/level1-bush.png');
+    this.load.image('rocks-image', 'assets/tiles/level1-rocks.png');
 
     this.load.image('background4', 'assets/wallpapers/forest/background4.png');
     this.load.image('background3', 'assets/wallpapers/forest/background3.png');
@@ -82,10 +83,11 @@ class Level1 extends Phaser.Scene {
 
     this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
+    this.rocksTiles = this.map.addTilesetImage('rocks', 'rocks-image');
 
-    let c1 = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
+    this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, this.groundTiles);
-    let c2 = this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles]);
+    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
     this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
 
