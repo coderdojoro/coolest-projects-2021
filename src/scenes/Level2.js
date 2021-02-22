@@ -12,13 +12,13 @@ class Level2 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('mage', 'assets/mage/mage.png');
-    this.load.spritesheet('idle-spritesheet', 'assets/mage/idle.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('walk-spritesheet', 'assets/mage/walk.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('run-spritesheet', 'assets/mage/run.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('jump-spritesheet', 'assets/mage/jump.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('double-jump-spritesheet', 'assets/mage/double-jump.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('fall-spritesheet', `assets/mage/fall.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.image('hero', 'assets/knight/knight.png');
+    this.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('run-spritesheet', 'assets/knight/run.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('jump-spritesheet', 'assets/knight/jump.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
@@ -39,7 +39,7 @@ class Level2 extends Phaser.Scene {
     this.anims.create({
       key: 'hero-idle',
       frames: [
-        { frame: 0, key: 'mage', duration: 10000 },
+        { frame: 0, key: 'hero', duration: 10000 },
         ...this.anims.generateFrameNumbers('idle-spritesheet', {})
       ],
       frameRate: 6,
