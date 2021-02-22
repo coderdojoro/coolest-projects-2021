@@ -7,7 +7,7 @@ class Knight extends Phaser.GameObjects.Sprite {
     heroState = "idle";
     animState = "idle";
     constructor(scene, x, y) {
-        super(scene, x, y, "mage");
+        super(scene, x, y, "hero");
         this.initialX = x;
         this.initialY = y;
         scene.add.existing(this);
@@ -16,8 +16,8 @@ class Knight extends Phaser.GameObjects.Sprite {
             return;
         }
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(30, 53)
-        this.body.setOffset(70, 57)
+        this.body.setSize(31, 50)
+        this.body.setOffset(72, 59)
         this.anims.play('hero-idle');
         this.body.setDragX(1100);
         this.body.setGravityY(700);
@@ -100,7 +100,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         }
 
-        if (justDown && this.heroState == 'jump') {
+        if (justDown && (this.heroState == 'jump' || this.heroState == 'fall')) {
             this.body.setVelocityY(-500);
             this.heroState = 'double-jump';
             if (!this.keyRight.isDown && !this.keyLeft.isDown) {
