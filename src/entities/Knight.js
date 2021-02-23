@@ -16,8 +16,8 @@ class Knight extends Phaser.GameObjects.Sprite {
             return;
         }
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(31, 50)
-        this.body.setOffset(72, 59)
+        this.body.setSize(31, 50);
+        this.body.setOffset(72, 59);
         this.anims.play('hero-idle');
         this.body.setDragX(1100);
         this.body.setGravityY(700);
@@ -36,12 +36,12 @@ class Knight extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        if (this.keyLeft.isUp && this.keyRight.isUp && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setAccelerationX(0);
             this.heroState = "idle";
 
         }
-        if (this.keyLeft.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.heroState != "dead" && this.keyLeft.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             // this.body.setVelocityX(-500);
             this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
@@ -54,7 +54,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
 
-        if (this.keyRight.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.heroState != "dead" && this.keyRight.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             // this.body.setVelocityX(500);
             this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
@@ -67,7 +67,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         }
 
-        if (this.keyLeft.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.heroState != "dead" && this.keyLeft.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setMaxVelocity(400, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(-100);
@@ -78,7 +78,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.heroState = 'run';
         }
 
-        if (this.keyRight.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.heroState != "dead" && this.keyRight.isDown && this.keyShift.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setMaxVelocity(400, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(100);
@@ -90,7 +90,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
         let justDown = Phaser.Input.Keyboard.JustDown(this.keyJump)
-        if (justDown && this.heroState != 'jump' && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.heroState != "dead" && justDown && this.heroState != 'jump' && this.body.onFloor() && this.body.velocity.y == 0) {
             this.body.setVelocityY(-400);
             this.heroState = 'jump';
             justDown = false;
@@ -100,7 +100,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         }
 
-        if (justDown && (this.heroState == 'jump' || this.heroState == 'fall')) {
+        if (this.heroState != "dead" && justDown && (this.heroState == 'jump' || this.heroState == 'fall')) {
             this.body.setVelocityY(-500);
             this.heroState = 'double-jump';
             if (!this.keyRight.isDown && !this.keyLeft.isDown) {
@@ -108,7 +108,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (!this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall' && this.animState != 'attack') {
+        if (this.heroState != "dead" && !this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall' && this.animState != 'attack') {
             this.heroState = 'fall';
             this.body.setVelocityX(0);
         }
@@ -163,11 +163,22 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.body.setDragX(1100);
             this.onIce = false;
         }
+    }
 
-        if (tile.properties && tile.properties.tileType == 'spike') {
-            this.setX(this.initialX);
-            this.setY(this.initialY - 32);
+    kill() {
+        if (this.heroState != "dead") {
+            this.anims.play('hero-death');
+            this.body.setVelocity(0, 0);
+            this.body.setAcceleration(0);
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                this.heroState = 'idle';
+                this.animState = 'idle';
+                this.setX(this.initialX);
+                this.setY(this.initialY - 32);
+            })
         }
+        this.animState = "dead";
+        this.heroState = "dead";
 
     }
 

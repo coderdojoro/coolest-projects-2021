@@ -19,11 +19,17 @@ class Level2 extends Phaser.Scene {
     this.load.spritesheet('jump-spritesheet', 'assets/knight/jump.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
     this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
-    this.load.image('bush-image', 'assets/tiles/level2-bush.png');
+    //this.load.image('bush-image', 'assets/tiles/level2-bush.png');
+    this.load.spritesheet('bush-image', 'assets/tiles/level2-bush.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
     this.load.image('trees-image', 'assets/tiles/level2-trees.png');
 
     this.load.image('background4', 'assets/wallpapers/snowy-forest/background4.png');
@@ -78,7 +84,12 @@ class Level2 extends Phaser.Scene {
       frameRate: 10,//5
       repeat: 0,
     });
-
+    this.anims.create({
+      key: 'hero-death',
+      frames: this.anims.generateFrameNumbers('death-spritesheet', {}),
+      frameRate: 10,//5
+      repeat: 0,
+    });
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
 
@@ -94,7 +105,6 @@ class Level2 extends Phaser.Scene {
       }
     }
 
-    let hero = new Knight(this, heroX, heroY);
 
     this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
     this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
@@ -116,14 +126,48 @@ class Level2 extends Phaser.Scene {
 
     this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+
+    let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
+
+    let offX = 5;
+    let offY = 8
+    let width = 32 - offX * 2;
+    let height = 32 - offY;
+
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.type == 'spike') {
+        let spike = spikeGroup.create(object.x, object.y, 'bush-image', 276);
+        spike.setOrigin(0, 1);
+        spike.setAngle(object.rotation);
+        if (object.rotation == 0) {
+          spike.body.setSize(width, height);
+          spike.body.setOffset(offX, offY);
+        } else if (object.rotation == 90) {
+          spike.body.setSize(height, width);
+          spike.body.setOffset(32 - offY - height, 32 + offX);
+        } else if (object.rotation == 180) {
+          spike.body.setSize(width, height);
+          spike.body.setOffset(- offX - width, 32 + (32 - offY - height));
+        } else if (object.rotation == 270) {
+          spike.body.setSize(height, width);
+          spike.body.setOffset(- 32 + offY + height - width, 32 - offX - width);
+        } else {
+          console.error("spike at incorrect angle: " + object.rotation);
+        }
+      }
+    }
+    let hero = new Knight(this, heroX, heroY);
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
+    //this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
 
     this.physics.add.collider(hero, this.groundLayer, hero.colided, null, hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
+
+    this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
 
 
     // for (let a = this.groundTiles.firstgid; a < this.groundTiles.firstgid + this.groundTiles.total; a++) {
