@@ -151,7 +151,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-fall');
         }
 
-        console.log('heroState:' + this.heroState + ' animsState:' + this.animState);
+        //console.log('heroState:' + this.heroState + ' animsState:' + this.animState);
 
     }
 

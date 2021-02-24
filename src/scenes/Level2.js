@@ -137,19 +137,31 @@ class Level2 extends Phaser.Scene {
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'spike') {
-        let spike = spikeGroup.create(object.x, object.y, 'bush-image', 276);
+        let spike;
+        if (object.gid == 385) {
+          spike = spikeGroup.create(object.x, object.y, 'bush-image', 276);
+        }
+        if (object.gid == 386) {
+          spike = spikeGroup.create(object.x, object.y, 'bush-image', 277);
+        }
+        if (object.gid == 335) {
+          spike = spikeGroup.create(object.x, object.y, 'bush-image', 226);
+        }
+        if (object.gid == 336) {
+          spike = spikeGroup.create(object.x, object.y, 'bush-image', 227);
+        }
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
         if (object.rotation == 0) {
           spike.body.setSize(width, height);
           spike.body.setOffset(offX, offY);
-        } else if (object.rotation == 90) {
+        } else if (object.rotation == 90 || object.rotation == -270) {
           spike.body.setSize(height, width);
           spike.body.setOffset(32 - offY - height, 32 + offX);
-        } else if (object.rotation == 180) {
+        } else if (object.rotation == 180 || object.rotation == -180) {
           spike.body.setSize(width, height);
           spike.body.setOffset(- offX - width, 32 + (32 - offY - height));
-        } else if (object.rotation == 270) {
+        } else if (object.rotation == 270 || object.rotation == -90) {
           spike.body.setSize(height, width);
           spike.body.setOffset(- 32 + offY + height - width, 32 - offX - width);
         } else {
