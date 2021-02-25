@@ -118,7 +118,7 @@
                  "name":"StartHero",
                  "point":true,
                  "rotation":180,
-                 "type":"spike",
+                 "type":"",
                  "visible":true,
                  "width":0,
                  "x":61,
