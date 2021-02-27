@@ -71,6 +71,17 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.heroState = 'double-jump';
         }
 
+        if (this.heroState == 'jump' || this.heroState == 'double-jump' || this.heroState == 'fall') {
+            if (this.keyRight.isDown) {
+                this.setFlipX(false);
+                this.body.setAccelerationX(500);
+            }
+            if (this.keyLeft.isDown) {
+                this.setFlipX(true);
+                this.body.setAccelerationX(-500);
+            }
+        }
+
         if (this.heroState == "idle" && this.animState != "idle") {
             this.anims.play('hero-idle');
             this.animState = "idle";
