@@ -60,6 +60,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.body.setAccelerationX(0);
             this.heroState = 'idle';
         }
+
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isDown && this.isOnFlor()) {
             this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
@@ -146,7 +147,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.lastFire = Date.now();
         }
 
-        if (this.fireState != 'special' && this.isOnFlor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 2000) {
+        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFlor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 2000) {
             this.fireState = 'special';
             this.lastSpecialFire = Date.now();
         }
@@ -156,13 +157,35 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.animState = "idle"
 
         }
-        if (this.heroState == "walk" && this.animState != "walk" && this.fireState == 'none') {
+        if (this.heroState == "walk" && this.fireState == 'none' && this.animState != "walk") {
             this.anims.play("hero-walk");
             this.animState = "walk";
         }
-        if (this.heroState == 'run' && this.animState != 'run' && this.fireState == 'none') {
+        if (this.heroState == "walk" && this.fireState == 'fire' && this.animState != "walk-attack") {
+            this.anims.play("hero-walk-attack");
+            this.animState = "walk-attack";
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                if (!this.keyFire.isDown) {
+                    this.fireState = 'none';
+                } else {
+                    this.animState = "enter-loop";
+                }
+            }, this);
+        }
+        if (this.heroState == 'run' && this.fireState == 'none' && this.animState != 'run') {
             this.animState = 'run';
             this.anims.play('hero-run');
+        }
+        if (this.heroState == 'run' && this.fireState == 'fire' && this.animState != 'run-attack') {
+            this.animState = 'run-attack';
+            this.anims.play('hero-run-attack');
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                if (!this.keyFire.isDown) {
+                    this.fireState = 'none';
+                } else {
+                    this.animState = "enter-loop";
+                }
+            }, this);
         }
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
             this.anims.play('hero-jump');
@@ -183,12 +206,12 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.heroState = 'idle';
             })
         }
-        if (this.fireState == 'fire' && this.animState != 'fire') {
+        if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
             this.anims.play('hero-attack');
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
-            }, this.scene);
+            }, this);
             this.lastFire = Date.now();
         }
 
@@ -200,7 +223,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
                 this.scene.cameras.main.shake(600, 0.002);
-            }, this.scene);
+            }, this);
             this.lastFire = Date.now();
         }
 
