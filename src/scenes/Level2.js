@@ -105,7 +105,6 @@ class Level2 extends Phaser.Scene {
       }
     }
 
-
     this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
     this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
     this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
@@ -152,7 +151,8 @@ class Level2 extends Phaser.Scene {
         }
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
-        if (object.rotation == 0) {
+
+        if (object.rotation == 0 || object.rotation == 360) {
           spike.body.setSize(width, height);
           spike.body.setOffset(offX, offY);
         } else if (object.rotation == 90 || object.rotation == -270) {
@@ -180,28 +180,6 @@ class Level2 extends Phaser.Scene {
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
     this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
-
-
-    // for (let a = this.groundTiles.firstgid; a < this.groundTiles.firstgid + this.groundTiles.total; a++) {
-    //   if (this.groundTiles.getTileProperties(a)) {
-    //     console.log(this.groundTiles.getTileProperties(a));
-    //     console.log(a);
-    //     this.groundLayer.setTileIndexCallback(a, function (f) {
-    //       console.log(f);
-    //     }, this);
-    //   }
-    // }
-
-    // this.map.forEachTile(function (pTile) {
-    //   console.log(pTile.properties);
-    // });
-
-    // console.log(this.map);
-
-
-    // this.groundLayer.forEachTile(function (tile) {
-    //   console.log(tile.properties.annotation);
-    // });
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);

@@ -165,17 +165,19 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
     }
 
+    onAnimationComplete() {
+        this.heroState = 'idle';
+        this.animState = 'idle';
+        this.setX(this.initialX);
+        this.setY(this.initialY);
+    }
+
     kill() {
         if (this.heroState != "dead") {
             this.anims.play('hero-death');
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.heroState = 'idle';
-                this.animState = 'idle';
-                this.setX(this.initialX);
-                this.setY(this.initialY - 32);
-            })
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, this.onAnimationComplete, this);
         }
         this.animState = "dead";
         this.heroState = "dead";
