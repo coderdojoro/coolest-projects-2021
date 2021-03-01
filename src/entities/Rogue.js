@@ -9,9 +9,13 @@ class Rogue extends Phaser.GameObjects.Sprite {
     heroState = 'idle';
     animState = 'idle';
 
-    constructor(scene, x, y) {
-        super(scene, x, y, 'rogue');
+    waterGroup;
+    scene;
 
+    constructor(scene, x, y, waterGroup) {
+        super(scene, x, y, 'hero');
+        this.waterGroup = waterGroup;
+        this.scene = scene;
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -30,6 +34,34 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.keyJump = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     }
 
+    isOnFloor() {
+        //on ground
+        let onGround = this.body.onFloor() && this.body.velocity.y == 0;
+        if (onGround) {
+            return true;
+        }
+        //in water
+        return this.isInWater();
+    }
+
+    isInWater() {
+        let waters = this.waterGroup.getChildren();
+        let overlapsWater = false;
+        for (let whater of waters) {
+            overlapsWater = this.scene.physics.overlapRect(
+                whater.x,
+                whater.y - 32,
+                32,
+                32)
+                .includes(this.body);
+            if (overlapsWater) {
+                break;
+            }
+        }
+        let touchWhaterBody = this.body.touching.down;
+        return overlapsWater && touchWhaterBody;
+    }
+
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
@@ -37,31 +69,49 @@ class Rogue extends Phaser.GameObjects.Sprite {
             return;
         }
 
+        if (this.isInWater()) {
+            this.body.setDragX(5500);
+        } else {
+            this.body.setDragX(500);
+        }
 
-        if (this.keyLeft.isUp && this.keyRight.isUp && this.body.onFloor() && this.body.velocity.y == 0) {
+        if (this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
             this.body.setAccelerationX(0);
             this.heroState = "idle";
         }
 
-        if (this.keyLeft.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
-            //this.body.setVelocityX(-500);
-            this.body.setMaxVelocity(200, 400);
-            this.body.setAccelerationX(-500);
+        if (this.keyLeft.isDown && this.isOnFloor()) {
+            if (this.isInWater()) {
+                this.body.setMaxVelocity(40, 400);
+                this.body.setAccelerationX(-150);
+            } else {
+                this.body.setMaxVelocity(200, 400);
+                this.body.setAccelerationX(-500);
+            }
             this.setFlipX(true);
             this.heroState = "walk";
         }
-        if (this.keyRight.isDown && this.body.onFloor() && this.body.velocity.y == 0) {
-            //this.body.setVelocityX(500);
-            this.body.setMaxVelocity(200, 400);
-            this.body.setAccelerationX(500);
+
+        if (this.keyRight.isDown && this.isOnFloor()) {
+            if (this.isInWater()) {
+                this.body.setMaxVelocity(40, 400);
+                this.body.setAccelerationX(150);
+            } else {
+                this.body.setMaxVelocity(200, 400);
+                this.body.setAccelerationX(500);
+            }
             this.setFlipX(false);
             this.heroState = "walk";
         }
 
         let justDown = Phaser.Input.Keyboard.JustDown(this.keyJump);
 
-        if (justDown && this.heroState != 'jump' && this.body.onFloor() && this.body.velocity.y == 0) {
-            this.body.setVelocityY(-250);
+        if (justDown && this.heroState != 'jump' && this.isOnFloor()) {
+            if (this.isInWater()) {
+                this.body.setVelocityY(-120);
+            } else {
+                this.body.setVelocityY(-250);
+            }
             justDown = false;
             this.heroState = 'jump';
         }
@@ -74,10 +124,12 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'jump' || this.heroState == 'double-jump' || this.heroState == 'fall') {
             if (this.keyRight.isDown) {
                 this.setFlipX(false);
+                this.body.setMaxVelocity(200, 400);
                 this.body.setAccelerationX(500);
             }
             if (this.keyLeft.isDown) {
                 this.setFlipX(true);
+                this.body.setMaxVelocity(200, 400);
                 this.body.setAccelerationX(-500);
             }
         }
