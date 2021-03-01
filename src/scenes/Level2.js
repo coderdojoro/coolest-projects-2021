@@ -23,6 +23,8 @@ class Level2 extends Phaser.Scene {
     this.load.spritesheet('landing-spritesheet', `assets/knight/landing.png`, { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('attack-spritesheet', `assets/knight/attack.png`, { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
@@ -108,6 +110,18 @@ class Level2 extends Phaser.Scene {
     this.anims.create({
       key: 'hero-special-attack',
       frames: this.anims.generateFrameNumbers('special-attack-spritesheet', {}),
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-walk-attack',
+      frames: this.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-run-attack',
+      frames: this.anims.generateFrameNumbers('run-attack-spritesheet', {}),
       frameRate: 10,
       repeat: 0,
     });
