@@ -3,7 +3,7 @@
 
 import Phaser from 'phaser';
 import Knight from '../entities/Knight.js';
-import Hero from '../entities/Knight.js';
+
 
 class Level2 extends Phaser.Scene {
 
