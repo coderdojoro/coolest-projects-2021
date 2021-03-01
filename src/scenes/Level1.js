@@ -2,7 +2,7 @@
 // @ts-check
 
 import Phaser from 'phaser';
-import Hero from '../entities/Rogue.js';
+import Rogue from '../entities/Rogue.js';
 
 class Level1 extends Phaser.Scene {
 
@@ -11,7 +11,7 @@ class Level1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('rogue', 'assets/rogue/rogue.png');
+    this.load.image('hero', 'assets/rogue/rogue.png');
     this.load.spritesheet('idle-spritesheet', 'assets/rogue/idle.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('walk-spritesheet', 'assets/rogue/walk.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('jump-spritesheet', 'assets/rogue/jump.png', { frameWidth: 171, frameHeight: 128 });
@@ -19,7 +19,12 @@ class Level1 extends Phaser.Scene {
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level1-tilemap.json');
 
-    this.load.image('ground-image', 'assets/tiles/level1-tiles.png ');
+    //this.load.image('ground-image', 'assets/tiles/level1-tiles.png ');
+    this.load.spritesheet('ground-image', 'assets/tiles/level1-tiles.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
     this.load.image('bush-image', 'assets/tiles/level1-bush.png');
     this.load.image('rocks-image', 'assets/tiles/level1-rocks.png');
 
@@ -34,7 +39,7 @@ class Level1 extends Phaser.Scene {
     this.anims.create({
       key: 'hero-idle',
       frames: [
-        { frame: 0, key: 'rogue', duration: 5000 },
+        { frame: 0, key: 'hero', duration: 5000 },
         ...this.anims.generateFrameNumbers('idle-spritesheet', {})
       ],
       frameRate: 6,
@@ -63,7 +68,6 @@ class Level1 extends Phaser.Scene {
     });
 
 
-    let hero = new Hero(this, 400, 300);
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
 
@@ -87,6 +91,41 @@ class Level1 extends Phaser.Scene {
 
     this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, this.groundTiles);
+
+    let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
+    let hero = new Rogue(this, 100, 300, waterGroup);
+
+    let objects = this.map.getObjectLayer('objects').objects;
+
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.type == 'water') {
+        let water;
+        if (object.gid == 272) {
+          // water = this.physics.add.staticSprite(object.x, object.y, 'ground-image', 7);
+          water = waterGroup.create(object.x, object.y, 'ground-image', 7);
+        }
+        if (object.gid == 282) {
+          water = waterGroup.create(object.x, object.y, 'ground-image', 17);
+        }
+        if (object.gid == 300) {
+          water = waterGroup.create(object.x, object.y, 'ground-image', 35);
+        }
+        if (object.gid == 326) {
+          water = waterGroup.create(object.x, object.y, 'ground-image', 61);
+        }
+        if (object.gid == 344) {
+          water = waterGroup.create(object.x, object.y, 'ground-image', 79);
+        }
+
+        water.setOrigin(0, 1);
+        water.body.setSize(32, 10);
+        water.body.setOffset(0, 22);
+        this.physics.add.collider(hero, waterGroup);
+
+      }
+    }
+
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
     this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
