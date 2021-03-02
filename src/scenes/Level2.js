@@ -104,7 +104,7 @@ class Level2 extends Phaser.Scene {
     this.anims.create({
       key: 'hero-attack',
       frames: this.anims.generateFrameNumbers('attack-spritesheet', {}),
-      frameRate: 15,//7
+      frameRate: 10,//7
       repeat: 0,
     });
     this.anims.create({
