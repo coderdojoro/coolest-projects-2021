@@ -125,7 +125,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (this.heroState != "dead" && !this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall' && this.fireState == 'none') {
+        if (this.heroState != "dead" && !this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall') {
             this.heroState = 'fall';
             this.body.setVelocityX(0);
         }
@@ -147,7 +147,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.lastFire = Date.now();
         }
 
-        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFlor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 2000) {
+        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFlor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 5000) {
             this.fireState = 'special';
             this.lastSpecialFire = Date.now();
         }
@@ -195,7 +195,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-double-jump');
             this.animState = 'double-jump';
         }
-        if (this.heroState == 'fall' && this.animState != 'fall' && this.animState != 'attack' && this.fireState == 'none') {
+        if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
             this.animState = 'fall';
             this.anims.play('hero-fall');
         }
@@ -242,6 +242,7 @@ class Knight extends Phaser.GameObjects.Sprite {
     }
 
     onAnimationComplete() {
+        console.log('death finished');
         this.heroState = 'idle';
         this.animState = 'idle';
         this.setX(this.initialX);
@@ -250,14 +251,15 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     kill() {
         if (this.heroState != "dead") {
+            console.log('enter death');
+            this.animState = "dead";
+            this.heroState = "dead";
+            this.fireState = 'none';
             this.anims.play('hero-death');
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, this.onAnimationComplete, this);
         }
-        this.animState = "dead";
-        this.heroState = "dead";
-
     }
 
 
