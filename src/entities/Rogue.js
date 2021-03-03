@@ -273,7 +273,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             setTimeout(function () {
                 this.anims.play('hero-special-attack');
                 this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                    this.anims.play('hero-idle');
+                    this.setTexture('hero');
                 }, this);
             }.bind(this), 350);
             const tweenConfig = {
@@ -286,6 +286,9 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 repeat: 0,
                 onComplete: () => {
                     this.fireState = 'none';
+                    this.heroState = 'idle';
+                    this.animState = 'idle';
+                    this.anims.play('hero-idle');
                 },
                 onCompleteScope: this
             }
