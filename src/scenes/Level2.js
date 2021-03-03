@@ -4,7 +4,6 @@
 import Phaser from 'phaser';
 import Knight from '../entities/Knight.js';
 
-
 class Level2 extends Phaser.Scene {
 
   constructor() {
@@ -29,7 +28,6 @@ class Level2 extends Phaser.Scene {
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
     this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
-    //this.load.image('bush-image', 'assets/tiles/level2-bush.png');
     this.load.spritesheet('bush-image', 'assets/tiles/level2-bush.png', {
       frameWidth: 32,
       frameHeight: 32,
@@ -45,8 +43,6 @@ class Level2 extends Phaser.Scene {
   }
 
   create() {
-
-
     this.anims.create({
       key: 'hero-idle',
       frames: [
@@ -59,7 +55,7 @@ class Level2 extends Phaser.Scene {
 
     this.anims.create({
       key: 'hero-walk',
-      frames: this.anims.generateFrameNumbers("walk-spritesheet", {}),
+      frames: this.anims.generateFrameNumbers('walk-spritesheet', {}),
       frameRate: 6,
       repeat: -1
     });
@@ -73,13 +69,13 @@ class Level2 extends Phaser.Scene {
 
     this.anims.create({
       key: 'hero-jump',
-      frames: this.anims.generateFrameNumbers("jump-spritesheet", {}),
+      frames: this.anims.generateFrameNumbers('jump-spritesheet', {}),
       frameRate: 6,
       repeat: 0
     });
     this.anims.create({
       key: 'hero-double-jump',
-      frames: this.anims.generateFrameNumbers("double-jump-spritesheet", {}),
+      frames: this.anims.generateFrameNumbers('double-jump-spritesheet', {}),
       frameRate: 20,
       repeat: 0
     });
@@ -204,10 +200,10 @@ class Level2 extends Phaser.Scene {
         }
       }
     }
-    let hero = new Knight(this, heroX, heroY);
-    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    //this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
+    let hero = new Knight(this, heroX, heroY);
+
+    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     this.physics.add.collider(hero, this.groundLayer, hero.colided, null, hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
@@ -222,7 +218,7 @@ class Level2 extends Phaser.Scene {
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
 
-    //var debug = this.add.graphics();
+    // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
 
   }
