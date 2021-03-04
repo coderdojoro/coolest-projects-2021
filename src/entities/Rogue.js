@@ -271,12 +271,12 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'special' && this.animState != 'special-fire') {
             this.animState = 'special-fire';
 
-            setTimeout(function () {
+            setTimeout(() => {
                 this.anims.play('hero-special-attack');
                 this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                     this.setTexture('hero');
                 }, this);
-            }.bind(this), 350);
+            }, 350);
 
             const tweenConfig = {
                 targets: this.scene.cameras.main,

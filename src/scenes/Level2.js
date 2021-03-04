@@ -194,7 +194,7 @@ class Level2 extends Phaser.Scene {
           spike.body.setOffset(- offX - width, 32 + (32 - offY - height));
         } else if (object.rotation == 270 || object.rotation == -90) {
           spike.body.setSize(height, width);
-          spike.body.setOffset(- 32 + offY + height - width, 32 - offX - width);
+          spike.body.setOffset(- 32 + offY, 32 - offX - width);
         } else {
           console.error("spike at incorrect angle: " + object.rotation);
         }
