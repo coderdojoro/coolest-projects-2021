@@ -160,7 +160,7 @@ class Level1 extends Phaser.Scene {
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
 
     let offX = 5;
-    let offY = 8
+    let offY = 13;
     let width = 32 - offX * 2;
     let height = 32 - offY;
 
@@ -168,7 +168,6 @@ class Level1 extends Phaser.Scene {
       let object = objects[a];
       if (object.type == 'spike') {
         let spike;
-        console.log(object.gid);
         if (object.gid == 363) {
           spike = spikeGroup.create(object.x, object.y, 'ground-image', 98);
         }
@@ -195,7 +194,7 @@ class Level1 extends Phaser.Scene {
           spike.body.setOffset(- offX - width, 32 + (32 - offY - height));
         } else if (object.rotation == 270 || object.rotation == -90) {
           spike.body.setSize(height, width);
-          spike.body.setOffset(- 32 + offY + height - width, 32 - offX - width);
+          spike.body.setOffset(- 32 + offY, 32 - offX - width);
         } else {
           console.error("spike at incorrect angle: " + object.rotation);
         }
