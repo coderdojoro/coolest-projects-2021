@@ -136,23 +136,6 @@ class Level1 extends Phaser.Scene {
       }
     }
 
-    let heroX;
-    let heroY;
-
-    let objects = this.map.getObjectLayer('objects').objects;
-    for (let a = 0; a < objects.length; a++) {
-      let object = objects[a];
-      if (object.name == 'StartHero') {
-        heroX = object.x;
-        heroY = object.y;
-      }
-    }
-
-
-
-
-
-
     this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
     this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
     this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
@@ -265,14 +248,8 @@ class Level1 extends Phaser.Scene {
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
 
-<<<<<<< HEAD
-
-    //var debug = this.add.graphics();
-    //this.groundLayer.renderDebug(debug, {});
-=======
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
->>>>>>> 5767b2f09ac5381095e77eee0115ab708af8abf2
 
   }
 
