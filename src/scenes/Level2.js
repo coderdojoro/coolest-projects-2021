@@ -4,7 +4,6 @@
 import Phaser from 'phaser';
 import Knight from '../entities/Knight.js';
 
-
 class Level2 extends Phaser.Scene {
 
   constructor() {
@@ -20,11 +19,15 @@ class Level2 extends Phaser.Scene {
     this.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('landing-spritesheet', `assets/knight/landing.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('attack-spritesheet', `assets/knight/attack.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
     this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
-    //this.load.image('bush-image', 'assets/tiles/level2-bush.png');
     this.load.spritesheet('bush-image', 'assets/tiles/level2-bush.png', {
       frameWidth: 32,
       frameHeight: 32,
@@ -40,8 +43,6 @@ class Level2 extends Phaser.Scene {
   }
 
   create() {
-
-
     this.anims.create({
       key: 'hero-idle',
       frames: [
@@ -54,7 +55,7 @@ class Level2 extends Phaser.Scene {
 
     this.anims.create({
       key: 'hero-walk',
-      frames: this.anims.generateFrameNumbers("walk-spritesheet", {}),
+      frames: this.anims.generateFrameNumbers('walk-spritesheet', {}),
       frameRate: 6,
       repeat: -1
     });
@@ -68,13 +69,13 @@ class Level2 extends Phaser.Scene {
 
     this.anims.create({
       key: 'hero-jump',
-      frames: this.anims.generateFrameNumbers("jump-spritesheet", {}),
+      frames: this.anims.generateFrameNumbers('jump-spritesheet', {}),
       frameRate: 6,
       repeat: 0
     });
     this.anims.create({
       key: 'hero-double-jump',
-      frames: this.anims.generateFrameNumbers("double-jump-spritesheet", {}),
+      frames: this.anims.generateFrameNumbers('double-jump-spritesheet', {}),
       frameRate: 20,
       repeat: 0
     });
@@ -88,6 +89,36 @@ class Level2 extends Phaser.Scene {
       key: 'hero-death',
       frames: this.anims.generateFrameNumbers('death-spritesheet', {}),
       frameRate: 10,//5
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-landing',
+      frames: this.anims.generateFrameNumbers('landing-spritesheet', {}),
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-attack',
+      frames: this.anims.generateFrameNumbers('attack-spritesheet', {}),
+      frameRate: 10,//7
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-special-attack',
+      frames: this.anims.generateFrameNumbers('special-attack-spritesheet', {}),
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-walk-attack',
+      frames: this.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'hero-run-attack',
+      frames: this.anims.generateFrameNumbers('run-attack-spritesheet', {}),
+      frameRate: 10,
       repeat: 0,
     });
 
@@ -104,7 +135,6 @@ class Level2 extends Phaser.Scene {
         heroY = object.y;
       }
     }
-
 
     this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
     this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
@@ -152,7 +182,8 @@ class Level2 extends Phaser.Scene {
         }
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
-        if (object.rotation == 0) {
+
+        if (object.rotation == 0 || object.rotation == 360) {
           spike.body.setSize(width, height);
           spike.body.setOffset(offX, offY);
         } else if (object.rotation == 90 || object.rotation == -270) {
@@ -163,16 +194,16 @@ class Level2 extends Phaser.Scene {
           spike.body.setOffset(- offX - width, 32 + (32 - offY - height));
         } else if (object.rotation == 270 || object.rotation == -90) {
           spike.body.setSize(height, width);
-          spike.body.setOffset(- 32 + offY + height - width, 32 - offX - width);
+          spike.body.setOffset(- 32 + offY, 32 - offX - width);
         } else {
           console.error("spike at incorrect angle: " + object.rotation);
         }
       }
     }
-    let hero = new Knight(this, heroX, heroY);
-    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    //this.children.moveTo(hero, this.children.getIndex(this.map.getLayer('ground').tilemapLayer));
+    let hero = new Knight(this, heroX, heroY);
+
+    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     this.physics.add.collider(hero, this.groundLayer, hero.colided, null, hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
@@ -181,35 +212,13 @@ class Level2 extends Phaser.Scene {
 
     this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
 
-
-    // for (let a = this.groundTiles.firstgid; a < this.groundTiles.firstgid + this.groundTiles.total; a++) {
-    //   if (this.groundTiles.getTileProperties(a)) {
-    //     console.log(this.groundTiles.getTileProperties(a));
-    //     console.log(a);
-    //     this.groundLayer.setTileIndexCallback(a, function (f) {
-    //       console.log(f);
-    //     }, this);
-    //   }
-    // }
-
-    // this.map.forEachTile(function (pTile) {
-    //   console.log(pTile.properties);
-    // });
-
-    // console.log(this.map);
-
-
-    // this.groundLayer.forEachTile(function (tile) {
-    //   console.log(tile.properties.annotation);
-    // });
-
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
 
-    //var debug = this.add.graphics();
+    // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
 
   }
