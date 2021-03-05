@@ -12,7 +12,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
     heroState = 'fall';
     animState = 'fall';
-
     fireState = "none";
 
     lastFire = 0;
@@ -298,7 +297,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
             this.body.setVelocityX(0);
             this.body.setAcceleration(0);
-            this.lastFire = Date.now();
+            this.lastSpecialFire = Date.now();
         }
 
         // console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);

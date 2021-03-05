@@ -8,7 +8,6 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     heroState = 'fall';
     animState = 'fall';
-
     fireState = "none";
 
     lastFire = 0;
