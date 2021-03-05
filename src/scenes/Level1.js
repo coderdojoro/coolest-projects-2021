@@ -71,6 +71,23 @@ class Level1 extends Phaser.Scene {
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
 
+    let heroX;
+    let heroY;
+
+    let objects = this.map.getObjectLayer('objects').objects;
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.name == 'StartHero') {
+        heroX = object.x;
+        heroY = object.y;
+      }
+    }
+
+
+
+
+
+
     this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
     this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
     this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
@@ -140,8 +157,8 @@ class Level1 extends Phaser.Scene {
     this.physics.world.setBoundsCollision(true, true, false, true);
 
 
-    // var debug = this.add.graphics();
-    // this.groundLayer.renderDebug(debug, {});
+    //var debug = this.add.graphics();
+    //this.groundLayer.renderDebug(debug, {});
 
 
   }

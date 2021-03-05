@@ -24,10 +24,11 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
 
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(33, 54);
+        this.body.setSize(30, 54);
         this.body.setOffset(70, 57);
         this.anims.play('hero-idle');
-        this.body.setDragX(500);
+        this.body.setDragX(1100);
+        this.body.setGravityY(700);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
