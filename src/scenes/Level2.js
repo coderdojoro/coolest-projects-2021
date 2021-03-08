@@ -11,19 +11,8 @@ class Level2 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('hero', 'assets/knight/knight.png');
-    this.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('run-spritesheet', 'assets/knight/run.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('jump-spritesheet', 'assets/knight/jump.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('landing-spritesheet', `assets/knight/landing.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('attack-spritesheet', `assets/knight/attack.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
+
+    this.load.image('empty', 'assets/empty.png');
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
@@ -43,84 +32,6 @@ class Level2 extends Phaser.Scene {
   }
 
   create() {
-    this.anims.create({
-      key: 'hero-idle',
-      frames: [
-        { frame: 0, key: 'hero', duration: 10000 },
-        ...this.anims.generateFrameNumbers('idle-spritesheet', {})
-      ],
-      frameRate: 6,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: 'hero-walk',
-      frames: this.anims.generateFrameNumbers('walk-spritesheet', {}),
-      frameRate: 6,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: 'hero-run',
-      frames: this.anims.generateFrameNumbers('run-spritesheet', {}),
-      frameRate: 6,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: 'hero-jump',
-      frames: this.anims.generateFrameNumbers('jump-spritesheet', {}),
-      frameRate: 6,
-      repeat: 0
-    });
-    this.anims.create({
-      key: 'hero-double-jump',
-      frames: this.anims.generateFrameNumbers('double-jump-spritesheet', {}),
-      frameRate: 20,
-      repeat: 0
-    });
-    this.anims.create({
-      key: 'hero-fall',
-      frames: this.anims.generateFrameNumbers('fall-spritesheet', {}),
-      frameRate: 10,//5
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-death',
-      frames: this.anims.generateFrameNumbers('death-spritesheet', {}),
-      frameRate: 10,//5
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-landing',
-      frames: this.anims.generateFrameNumbers('landing-spritesheet', {}),
-      frameRate: 10,
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-attack',
-      frames: this.anims.generateFrameNumbers('attack-spritesheet', {}),
-      frameRate: 10,//7
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-special-attack',
-      frames: this.anims.generateFrameNumbers('special-attack-spritesheet', {}),
-      frameRate: 10,
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-walk-attack',
-      frames: this.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
-      frameRate: 10,
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-run-attack',
-      frames: this.anims.generateFrameNumbers('run-attack-spritesheet', {}),
-      frameRate: 10,
-      repeat: 0,
-    });
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
 
@@ -154,7 +65,7 @@ class Level2 extends Phaser.Scene {
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
     this.treesTiles = this.map.addTilesetImage('trees', 'trees-image');
 
-    this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    let backgroundLayer = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
@@ -205,12 +116,13 @@ class Level2 extends Phaser.Scene {
 
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    this.physics.add.collider(hero, this.groundLayer, hero.colided, null, hero);
+    this.physics.add.collider(hero, this.groundLayer, hero.groundColided, null, hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
     this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
+    this.physics.add.overlap(hero, backgroundLayer, hero.backgroundOverlap, null, hero);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(hero);
