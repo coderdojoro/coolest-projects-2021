@@ -44,6 +44,7 @@ module.exports = (env, argv) => ({
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' },
+      { from: 'src/favicon.ico', to: 'favicon.ico' }
     ]),
     new HtmlWebPackPlugin({
       template: './src/index.html',
