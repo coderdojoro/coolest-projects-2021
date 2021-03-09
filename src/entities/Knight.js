@@ -359,6 +359,7 @@ class Knight extends Phaser.GameObjects.Sprite {
     backgroundOverlap(hero, tile) {
         if (tile.properties.tileType == 'checkpoint') {
             if (this.initialX < tile.pixelX && tile.pixelX - this.initialX > 32 * 3) {
+                //this.scene.cameras.main.setAlpha(0);
                 var txt = this.scene.add.text(tile.pixelX, -50, 'CHECKPOINT');
                 txt.setColor("#FFFFFF");
                 txt.setFontFamily("VT323");
