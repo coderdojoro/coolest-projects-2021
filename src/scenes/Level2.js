@@ -27,7 +27,7 @@ class Level2 extends Phaser.Scene {
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
-    this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
+    this.load.image('ground-image', 'assets/tiles/level2-tiles.png');
     this.load.spritesheet('bush-image', 'assets/tiles/level2-bush.png', {
       frameWidth: 32,
       frameHeight: 32,
