@@ -362,15 +362,17 @@ class Knight extends Phaser.GameObjects.Sprite {
                 //this.scene.cameras.main.setAlpha(0);
                 var txt = this.scene.add.text(tile.pixelX, -50, 'CHECKPOINT');
                 txt.setColor("#FFFFFF");
-                txt.setFontFamily("VT323");
-                txt.setFontSize(26);
-                txt.setStroke("#000000", 3);
+                txt.setFontFamily("Stick");
+                txt.setFontSize(22);
+                txt.setStroke("#000000", 6);
+                txt.setFontStyle('bold');
+                txt.setOrigin(0.5);
                 //txt.setTintFill(0xff0000, 0xff0000, 0xffffff, 0xffffff);
 
                 const tweenConfig = {
                     targets: txt,
                     y: tile.pixelY - 32,
-                    duration: 3000,
+                    duration: 1000,
                     ease: 'Elastic',
                     easeParams: [0.001, 0.8],
                     yoyo: true,
