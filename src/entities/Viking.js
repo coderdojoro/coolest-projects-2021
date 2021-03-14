@@ -4,7 +4,7 @@ class Viking extends Phaser.GameObjects.Sprite {
     loaded = false;
 
     constructor(scene, x, y) {
-        super(scene, x, y, 'empty');
+        super(scene, x, y, scene.make.renderTexture({ width: 60, height: 48 }).texture);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
@@ -39,3 +39,5 @@ class Viking extends Phaser.GameObjects.Sprite {
     }
 
 }
+
+export default Viking;

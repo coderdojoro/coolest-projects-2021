@@ -16,7 +16,8 @@ class Knight extends Phaser.GameObjects.Sprite {
     lastSpecialFire = 0;
 
     constructor(scene, x, y) {
-        super(scene, x, y, 'empty');
+        super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
+
         this.initialX = x;
         this.initialY = y;
 
@@ -25,6 +26,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         this.loadAssets();
 
+        this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
         this.body.setSize(31, 50);
         this.body.setOffset(72, 59);
@@ -161,7 +163,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
             this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.setAccelerationX(0);
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
