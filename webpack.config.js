@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => ({
@@ -12,10 +12,7 @@ module.exports = (env, argv) => ({
     app: path.resolve(__dirname, './src/index.js'),
     vendor: ['phaser'],
   },
-  output: {
-    path: path.resolve(process.cwd(), 'dist'),
-  },
-  devtool: argv.mode === 'development' ? 'eval-cheap-module-source-map' : 'none',
+  devtool: argv.mode === 'development' ? 'cheap-module-eval-source-map' : 'none',
   module: {
     rules: [
       {
@@ -45,13 +42,9 @@ module.exports = (env, argv) => ({
       CANVAS_RENDERER: true,
     }),
     new CleanWebpackPlugin(),
-    new CopyWebpackPlugin(
-      {
-        patterns: [
-          { from: 'src/assets', to: 'assets' },
-          { from: 'src/favicon.ico', to: 'favicon.ico' }
-        ]
-      }),
+    new CopyWebpackPlugin([
+      { from: 'src/assets', to: 'assets' },
+    ]),
     new HtmlWebPackPlugin({
       template: './src/index.html',
       filename: './index.html',
@@ -59,10 +52,10 @@ module.exports = (env, argv) => ({
       chunksSortMode: 'manual',
     }),
   ],
-  // optimization: {
-  //   splitChunks: {
-  //     name: 'vendor',
-  //     chunks: 'all',
-  //   },
-  // },
+  optimization: {
+    splitChunks: {
+      name: 'vendor',
+      chunks: 'all',
+    },
+  },
 });
