@@ -42,12 +42,12 @@ class Wolf extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        this.body.setMaxVelocityX(200);
+        this.body.setMaxVelocity(200, 400);
         this.body.setAccelerationX(300 * this.direction);
     }
 
     groundColided(hero, tile) {
-        console.log(tile);
+        // console.log(tile);
     }
 
 }

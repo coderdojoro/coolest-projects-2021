@@ -67,21 +67,21 @@ class Level2 extends Phaser.Scene {
     this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
     this.background1 = this.map.addTilesetImage('wallpaper1', 'background1');
 
-    this.battlegroundLayer1 = this.map.createLayer('wallpaper1' /*layer name from json*/, this.background1);
+    this.battlegroundLayer1 = this.map.createStaticLayer('wallpaper1' /*layer name from json*/, this.background1);
     this.battlegroundLayer1.setScrollFactor(0.0, 1);
-    this.battlegroundLayer2 = this.map.createLayer('wallpaper2' /*layer name from json*/, this.background2);
+    this.battlegroundLayer2 = this.map.createStaticLayer('wallpaper2' /*layer name from json*/, this.background2);
     this.battlegroundLayer2.setScrollFactor(0.2, 1);
-    this.battlegroundLayer3 = this.map.createLayer('wallpaper3' /*layer name from json*/, this.background3);
+    this.battlegroundLayer3 = this.map.createStaticLayer('wallpaper3' /*layer name from json*/, this.background3);
     this.battlegroundLayer3.setScrollFactor(0.4, 1);
-    this.battlegroundLayer4 = this.map.createLayer('wallpaper4' /*layer name from json*/, this.background4);
+    this.battlegroundLayer4 = this.map.createStaticLayer('wallpaper4' /*layer name from json*/, this.background4);
     this.battlegroundLayer4.setScrollFactor(0.6, 1);
 
     this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
     this.treesTiles = this.map.addTilesetImage('trees', 'trees-image');
 
-    let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
-    this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    let backgroundLayer = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
 
@@ -136,7 +136,7 @@ class Level2 extends Phaser.Scene {
 
     let hero = new Knight(this, heroX, heroY);
 
-    this.map.createLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     this.physics.add.collider(hero, this.groundLayer, hero.groundColided, null, hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
