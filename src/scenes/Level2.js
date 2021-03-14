@@ -3,6 +3,7 @@
 
 import Phaser from 'phaser';
 import Knight from '../entities/Knight.js';
+import Wolf from '../entities/Wolf.js';
 
 class Level2 extends Phaser.Scene {
 
@@ -11,8 +12,6 @@ class Level2 extends Phaser.Scene {
   }
 
   preload() {
-
-    this.load.image('empty', 'assets/empty.png');
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
@@ -29,9 +28,25 @@ class Level2 extends Phaser.Scene {
     this.load.image('background2', 'assets/wallpapers/snowy-forest/background2.png');
     this.load.image('background1', 'assets/wallpapers/snowy-forest/background1.png');
 
+    this.load.spritesheet('brazier', 'assets/tiles/brazier.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('banner', 'assets/tiles/banner.png', { frameWidth: 32, frameHeight: 64 });
   }
 
   create() {
+
+    this.anims.create({
+      key: 'brazier',
+      frames: this.anims.generateFrameNumbers('brazier', {}),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: 'banner',
+      frames: this.anims.generateFrameNumbers('banner', {}),
+      frameRate: 10,
+      repeat: -1,
+    });
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
 
@@ -79,18 +94,7 @@ class Level2 extends Phaser.Scene {
       let object = objects[a];
       if (object.type == 'spike') {
         let spike;
-        if (object.gid == 385) {
-          spike = spikeGroup.create(object.x, object.y, 'bush-image', 276);
-        }
-        if (object.gid == 386) {
-          spike = spikeGroup.create(object.x, object.y, 'bush-image', 277);
-        }
-        if (object.gid == 335) {
-          spike = spikeGroup.create(object.x, object.y, 'bush-image', 226);
-        }
-        if (object.gid == 336) {
-          spike = spikeGroup.create(object.x, object.y, 'bush-image', 227);
-        }
+        spike = spikeGroup.create(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
 
@@ -109,6 +113,24 @@ class Level2 extends Phaser.Scene {
         } else {
           console.error("spike at incorrect angle: " + object.rotation);
         }
+      }
+      if (object.type == 'brazier') {
+        let brazier = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
+        brazier.setOrigin(0, 1);
+        brazier.anims.play("brazier");
+        brazier.body.immovable = true;
+        brazier.body.setAllowGravity(false);
+      }
+      if (object.type == 'banner') {
+        let banner = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
+        banner.setOrigin(0, 1);
+        banner.anims.play("banner");
+        banner.body.immovable = true;
+        banner.body.setAllowGravity(false);
+      }
+      if (object.type == 'wolf') {
+        let wolf = new Wolf(this, object.x, object.y);
+        this.physics.add.collider(wolf, this.groundLayer, wolf.groundColided, null, wolf);
       }
     }
 
