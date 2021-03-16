@@ -115,7 +115,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.scene.anims.create({
                 key: 'hero-attack',
                 frames: this.scene.anims.generateFrameNumbers('attack-spritesheet', {}),
-                frameRate: 10,//7
+                frameRate: 15,//7
                 repeat: 0,
             });
             this.scene.anims.create({
@@ -151,6 +151,9 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+
+        // this.scene.add.circle(this.x, this.y, 2, Phaser.Math.Between(0, 0xffffff));
+
 
         if (!this.loaded) {
             return;
@@ -320,7 +323,9 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.animState = 'landing';
             this.anims.play('hero-landing');
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.heroState = 'idle';
+                if (this.heroState != 'dead') {
+                    this.heroState = 'idle';
+                }
             })
         }
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
