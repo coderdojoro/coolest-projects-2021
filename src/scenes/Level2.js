@@ -44,7 +44,7 @@ class Level2 extends Phaser.Scene {
     this.anims.create({
       key: 'banner',
       frames: this.anims.generateFrameNumbers('banner', {}),
-      frameRate: 10,
+      frameRate: 5,
       repeat: -1,
     });
 
@@ -82,6 +82,7 @@ class Level2 extends Phaser.Scene {
 
     let backgroundLayer = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.hero = new Knight(this, heroX, heroY);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
 
@@ -120,6 +121,7 @@ class Level2 extends Phaser.Scene {
         brazier.anims.play("brazier");
         brazier.body.immovable = true;
         brazier.body.setAllowGravity(false);
+        brazier.setScale(2);
       }
       if (object.type == 'banner') {
         let banner = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
@@ -127,27 +129,27 @@ class Level2 extends Phaser.Scene {
         banner.anims.play("banner");
         banner.body.immovable = true;
         banner.body.setAllowGravity(false);
+        banner.setScale(2.5);
       }
       if (object.type == 'wolf') {
         let wolf = new Wolf(this, object.x, object.y);
         this.physics.add.collider(wolf, this.groundLayer, wolf.groundColided, null, wolf);
+        wolf.setName('wolf-' + object.id);
       }
     }
 
-    let hero = new Knight(this, heroX, heroY);
-
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    this.physics.add.collider(hero, this.groundLayer, hero.groundColided, null, hero);
+    this.physics.add.collider(this.hero, this.groundLayer, this.hero.groundColided, null, this.hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
-    this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
-    this.physics.add.overlap(hero, backgroundLayer, hero.backgroundOverlap, null, hero);
+    this.physics.add.overlap(this.hero, spikeGroup, this.hero.kill, null, this.hero);
+    this.physics.add.overlap(this.hero, backgroundLayer, this.hero.backgroundOverlap, null, this.hero);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-    this.cameras.main.startFollow(hero);
+    this.cameras.main.startFollow(this.hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
