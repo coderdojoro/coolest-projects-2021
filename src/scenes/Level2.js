@@ -94,8 +94,7 @@ class Level2 extends Phaser.Scene {
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'spike') {
-        let spike;
-        spike = spikeGroup.create(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
+        let spike = spikeGroup.create(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
 
