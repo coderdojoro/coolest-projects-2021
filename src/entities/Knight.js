@@ -1,3 +1,5 @@
+import Wolf from "./Wolf";
+
 // @ts-check
 class Knight extends Phaser.GameObjects.Sprite {
     keyLeft;
@@ -115,7 +117,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.scene.anims.create({
                 key: 'hero-attack',
                 frames: this.scene.anims.generateFrameNumbers('attack-spritesheet', {}),
-                frameRate: 15,//7
+                frameRate: 25,//7
                 repeat: 0,
             });
             this.scene.anims.create({
@@ -151,16 +153,57 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-
-        // this.scene.add.circle(this.x, this.y, 2, Phaser.Math.Between(0, 0xffffff));
-
-
         if (!this.loaded) {
             return;
         }
 
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
+        }
+
+        if (this.fireState == 'fire') {
+            let selected;
+            if (this.flipX) {
+                selected = this.scene.physics.overlapRect(
+                    this.x + this.body.offset.x - 50,
+                    this.y - 128 + this.body.offset.y - 20,
+                    50,
+                    70
+                );
+                // let r2 = this.scene.add.rectangle(
+                //     this.x + this.body.offset.x - 50,
+                //     this.y - 128 + this.body.offset.y - 20,
+                //     50,
+                //     70,
+                //     0xff0000,
+                //     0.05
+                // );
+                // r2.setOrigin(0, 0);
+            } else {
+                selected = this.scene.physics.overlapRect(
+                    this.x + this.body.offset.x + this.body.width,
+                    this.y - 128 + this.body.offset.y - 20,
+                    50,
+                    70
+                );
+                // let r = this.scene.add.rectangle(
+                //     this.x + this.body.offset.x + this.body.width,
+                //     this.y - 128 + this.body.offset.y - 20,
+                //     50,
+                //     70,
+                //     0xff0000,
+                //     0.05
+                // );
+                // r.setOrigin(0, 0);
+            }
+
+
+            for (let obj of selected) {
+                //console.log(obj.gameObject.name + "" + (selected.gameObject instanceof Wolf));
+                if (obj.gameObject instanceof Wolf) {
+                    obj.gameObject.kill();
+                }
+            }
         }
 
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
@@ -365,7 +408,8 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     backgroundOverlap(hero, tile) {
         if (tile.properties.tileType == 'checkpoint') {
-            if (this.initialX < tile.pixelX && tile.pixelX - this.initialX > 32 * 3) {
+            let newX = tile.pixelX - this.body.offset.x - this.body.halfWidth;
+            if (this.initialX < tile.pixelX && newX - this.initialX > 32 * 3) {
                 //this.scene.cameras.main.setAlpha(0);
                 var txt = this.scene.add.text(tile.pixelX, -50, 'CHECKPOINT');
                 txt.setColor("#FFFFFF");
@@ -392,8 +436,8 @@ class Knight extends Phaser.GameObjects.Sprite {
                 }
                 this.scene.tweens.add(tweenConfig);
 
-                this.initialX = tile.pixelX;
-                this.initialY = tile.pixelY;
+                this.initialX = newX;
+                this.initialY = this.y - 1;
             }
         }
     }
