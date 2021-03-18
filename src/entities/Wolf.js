@@ -4,7 +4,8 @@ class Wolf extends Phaser.GameObjects.Sprite {
     loaded = false;
     direction = Phaser.Math.Between(0, 1) == 0 ? -1 : 1;
     groundLayer;
-    alive = true;
+
+    wolfState = 'run';
 
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 60, height: 48 }).texture);
@@ -12,9 +13,11 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.scene.load.image('wolf', 'assets/wolf/wolf.png');
         this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 60, frameHeight: 48 });
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
         this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
+        this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -34,6 +37,12 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 frames: this.scene.anims.generateFrameNumbers('wolfdeath-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0
+            });
+            this.scene.anims.create({
+                key: 'dizzy',
+                frames: this.scene.anims.generateFrameNumbers('dizzy-spritesheet', {}),
+                frameRate: 10,
+                repeat: -1,
             });
 
             this.loaded = true;
@@ -59,6 +68,8 @@ class Wolf extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
+        console.log(this.wolfState);
+
         if (!this.loaded) {
             return;
         }
@@ -67,25 +78,20 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         // this.scene.add.circle(this.body.x + this.body.halfWidth, this.y - 16, 2, Phaser.Math.Between(0, 0xffffff));
 
-        if (!this.alive) {
+        if (this.wolfState == 'dead') {
             return;
         }
-
-        if (this.attack) {
+        if (this.wolfState == 'dizzy') {
+            if (Date.now() - this.dizzySatrt > 3000) {
+                this.wolfState = 'run';
+                this.anims.play('wolf-run');
+                this.dizzySprite.destroy();
+            }
             return;
         }
-
-        // if (this.scene.hero.fireState == 'fire') {
-        //     if (this.scene.hero.flipX) {
-
-        //     } else {
-        //         console.log("x:" + this.body.offset.x + ", w:" + this.body.width);
-        //         let rectangle = this.scene.add.rectangle(this.scene.hero.x + this.scene.hero.body.offset.x + this.scene.hero.body.width, this.scene.hero.y - (128 - this.scene.hero.body.offset.y - this.scene.hero.body.height), 50, 64, 0xff0000);
-        //         rectangle.setOrigin(0, 1);
-        //         this.scene.physics
-        //     }
-
-        // }
+        if (this.wolfState == 'attack') {
+            return;
+        }
 
         if (this.direction < 0) {
             this.setFlipX(true);
@@ -94,11 +100,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         this.body.setMaxVelocity(150, 400);
         this.body.setAccelerationX(300 * this.direction);
-
     }
 
     groundColided(wolf, tile) {
-        if (!this.alive) {
+        if (this.wolfState == 'dead') {
+            return;
+        }
+        if (this.wolfState == 'dizzy') {
             return;
         }
         // this.scene.add.circle(this.x + this.body.offset.x + this.body.width, this.y, 2, 0xff0000);
@@ -122,7 +130,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     worldColided(wolf) {
-        if (!this.alive) {
+        if (this.wolfState == 'dead') {
             return;
         }
         if (wolf.gameObject.name != this.name) {
@@ -132,10 +140,14 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     heroOverlap(hero, wolf) {
-        if (!this.alive) {
+        if (this.wolfState == 'dead') {
             return;
         }
-        if (!this.attack && hero.heroState != 'dead') {
+        if (this.wolfState == 'dizzy') {
+            return;
+        }
+
+        if (this.wolfState != 'attack' && hero.heroState != 'dead') {
             if (this.body.x + this.body.halfWidth < hero.body.x + hero.body.halfWidth) {
                 this.setFlipX(false);
                 this.direction = 1;
@@ -143,14 +155,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 this.setFlipX(true);
                 this.direction = -1;
             }
-            this.attack = true;
+            this.wolfState = 'attack';
             this.body.velocity.x = 0;
             this.body.setAccelerationX(0);
             this.anims.play('wolf-attack');
             hero.kill();
-            this.attack = true;
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.attack = false;
+                this.wolfState = 'run';
                 this.anims.play('wolf-run');
                 this.setX(this.x + 40 * this.direction);
             }, this);
@@ -158,13 +169,37 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     kill() {
-        if (!this.alive) {
+        if (this.wolfState == 'dead') {
             return;
         }
-        this.alive = false;
+        this.wolfState = 'dead';
         this.anims.play('wolf-death');
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
+        if (this.dizzySprite) {
+            this.dizzySprite.destroy();
+        }
+    }
+
+    makeDizzy() {
+        if (this.wolfState == 'dead') {
+            return;
+        }
+        this.dizzySatrt = Date.now();
+        this.body.velocity.x = 0;
+        this.body.setAccelerationX(0);
+        if (this.wolfState == 'dizzy') {
+            return;
+        }
+        this.wolfState = 'dizzy';
+        this.anims.stop();
+        this.setTexture('wolf');
+        let x = this.direction == 1 ? this.x + 35 : this.x - 5;
+        this.dizzySprite = this.scene.physics.add.sprite(x, this.y - 30, null);
+        this.dizzySprite.setOrigin(0, 1);
+        this.dizzySprite.anims.play("dizzy");
+        this.dizzySprite.body.immovable = true;
+        this.dizzySprite.body.setAllowGravity(false);
     }
 
 }
