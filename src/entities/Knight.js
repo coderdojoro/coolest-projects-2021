@@ -388,6 +388,27 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
                 this.scene.cameras.main.shake(800, 0.002);
+                let selected = this.scene.physics.overlapRect(
+                    this.scene.cameras.main.scrollX,
+                    this.scene.cameras.main.scrollY,
+                    this.scene.cameras.main.width,
+                    this.scene.cameras.main.height
+                );
+                for (let obj of selected) {
+                    //console.log(obj.gameObject.name + "" + (selected.gameObject instanceof Wolf));
+                    if (obj.gameObject instanceof Wolf) {
+                        obj.gameObject.makeDizzy();
+                    }
+                }
+                // let r = this.scene.add.rectangle(
+                //     this.scene.cameras.main.scrollX,
+                //     this.scene.cameras.main.scrollY,
+                //     this.scene.cameras.main.width,
+                //     this.scene.cameras.main.height,
+                //     0xff0000,
+                //     0.5
+                // );
+                // r.setOrigin(0, 0);
             }, this);
             this.lastFire = Date.now();
         }
