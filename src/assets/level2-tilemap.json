@@ -12725,24 +12725,6 @@
                  "y":685.666666666667
                 }, 
                 {
-                 "gid":282,
-                 "height":2104,
-                 "id":914,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"tileType",
-                         "type":"string",
-                         "value":"spike"
-                        }],
-                 "rotation":0,
-                 "type":"spike",
-                 "visible":true,
-                 "width":3766,
-                 "x":-1041,
-                 "y":1918
-                }, 
-                {
                  "gid":408,
                  "height":32,
                  "id":916,
@@ -13815,6 +13797,18 @@
                  "width":32,
                  "x":9696,
                  "y":768
+                }, 
+                {
+                 "gid":282,
+                 "height":32,
+                 "id":982,
+                 "name":"",
+                 "rotation":0,
+                 "type":"wolf",
+                 "visible":true,
+                 "width":32,
+                 "x":3584,
+                 "y":928
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -13823,7 +13817,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":982,
+ "nextobjectid":983,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
