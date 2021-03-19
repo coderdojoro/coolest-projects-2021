@@ -240,13 +240,46 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     }
 
-    colided(hero, tile) {
+    onGroundColided(hero, tile) {
         if (tile.properties && tile.properties.tileType == 'ice') {
             this.body.setDragX(40);
             this.onIce = true;
         } else {
             this.body.setDragX(1100);
             this.onIce = false;
+        }
+    }
+
+    onBackroundOverlap(hero, tile) {
+
+        if (tile.properties.tileType == 'checkpoint') {
+            if (tile.pixelX > this.initialX && tile.pixelX - this.initialX > 32 * 3) {
+                let text = this.scene.add.text(tile.pixelX, -50, 'CHECK POINT');
+                text.setColor('#1900ff');
+                text.setFontSize(22);
+                text.setStroke('#ffffff', 4);
+                //text.setTintFill(0xff0000, 0xff00ff, 0x00ffff, 0x12ee44433);
+                text.setFontFamily('Stick');
+                text.setFontStyle('bold');
+                text.setOrigin(0.5, 1);
+                let tweenConfig = {
+                    targets: text,
+                    y: tile.pixelY,
+                    duration: 5000,
+                    ease: 'Elastic',
+                    easeParams: [0.01, 0.8],
+                    yoyo: true,
+                    hold: 2500,
+                    repeat: 0,
+                    onComplete: () => {
+                        text.destroy();
+                    },
+                    onCompleteScope: this
+                };
+                this.scene.tweens.add(tweenConfig);
+                this.initialX = tile.pixelX;
+                this.initialY = tile.pixelY;
+            }
         }
     }
 
