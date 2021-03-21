@@ -173,6 +173,7 @@ class Level2 extends Phaser.Scene {
 
     let backgroundLayer = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.hero = new Knight(this, heroX, heroY);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
 
@@ -226,20 +227,18 @@ class Level2 extends Phaser.Scene {
       }
     }
 
-    let hero = new Knight(this, heroX, heroY);
-
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    this.physics.add.overlap(hero, backgroundLayer, hero.onBackroundOverlap, null, hero);
-    this.physics.add.collider(hero, this.groundLayer, hero.onGroundColided, null, hero);
+    this.physics.add.overlap(this.hero, backgroundLayer, this.hero.onBackgroundOverlap, null, this.hero);
+    this.physics.add.collider(this.hero, this.groundLayer, this.hero.onGroundColided, null, this.hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
-    this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
+    this.physics.add.overlap(this.hero, spikeGroup, this.hero.kill, null, this.hero);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-    this.cameras.main.startFollow(hero);
+    this.cameras.main.startFollow(this.hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
