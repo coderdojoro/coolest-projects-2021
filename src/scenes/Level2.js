@@ -139,13 +139,13 @@ class Level2 extends Phaser.Scene {
 
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
-    this.physics.add.collider(this.hero, this.groundLayer, this.hero.groundColided, null, this.hero);
+    this.physics.add.overlap(this.hero, backgroundLayer, this.hero.onBackgroundOverlap, null, this.hero);
+    this.physics.add.collider(this.hero, this.groundLayer, this.hero.onGroundColided, null, this.hero);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.treesTiles.firstgid, this.treesTiles.firstgid + this.treesTiles.total, true);
 
     this.physics.add.overlap(this.hero, spikeGroup, this.hero.kill, null, this.hero);
-    this.physics.add.overlap(this.hero, backgroundLayer, this.hero.backgroundOverlap, null, this.hero);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     this.cameras.main.startFollow(this.hero);
