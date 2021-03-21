@@ -1,4 +1,6 @@
 // @ts-check
+import Wolf from "./Wolf";
+
 class Knight extends Phaser.GameObjects.Sprite {
     keyLeft;
     keyRight;
@@ -7,24 +9,124 @@ class Knight extends Phaser.GameObjects.Sprite {
     keySpecialFire;
 
     heroState = 'fall';
-    animState = 'fall';
+    animState;
     fireState = "none";
+
+    loaded = false;
 
     lastFire = 0;
     lastSpecialFire = 0;
 
     constructor(scene, x, y) {
-        super(scene, x, y, 'hero');
+        super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
         this.initialX = x;
         this.initialY = y;
 
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
 
-        if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
-            return;
-        }
+        this.scene.load.image('hero', 'assets/knight/knight.png');
+        this.scene.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('run-spritesheet', 'assets/knight/run.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('jump-spritesheet', 'assets/knight/jump.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('landing-spritesheet', `assets/knight/landing.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('attack-spritesheet', `assets/knight/attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
 
+        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+            console.log("LOAD COMPLETE");
+            this.scene.anims.create({
+                key: 'hero-idle',
+                frames: [
+                    { frame: 0, key: 'hero', duration: 10000 },
+                    ...this.scene.anims.generateFrameNumbers('idle-spritesheet', {})
+                ],
+                frameRate: 6,
+                repeat: -1
+            });
+
+            this.scene.anims.create({
+                key: 'hero-walk',
+                frames: this.scene.anims.generateFrameNumbers('walk-spritesheet', {}),
+                frameRate: 6,
+                repeat: -1
+            });
+
+            this.scene.anims.create({
+                key: 'hero-run',
+                frames: this.scene.anims.generateFrameNumbers('run-spritesheet', {}),
+                frameRate: 6,
+                repeat: -1,
+            });
+
+            this.scene.anims.create({
+                key: 'hero-jump',
+                frames: this.scene.anims.generateFrameNumbers('jump-spritesheet', {}),
+                frameRate: 6,
+                repeat: 0
+            });
+            this.scene.anims.create({
+                key: 'hero-double-jump',
+                frames: this.scene.anims.generateFrameNumbers('double-jump-spritesheet', {}),
+                frameRate: 20,
+                repeat: 0
+            });
+            this.scene.anims.create({
+                key: 'hero-fall',
+                frames: this.scene.anims.generateFrameNumbers('fall-spritesheet', {}),
+                frameRate: 10,//5
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-death',
+                frames: this.scene.anims.generateFrameNumbers('death-spritesheet', {}),
+                frameRate: 10,//5
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-landing',
+                frames: this.scene.anims.generateFrameNumbers('landing-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-attack',
+                frames: this.scene.anims.generateFrameNumbers('attack-spritesheet', {}),
+                frameRate: 25,//7
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-special-attack',
+                frames: this.scene.anims.generateFrameNumbers('special-attack-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-walk-attack',
+                frames: this.scene.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-run-attack',
+                frames: this.scene.anims.generateFrameNumbers('run-attack-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+
+            this.loaded = true;
+
+        }, this);
+
+        this.scene.load.start();
+
+        this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
         this.body.setSize(31, 50);
         this.body.setOffset(72, 59);
@@ -48,6 +150,10 @@ class Knight extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
+        if (!this.loaded) {
+            return;
+        }
+
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
         }
@@ -55,7 +161,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
             this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.setAccelerationX(0);
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
@@ -212,7 +318,9 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.animState = 'landing';
             this.anims.play('hero-landing');
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.heroState = 'idle';
+                if (this.heroState != 'dead') {
+                    this.heroState = 'idle';
+                }
             })
         }
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
@@ -228,7 +336,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.animState = 'special-fire';
             this.anims.play('hero-special-attack');
             this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.setAccelerationX(0);
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
                 this.scene.cameras.main.shake(800, 0.002);
@@ -250,10 +358,10 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
     }
 
-    onBackroundOverlap(hero, tile) {
-
+    onBackgroundOverlap(hero, tile) {
         if (tile.properties.tileType == 'checkpoint') {
-            if (tile.pixelX > this.initialX && tile.pixelX - this.initialX > 32 * 3) {
+            let newX = tile.pixelX - this.body.offset.x - this.body.halfWidth;
+            if (this.initialX < tile.pixelX && newX - this.initialX > 32 * 3) {
                 let text = this.scene.add.text(tile.pixelX, -50, 'CHECK POINT');
                 text.setColor('#1900ff');
                 text.setFontSize(22);
@@ -277,8 +385,8 @@ class Knight extends Phaser.GameObjects.Sprite {
                     onCompleteScope: this
                 };
                 this.scene.tweens.add(tweenConfig);
-                this.initialX = tile.pixelX;
-                this.initialY = tile.pixelY;
+                this.initialX = newX;
+                this.initialY = this.y - 1;
             }
         }
     }
