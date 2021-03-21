@@ -1,6 +1,6 @@
+// @ts-check
 import Wolf from "./Wolf";
 
-// @ts-check
 class Knight extends Phaser.GameObjects.Sprite {
     keyLeft;
     keyRight;
@@ -19,31 +19,12 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
-
         this.initialX = x;
         this.initialY = y;
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.loadAssets();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(31, 50);
-        this.body.setOffset(72, 59);
-        this.body.setDragX(1100);
-        this.body.setGravityY(700);
-
-        this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.keyJump = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keyShift = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
-        this.keyFire = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
-        this.keySpecialFire = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-    }
-
-    loadAssets() {
         this.scene.load.image('hero', 'assets/knight/knight.png');
         this.scene.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
@@ -144,6 +125,20 @@ class Knight extends Phaser.GameObjects.Sprite {
         }, this);
 
         this.scene.load.start();
+
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(31, 50);
+        this.body.setOffset(72, 59);
+        this.body.setDragX(1100);
+        this.body.setGravityY(700);
+
+        this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.keyJump = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.keyShift = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+        this.keyFire = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.K);
+        this.keySpecialFire = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
     }
 
     isOnFloor() {
@@ -153,6 +148,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+
         if (!this.loaded) {
             return;
         }
@@ -170,15 +166,6 @@ class Knight extends Phaser.GameObjects.Sprite {
                     50,
                     70
                 );
-                // let r2 = this.scene.add.rectangle(
-                //     this.x + this.body.offset.x - 50,
-                //     this.y - 128 + this.body.offset.y - 20,
-                //     50,
-                //     70,
-                //     0xff0000,
-                //     0.05
-                // );
-                // r2.setOrigin(0, 0);
             } else {
                 selected = this.scene.physics.overlapRect(
                     this.x + this.body.offset.x + this.body.width,
@@ -186,20 +173,9 @@ class Knight extends Phaser.GameObjects.Sprite {
                     50,
                     70
                 );
-                // let r = this.scene.add.rectangle(
-                //     this.x + this.body.offset.x + this.body.width,
-                //     this.y - 128 + this.body.offset.y - 20,
-                //     50,
-                //     70,
-                //     0xff0000,
-                //     0.05
-                // );
-                // r.setOrigin(0, 0);
             }
 
-
             for (let obj of selected) {
-                //console.log(obj.gameObject.name + "" + (selected.gameObject instanceof Wolf));
                 if (obj.gameObject instanceof Wolf) {
                     obj.gameObject.kill();
                 }
@@ -395,20 +371,10 @@ class Knight extends Phaser.GameObjects.Sprite {
                     this.scene.cameras.main.height
                 );
                 for (let obj of selected) {
-                    //console.log(obj.gameObject.name + "" + (selected.gameObject instanceof Wolf));
                     if (obj.gameObject instanceof Wolf) {
                         obj.gameObject.makeDizzy();
                     }
                 }
-                // let r = this.scene.add.rectangle(
-                //     this.scene.cameras.main.scrollX,
-                //     this.scene.cameras.main.scrollY,
-                //     this.scene.cameras.main.width,
-                //     this.scene.cameras.main.height,
-                //     0xff0000,
-                //     0.5
-                // );
-                // r.setOrigin(0, 0);
             }, this);
             this.lastFire = Date.now();
         }
@@ -417,7 +383,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     }
 
-    groundColided(hero, tile) {
+    onGroundColided(hero, tile) {
         if (tile.properties && tile.properties.tileType == 'ice') {
             this.body.setDragX(40);
             this.onIce = true;
@@ -427,36 +393,33 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
     }
 
-    backgroundOverlap(hero, tile) {
+    onBackgroundOverlap(hero, tile) {
         if (tile.properties.tileType == 'checkpoint') {
             let newX = tile.pixelX - this.body.offset.x - this.body.halfWidth;
             if (this.initialX < tile.pixelX && newX - this.initialX > 32 * 3) {
-                //this.scene.cameras.main.setAlpha(0);
-                var txt = this.scene.add.text(tile.pixelX, -50, 'CHECKPOINT');
-                txt.setColor("#FFFFFF");
-                txt.setFontFamily("Stick");
-                txt.setFontSize(22);
-                txt.setStroke("#000000", 6);
-                txt.setFontStyle('bold');
-                txt.setOrigin(0.5);
-                //txt.setTintFill(0xff0000, 0xff0000, 0xffffff, 0xffffff);
-
-                const tweenConfig = {
-                    targets: txt,
-                    y: tile.pixelY - 32,
-                    duration: 1000,
+                let text = this.scene.add.text(tile.pixelX, -50, 'CHECK POINT');
+                text.setColor('#1900ff');
+                text.setFontSize(22);
+                text.setStroke('#ffffff', 4);
+                //text.setTintFill(0xff0000, 0xff00ff, 0x00ffff, 0x12ee44433);
+                text.setFontFamily('Stick');
+                text.setFontStyle('bold');
+                text.setOrigin(0.5, 1);
+                let tweenConfig = {
+                    targets: text,
+                    y: tile.pixelY,
+                    duration: 5000,
                     ease: 'Elastic',
-                    easeParams: [0.001, 0.8],
+                    easeParams: [0.01, 0.8],
                     yoyo: true,
                     hold: 2500,
                     repeat: 0,
                     onComplete: () => {
-                        txt.destroy();
+                        text.destroy();
                     },
                     onCompleteScope: this
-                }
+                };
                 this.scene.tweens.add(tweenConfig);
-
                 this.initialX = newX;
                 this.initialY = this.y - 1;
             }
