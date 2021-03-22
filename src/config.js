@@ -6,7 +6,7 @@ import Phaser from 'phaser';
 export default {
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: '#87ceeb',
+  backgroundColor: '#000000',
   scale: {
     width: 1280,
     height: 720,
@@ -20,7 +20,7 @@ export default {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: true,
+      debug: false,
       debugShowVelocity: true,
       debugShowBody: true,
       debugShowStaticBody: true
