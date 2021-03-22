@@ -12,7 +12,6 @@ class Level2 extends Phaser.Scene {
   }
 
   preload() {
-
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
     this.load.image('ground-image', 'assets/tiles/level2-tiles.png');
@@ -33,7 +32,6 @@ class Level2 extends Phaser.Scene {
   }
 
   create() {
-
     this.anims.create({
       key: 'brazier',
       frames: this.anims.generateFrameNumbers('brazier', {}),
