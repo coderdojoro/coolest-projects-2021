@@ -15,7 +15,7 @@ class Level2 extends Phaser.Scene {
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
 
-    this.load.image('ground-image', 'assets/tiles/level2-tiles.png ');
+    this.load.image('ground-image', 'assets/tiles/level2-tiles.png');
     this.load.spritesheet('bush-image', 'assets/tiles/level2-bush.png', {
       frameWidth: 32,
       frameHeight: 32,
@@ -44,7 +44,7 @@ class Level2 extends Phaser.Scene {
     this.anims.create({
       key: 'banner',
       frames: this.anims.generateFrameNumbers('banner', {}),
-      frameRate: 5,
+      frameRate: 10,
       repeat: -1,
     });
 
@@ -128,7 +128,7 @@ class Level2 extends Phaser.Scene {
         banner.anims.play("banner");
         banner.body.immovable = true;
         banner.body.setAllowGravity(false);
-        banner.setScale(2.5);
+        banner.setScale(3);
       }
       if (object.type == 'wolf') {
         let wolf = new Wolf(this, object.x, object.y);
