@@ -8,12 +8,14 @@ class Wolf extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 60, height: 48 }).texture);
 
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
 
+        this.scene.load.image('wolf', 'assets/wolf/wolf.png');
         this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 60, frameHeight: 48 });
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
         this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
+        this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -34,6 +36,12 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 frameRate: 10,
                 repeat: 0
             });
+            this.scene.anims.create({
+                key: 'dizzy',
+                frames: this.scene.anims.generateFrameNumbers('dizzy-spritesheet', {}),
+                frameRate: 10,
+                repeat: -1,
+            });
 
             this.loaded = true;
             this.anims.play('wolf-run');
@@ -45,8 +53,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.body.setCollideWorldBounds(true);
         this.body.setSize(34, 22);
         this.body.setOffset(14, 26);
-        this.body.setDragX(10000);
-        this.body.setGravityY(0);
 
         this.setScale(1.5);
     }
@@ -72,7 +78,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
             if (tileX < 0) {
                 return;
             }
-            //this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
+            // this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
             var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
             if (!tileInFront) {
                 this.body.velocity.x = 0;
