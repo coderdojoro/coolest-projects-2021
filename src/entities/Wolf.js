@@ -1,9 +1,9 @@
 // @ts-check
 class Wolf extends Phaser.GameObjects.Sprite {
 
-    loaded = false;
     direction = Phaser.Math.Between(0, 1) == 0 ? -1 : 1;
-    groundLayer;
+
+    loaded = false;
 
     wolfState = 'run';
 
@@ -109,7 +109,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         // this.scene.add.circle(this.x + this.body.offset.x + this.body.width, this.y, 2, 0xff0000);
         // this.scene.add.circle(this.x, this.y, 2, 0xff0000);
-        if (wolf.y == tile.pixelY + 32) {
+        if (wolf.y == tile.pixelY + 64 || wolf.y == tile.pixelY + 32) {
             this.direction = this.direction * -1;
         }
         if (tile.pixelY == wolf.y) {
@@ -117,7 +117,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
             if (tileX < 0) {
                 return;
             }
-            this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
+            // this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
             var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
             if (!tileInFront) {
                 this.body.velocity.x = 0;
