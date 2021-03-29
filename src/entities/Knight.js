@@ -38,6 +38,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 32, frameHeight: 32 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             console.log("LOAD COMPLETE");
@@ -117,6 +118,12 @@ class Knight extends Phaser.GameObjects.Sprite {
                 key: 'hero-run-attack',
                 frames: this.scene.anims.generateFrameNumbers('run-attack-spritesheet', {}),
                 frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'earthattack',
+                frames: this.scene.anims.generateFrameNumbers('earthattack-spritesheet', {}),
+                frameRate: 30,
                 repeat: 0,
             });
 
@@ -279,7 +286,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.lastFire = Date.now();
         }
 
-        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFloor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 5000) {
+        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFloor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 1000) {
             this.fireState = 'special';
             this.lastSpecialFire = Date.now();
         }
@@ -364,6 +371,34 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
                 this.scene.cameras.main.shake(800, 0.002);
+                let xRight = Math.trunc((this.body.right + 32) / 32) * 32;
+                let xLeft = Math.trunc((this.body.left - 32) / 32) * 32;
+                let slashes = [];
+                for (let a = 0; a < 11; a++) {
+                    let tileXRight = xRight + 32 * a;
+                    let tileUnderRight = this.scene.groundLayer.getTileAtWorldXY(tileXRight, this.body.bottom);
+                    if (tileUnderRight) {
+                        let slash = this.scene.add.sprite(tileXRight, this.body.bottom, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
+                        slash.setOrigin(0, 1);
+                        slash.anims.play('earthattack', false, 10 - a);
+                        slashes.push(slash);
+                    }
+                    let tileXLeft = xLeft - 32 * a;
+                    let tileUnderLeft = this.scene.groundLayer.getTileAtWorldXY(tileXLeft, this.body.bottom);
+                    if (tileUnderLeft) {
+                        let slash = this.scene.add.sprite(tileXLeft, this.body.bottom, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
+                        slash.setOrigin(0, 1);
+                        slash.anims.play('earthattack', false, 10 - a);
+                        slashes.push(slash);
+                    }
+                }
+
+                slashes[slashes.length - 1].once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                    for (let slash of slashes) {
+                        slash.destroy();
+                    }
+                }, this);
+
                 let selected = this.scene.physics.overlapRect(
                     this.scene.cameras.main.scrollX,
                     this.scene.cameras.main.scrollY,

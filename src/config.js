@@ -1,4 +1,3 @@
-/// <reference path="../typings/phaser.d.ts" />
 // @ts-check
 
 import Phaser from 'phaser';

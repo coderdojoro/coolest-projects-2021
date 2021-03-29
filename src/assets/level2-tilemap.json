@@ -13781,18 +13781,6 @@
                  "y":768
                 }, 
                 {
-                 "gid":282,
-                 "height":32,
-                 "id":982,
-                 "name":"",
-                 "rotation":0,
-                 "type":"wolf",
-                 "visible":true,
-                 "width":32,
-                 "x":3584,
-                 "y":928
-                }, 
-                {
                  "gid":146,
                  "height":32,
                  "id":983,

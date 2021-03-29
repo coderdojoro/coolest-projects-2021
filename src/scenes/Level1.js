@@ -24,6 +24,7 @@ class Level1 extends Phaser.Scene {
     this.load.spritesheet('special-attack-spritesheet', `assets/rogue/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
     this.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
+    this.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
 
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level1-tilemap.json');
 
@@ -118,6 +119,12 @@ class Level1 extends Phaser.Scene {
     this.anims.create({
       key: 'hero-run-attack',
       frames: this.anims.generateFrameNumbers('run-attack-spritesheet', {}),
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.anims.create({
+      key: 'slash',
+      frames: this.anims.generateFrameNumbers('slash-spritesheet', {}),
       frameRate: 10,
       repeat: 0,
     });
