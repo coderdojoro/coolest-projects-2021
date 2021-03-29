@@ -30,6 +30,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             return;
         }
 
+        this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
         this.body.setSize(30, 54);
         this.body.setOffset(70, 57);
@@ -272,8 +273,17 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
             setTimeout(() => {
                 this.anims.play('hero-special-attack');
+                let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
+                slash1.setOrigin(0, 1);
+                slash1.anims.play('slash');
+                let slash2 = this.scene.add.sprite(this.x - 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
+                slash2.setFlipX(true);
+                slash2.setOrigin(0, 1);
+                slash2.anims.play('slash');
                 this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                     this.setTexture('hero');
+                    slash1.destroy();
+                    slash2.destroy();
                 }, this);
             }, 350);
 
