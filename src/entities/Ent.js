@@ -1,5 +1,5 @@
 // @ts-check
-class Wolf extends Phaser.GameObjects.Sprite {
+class Ent extends Phaser.GameObjects.Sprite {
 
     direction = Phaser.Math.Between(0, 1) == 0 ? -1 : 1;
 
@@ -13,8 +13,8 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.scene.load.image('wolf', 'assets/wolf/wolf.png');
-        this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 60, frameHeight: 48 });
+        this.scene.load.image('ent', 'assets/ent/ent.png');
+        this.scene.load.spritesheet('entwalk-spritesheet', 'assets/ent/walk.png', { frameWidth: 60, frameHeight: 48 });
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
         this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
@@ -34,7 +34,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
             });
             this.scene.anims.create({
                 key: 'wolf-death',
-                frames: this.scene.anims.generateFrameNumbers('wolfdeath-spritesheet', {}),
+                frames: this.scene.anims.generateFrameNumbers('entwalk-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0
             });
@@ -67,6 +67,8 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+
+        console.log(this.wolfState);
 
         if (!this.loaded) {
             return;
@@ -202,4 +204,4 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
 }
 
-export default Wolf;
+export default Ent;

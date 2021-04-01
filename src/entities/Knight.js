@@ -38,7 +38,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 32, frameHeight: 32 });
+        this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 34, frameHeight: 34 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             console.log("LOAD COMPLETE");
@@ -370,34 +370,45 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.body.setAccelerationX(0);
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
-                this.scene.cameras.main.shake(800, 0.002);
+                this.scene.cameras.main.shake(1200, 0.002);
                 let xRight = Math.trunc((this.body.right + 32) / 32) * 32;
                 let xLeft = Math.trunc((this.body.left - 32) / 32) * 32;
-                let slashes = [];
+                let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
+                let lastSlash;
                 for (let a = 0; a < 11; a++) {
                     let tileXRight = xRight + 32 * a;
                     let tileUnderRight = this.scene.groundLayer.getTileAtWorldXY(tileXRight, this.body.bottom);
-                    if (tileUnderRight) {
-                        let slash = this.scene.add.sprite(tileXRight, this.body.bottom, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
+                    let tileOverRight = this.scene.groundLayer.getTileAtWorldXY(tileXRight, this.body.bottom - 1);
+                    if (tileUnderRight && !tileOverRight) {
+                        let slash = slashGroup.create(tileXRight - 1, this.body.bottom + 1, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
                         slash.setOrigin(0, 1);
-                        slash.anims.play('earthattack', false, 10 - a);
-                        slashes.push(slash);
+                        slash.anims.play('earthattack', false, 20 - a * 2);
+                        lastSlash = slash;
                     }
                     let tileXLeft = xLeft - 32 * a;
                     let tileUnderLeft = this.scene.groundLayer.getTileAtWorldXY(tileXLeft, this.body.bottom);
-                    if (tileUnderLeft) {
-                        let slash = this.scene.add.sprite(tileXLeft, this.body.bottom, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
+                    let tileOverLeft = this.scene.groundLayer.getTileAtWorldXY(tileXLeft, this.body.bottom - 1);
+                    if (tileUnderLeft && !tileOverLeft) {
+                        let slash = slashGroup.create(tileXLeft - 1, this.body.bottom + 1, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
                         slash.setOrigin(0, 1);
-                        slash.anims.play('earthattack', false, 10 - a);
-                        slashes.push(slash);
+                        slash.anims.play('earthattack', false, 20 - a * 2);
+                        lastSlash = slash;
                     }
                 }
+                if (lastSlash) {
+                    let collider = this.scene.physics.add.overlap(this.scene.wolfGroup, slashGroup, (wolf, slash) => {
+                        if (wolf instanceof Wolf && slash.anims.currentFrame.index > 26) {
+                            wolf.kill();
+                        }
+                    }, null, this);
 
-                slashes[slashes.length - 1].once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                    for (let slash of slashes) {
-                        slash.destroy();
-                    }
-                }, this);
+                    lastSlash.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                        this.scene.physics.world.removeCollider(collider);
+                        slashGroup.destroy(true);
+                    }, this);
+                }
+
+
 
                 let selected = this.scene.physics.overlapRect(
                     this.scene.cameras.main.scrollX,

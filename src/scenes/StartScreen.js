@@ -26,6 +26,8 @@ class StartScreen extends Phaser.Scene {
     this.add.image(640, 100, 'game-title');
     this.add.image(1030, 380, 'instructions');
     this.add.image(640, 680, 'createdby');
+    let text = this.add.text(-500, -500, 'Preload checkpoint font');
+    text.setFontFamily('Stick');
 
     let lvl1 = this.add.sprite(380, 320, 'level1').setInteractive();
     let lvl2 = this.add.sprite(380, 400, 'level2').setInteractive();
