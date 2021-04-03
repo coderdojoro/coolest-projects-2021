@@ -2,6 +2,7 @@
 // @ts-check
 
 import Phaser from 'phaser';
+import Beholder from '../entities/Beholder.js';
 import Knight from '../entities/Knight.js';
 import Wolf from '../entities/Wolf.js';
 
@@ -84,6 +85,7 @@ class Level2 extends Phaser.Scene {
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
     this.wolfGroup = this.physics.add.group();
+    this.beholderGroup = this.physics.add.group();
 
     let offX = 5;
     let offY = 8
@@ -134,6 +136,12 @@ class Level2 extends Phaser.Scene {
         this.physics.add.collider(wolf, this.groundLayer, wolf.groundColided, null, wolf);
         wolf.setName('wolf-' + object.id);
         this.wolfGroup.add(wolf, false);
+      }
+      if (object.type == 'beholder') {
+        let beholder = new Beholder(this, object.x, object.y);
+        this.physics.add.collider(beholder, this.groundLayer, beholder.groundColided, null, beholder);
+        beholder.setName('beholder-' + object.id);
+        this.beholderGroup.add(beholder, false);
       }
     }
 

@@ -1,4 +1,5 @@
 // @ts-check
+import Beholder from "./Beholder";
 import Wolf from "./Wolf";
 
 class Knight extends Phaser.GameObjects.Sprite {
@@ -183,7 +184,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
 
             for (let obj of selected) {
-                if (obj.gameObject instanceof Wolf) {
+                if (obj.gameObject instanceof Wolf || obj.gameObject instanceof Beholder) {
                     obj.gameObject.kill();
                 }
             }
@@ -396,19 +397,15 @@ class Knight extends Phaser.GameObjects.Sprite {
                     }
                 }
                 if (lastSlash) {
-                    let collider = this.scene.physics.add.overlap(this.scene.wolfGroup, slashGroup, (wolf, slash) => {
-                        if (wolf instanceof Wolf && slash.anims.currentFrame.index > 26) {
-                            wolf.kill();
-                        }
-                    }, null, this);
+                    let wolfCollider = this.scene.physics.add.overlap(this.scene.wolfGroup, slashGroup, this.entitySlashOverlap, null, this);
+                    let begolderCollider = this.scene.physics.add.overlap(this.scene.beholderGroup, slashGroup, this.entitySlashOverlap, null, this);
 
                     lastSlash.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                        this.scene.physics.world.removeCollider(collider);
+                        this.scene.physics.world.removeCollider(wolfCollider);
+                        this.scene.physics.world.removeCollider(begolderCollider);
                         slashGroup.destroy(true);
                     }, this);
                 }
-
-
 
                 let selected = this.scene.physics.overlapRect(
                     this.scene.cameras.main.scrollX,
@@ -417,7 +414,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                     this.scene.cameras.main.height
                 );
                 for (let obj of selected) {
-                    if (obj.gameObject instanceof Wolf) {
+                    if (obj.gameObject instanceof Wolf || obj.gameObject instanceof Beholder) {
                         obj.gameObject.makeDizzy();
                     }
                 }
@@ -427,6 +424,15 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         // console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
 
+    }
+
+    entitySlashOverlap(entity, slash) {
+        if (slash.anims.currentFrame.index < 26) {
+            return;
+        }
+        if (entity instanceof Wolf || entity instanceof Beholder) {
+            entity.kill();
+        }
     }
 
     onGroundColided(hero, tile) {
