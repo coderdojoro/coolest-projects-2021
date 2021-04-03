@@ -15,6 +15,7 @@ class Ent extends Phaser.GameObjects.Sprite {
 
         this.scene.load.image('ent', 'assets/ent/ent.png');
         this.scene.load.spritesheet('entwalk-spritesheet', 'assets/ent/walk.png', { frameWidth: 60, frameHeight: 48 });
+        //here
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
         this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
