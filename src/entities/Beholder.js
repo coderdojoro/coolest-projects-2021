@@ -74,7 +74,6 @@ class Beholder extends Phaser.GameObjects.Sprite {
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
         }
-        // this.scene.add.circle(this.body.x + this.body.halfWidth, this.y - 16, 2, Phaser.Math.Between(0, 0xffffff));
 
         if (this.beholderState == 'dead') {
             return;
@@ -89,6 +88,22 @@ class Beholder extends Phaser.GameObjects.Sprite {
         }
         if (this.beholderState == 'attack') {
             return;
+        }
+
+        let frontX;
+        if (this.direction < 0) {
+            frontX = this.body.left - 58;
+        } else {
+            frontX = this.body.right;
+        }
+
+        let overlapsWithHero = Phaser.Geom.Rectangle.Overlaps(
+            new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
+            new Phaser.Geom.Rectangle(frontX, this.body.top + 9, 58, 22)
+        );
+
+        if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
+            this.attackHero();
         }
 
         if (this.direction < 0) {
@@ -152,16 +167,20 @@ class Beholder extends Phaser.GameObjects.Sprite {
                 this.setFlipX(true);
                 this.direction = -1;
             }
-            this.beholderState = 'attack';
-            this.body.velocity.x = 0;
-            this.body.setAccelerationX(0);
-            this.anims.play('beholder-attack');
-            hero.kill();
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.beholderState = 'walk';
-                this.anims.play('beholder-walk');
-            }, this);
+            this.attackHero();
         }
+    }
+
+    attackHero() {
+        this.beholderState = 'attack';
+        this.body.velocity.x = 0;
+        this.body.setAccelerationX(0);
+        this.anims.play('beholder-attack');
+        this.scene.hero.kill();
+        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.beholderState = 'walk';
+            this.anims.play('beholder-walk');
+        }, this);
     }
 
     kill() {
