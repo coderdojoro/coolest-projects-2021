@@ -68,7 +68,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
-        if (!this.loaded) {
+        if (this.loaded == false) {
             return;
         }
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
@@ -100,6 +100,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.body.setAccelerationX(300 * this.direction);
     }
 
+    worldCollided(wolf) {
+        if (wolf.gameObject.name != this.name) {
+            return;
+        }
+        this.direction = this.direction * -1;
+    }
+
     groundColided(wolf, tile) {
         if (this.wolfState == 'dead') {
             return;
@@ -117,7 +124,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
             if (tileX < 0) {
                 return;
             }
-            // this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
             var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
             if (!tileInFront) {
                 this.body.velocity.x = 0;
