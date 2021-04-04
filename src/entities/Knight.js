@@ -166,16 +166,16 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
         if (this.fireState == 'fire') {
-            let selected;
+            let enemies;
             if (this.flipX) {
-                selected = this.scene.physics.overlapRect(
+                enemies = this.scene.physics.overlapRect(
                     this.x + this.body.offset.x - 50,
                     this.y - 128 + this.body.offset.y - 20,
                     50,
                     70
                 );
             } else {
-                selected = this.scene.physics.overlapRect(
+                enemies = this.scene.physics.overlapRect(
                     this.x + this.body.offset.x + this.body.width,
                     this.y - 128 + this.body.offset.y - 20,
                     50,
@@ -183,7 +183,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                 );
             }
 
-            for (let obj of selected) {
+            for (let obj of enemies) {
                 if (obj.gameObject instanceof Wolf || obj.gameObject instanceof Beholder) {
                     obj.gameObject.kill();
                 }
@@ -478,13 +478,6 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
     }
 
-    onAnimationComplete() {
-        this.heroState = 'idle';
-        this.animState = 'idle';
-        this.setX(this.initialX);
-        this.setY(this.initialY);
-    }
-
     kill() {
         if (this.heroState != "dead") {
             this.animState = "dead";
@@ -493,7 +486,13 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-death');
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, this.onAnimationComplete, this);
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                this.setX(this.initialX);
+                this.setY(this.initialY);
+                this.body.updateFromGameObject();
+                this.heroState = 'idle';
+                this.animState = 'idle';
+            }, this);
         }
     }
 
