@@ -74,13 +74,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.body.setAccelerationX(300 * this.direction);
     }
 
-    worldCollided(wolf) {
-        if (wolf.gameObject.name != this.name) {
-            return;
-        }
-        this.direction = this.direction * -1;
-    }
-
     groundColided(wolf, tile) {
         if (wolf.y == tile.pixelY + 64 || wolf.y == tile.pixelY + 32) {
             this.direction = this.direction * -1;
@@ -97,6 +90,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 this.direction = this.direction * -1;
             }
         }
+    }
+
+    worldCollided(wolf) {
+        if (wolf.gameObject.name != this.name) {
+            return;
+        }
+        this.direction = this.direction * -1;
     }
 }
 
