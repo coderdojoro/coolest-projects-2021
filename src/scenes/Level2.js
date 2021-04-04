@@ -131,6 +131,7 @@ class Level2 extends Phaser.Scene {
       if (object.type == 'wolf') {
         let wolf = new Wolf(this, object.x, object.y);
         this.physics.add.collider(wolf, this.groundLayer, wolf.groundColided, null, wolf);
+        wolf.setName('wolf-' + object.gid);
       }
     }
 

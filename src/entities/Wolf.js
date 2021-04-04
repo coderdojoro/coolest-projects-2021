@@ -54,12 +54,17 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.body.setSize(34, 22);
         this.body.setOffset(14, 26);
 
-        this.setScale(1.5);
+        this.setScale(1.7);
+
+        this.body.onWorldBounds = true;
+        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-
+        if (this.loaded == false) {
+            return;
+        }
         if (this.direction < 0) {
             this.setFlipX(true);
         } else {
@@ -67,6 +72,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         this.body.setMaxVelocity(150, 400);
         this.body.setAccelerationX(300 * this.direction);
+    }
+
+    worldCollided(wolf) {
+        if (wolf.gameObject.name != this.name) {
+            return;
+        }
+        this.direction = this.direction * -1;
     }
 
     groundColided(wolf, tile) {
@@ -78,7 +90,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
             if (tileX < 0) {
                 return;
             }
-            // this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
             var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
             if (!tileInFront) {
                 this.body.velocity.x = 0;
