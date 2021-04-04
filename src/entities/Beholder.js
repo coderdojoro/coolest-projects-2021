@@ -138,7 +138,6 @@ class Beholder extends Phaser.GameObjects.Sprite {
             this.body.velocity.x = 0;
             this.direction = this.direction * -1;
         }
-
     }
 
     worldColided(beholder) {

@@ -5,63 +5,62 @@ class Ent extends Phaser.GameObjects.Sprite {
 
     loaded = false;
 
-    wolfState = 'run';
+    beholderState = 'walk';
 
     constructor(scene, x, y) {
-        super(scene, x, y, scene.make.renderTexture({ width: 60, height: 48 }).texture);
+        super(scene, x, y, scene.make.renderTexture({ width: 154, height: 101 }).texture);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.scene.load.image('ent', 'assets/ent/ent.png');
-        this.scene.load.spritesheet('entwalk-spritesheet', 'assets/ent/walk.png', { frameWidth: 60, frameHeight: 48 });
-        //here
-        this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
-        this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
+        this.scene.load.image('beholder', 'assets/beholder/beholder.png');
+        this.scene.load.spritesheet('beholderwalk-spritesheet', 'assets/beholder/walk.png', { frameWidth: 154, frameHeight: 101 });
+        this.scene.load.spritesheet('beholderattack-spritesheet', 'assets/beholder/attack.png', { frameWidth: 154, frameHeight: 101 });
+        this.scene.load.spritesheet('beholderdeath-spritesheet', 'assets/beholder/death.png', { frameWidth: 154, frameHeight: 101 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
-                key: 'wolf-run',
-                frames: this.scene.anims.generateFrameNumbers('wolfrun-spritesheet', {}),
-                frameRate: 10,
+                key: 'beholder-walk',
+                frames: this.scene.anims.generateFrameNumbers('beholderwalk-spritesheet', {}),
+                frameRate: 5,
                 repeat: -1
             });
             this.scene.anims.create({
-                key: 'wolf-attack',
-                frames: this.scene.anims.generateFrameNumbers('wolfattack-spritesheet', {}),
-                frameRate: 10,
+                key: 'beholder-attack',
+                frames: this.scene.anims.generateFrameNumbers('beholderattack-spritesheet', {}),
+                frameRate: 8,
                 repeat: 0
             });
             this.scene.anims.create({
-                key: 'wolf-death',
-                frames: this.scene.anims.generateFrameNumbers('entwalk-spritesheet', {}),
-                frameRate: 10,
+                key: 'beholder-death',
+                frames: this.scene.anims.generateFrameNumbers('beholderdeath-spritesheet', {}),
+                frameRate: 8,
                 repeat: 0
             });
             this.scene.anims.create({
                 key: 'dizzy',
                 frames: this.scene.anims.generateFrameNumbers('dizzy-spritesheet', {}),
-                frameRate: 10,
+                frameRate: 8,
                 repeat: -1,
             });
 
+            this.x = this.x - (this.body.left - this.x);
+            this.y = this.y + (this.y - this.body.bottom);
+
             this.loaded = true;
-            this.anims.play('wolf-run');
+            this.anims.play('beholder-walk');
         }, this);
 
         this.scene.load.start();
 
         this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(34, 22);
-        this.body.setOffset(14, 26);
-
-        this.setScale(1.5);
+        this.body.setSize(34, 56);
+        this.body.setOffset(60, 37);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);
-
 
         this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
@@ -69,29 +68,42 @@ class Ent extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
-        console.log(this.wolfState);
-
         if (!this.loaded) {
             return;
         }
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
         }
-        // this.scene.add.circle(this.body.x + this.body.halfWidth, this.y - 16, 2, Phaser.Math.Between(0, 0xffffff));
 
-        if (this.wolfState == 'dead') {
+        if (this.beholderState == 'dead') {
             return;
         }
-        if (this.wolfState == 'dizzy') {
+        if (this.beholderState == 'dizzy') {
             if (Date.now() - this.dizzySatrt > 3000) {
-                this.wolfState = 'run';
-                this.anims.play('wolf-run');
+                this.beholderState = 'walk';
+                this.anims.play('beholder-walk');
                 this.dizzySprite.destroy();
             }
             return;
         }
-        if (this.wolfState == 'attack') {
+        if (this.beholderState == 'attack') {
             return;
+        }
+
+        let frontX;
+        if (this.direction < 0) {
+            frontX = this.body.left - 58;
+        } else {
+            frontX = this.body.right;
+        }
+
+        let overlapsWithHero = Phaser.Geom.Rectangle.Overlaps(
+            new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
+            new Phaser.Geom.Rectangle(frontX, this.body.top + 9, 58, 22)
+        );
+
+        if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
+            this.attackHero();
         }
 
         if (this.direction < 0) {
@@ -99,82 +111,83 @@ class Ent extends Phaser.GameObjects.Sprite {
         } else {
             this.setFlipX(false);
         }
-        this.body.setMaxVelocity(150, 400);
-        this.body.setAccelerationX(300 * this.direction);
+        this.body.setMaxVelocity(80, 400);
+        this.body.setAccelerationX(100 * this.direction);
     }
 
-    groundColided(wolf, tile) {
-        if (this.wolfState == 'dead') {
+    groundColided(beholder, tile) {
+        if (this.beholderState == 'dead') {
             return;
         }
-        if (this.wolfState == 'dizzy') {
+        if (this.beholderState == 'dizzy') {
             return;
         }
-        // this.scene.add.circle(this.x + this.body.offset.x + this.body.width, this.y, 2, 0xff0000);
-        // this.scene.add.circle(this.x, this.y, 2, 0xff0000);
-        if (wolf.y == tile.pixelY + 64 || wolf.y == tile.pixelY + 32) {
+
+        if (Math.trunc(beholder.body.bottom) - tile.pixelY > 0) {
             this.direction = this.direction * -1;
         }
-        if (tile.pixelY == wolf.y) {
-            let tileX = this.x + (this.direction < 0 ? -1 * this.body.offset.x : this.body.width + this.body.offset.x + 14) * this.direction;
-            if (tileX < 0) {
-                return;
-            }
-            // this.scene.add.circle(tileX, this.y + 32 / 2, 2, Phaser.Math.Between(0, 0xffffff));
-            var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
-            if (!tileInFront) {
-                this.body.velocity.x = 0;
-                this.body.setAccelerationX(0);
-                this.direction = this.direction * -1;
-            }
+
+        var tileInFront;
+        if (this.direction < 0) {
+            tileInFront = this.scene.groundLayer.getTileAtWorldXY(this.body.left - 1, this.body.bottom);
+        } else {
+            tileInFront = this.scene.groundLayer.getTileAtWorldXY(this.body.right + 1, this.body.bottom);
+        }
+
+        if (!tileInFront) {
+            this.body.velocity.x = 0;
+            this.direction = this.direction * -1;
         }
     }
 
-    worldColided(wolf) {
-        if (this.wolfState == 'dead') {
+    worldColided(beholder) {
+        if (this.beholderState == 'dead') {
             return;
         }
-        if (wolf.gameObject.name != this.name) {
+        if (beholder.gameObject.name != this.name) {
             return;
         }
         this.direction = this.direction * -1;
     }
 
-    heroOverlap(hero, wolf) {
-        if (this.wolfState == 'dead') {
+    heroOverlap(hero, beholder) {
+        if (this.beholderState == 'dead') {
             return;
         }
-        if (this.wolfState == 'dizzy') {
+        if (this.beholderState == 'dizzy') {
             return;
         }
 
-        if (this.wolfState != 'attack' && hero.heroState != 'dead') {
-            if (this.body.x + this.body.halfWidth < hero.body.x + hero.body.halfWidth) {
+        if (this.beholderState != 'attack' && hero.heroState != 'dead') {
+            if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
                 this.setFlipX(false);
                 this.direction = 1;
             } else {
                 this.setFlipX(true);
                 this.direction = -1;
             }
-            this.wolfState = 'attack';
-            this.body.velocity.x = 0;
-            this.body.setAccelerationX(0);
-            this.anims.play('wolf-attack');
-            hero.kill();
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.wolfState = 'run';
-                this.anims.play('wolf-run');
-                this.setX(this.x + 40 * this.direction);
-            }, this);
+            this.attackHero();
         }
     }
 
+    attackHero() {
+        this.beholderState = 'attack';
+        this.body.velocity.x = 0;
+        this.body.setAccelerationX(0);
+        this.anims.play('beholder-attack');
+        this.scene.hero.kill();
+        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.beholderState = 'walk';
+            this.anims.play('beholder-walk');
+        }, this);
+    }
+
     kill() {
-        if (this.wolfState == 'dead') {
+        if (this.beholderState == 'dead') {
             return;
         }
-        this.wolfState = 'dead';
-        this.anims.play('wolf-death');
+        this.beholderState = 'dead';
+        this.anims.play('beholder-death');
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
         if (this.dizzySprite) {
@@ -183,20 +196,19 @@ class Ent extends Phaser.GameObjects.Sprite {
     }
 
     makeDizzy() {
-        if (this.wolfState == 'dead') {
+        if (this.beholderState == 'dead') {
             return;
         }
         this.dizzySatrt = Date.now();
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
-        if (this.wolfState == 'dizzy') {
+        if (this.beholderState == 'dizzy') {
             return;
         }
-        this.wolfState = 'dizzy';
+        this.beholderState = 'dizzy';
         this.anims.stop();
-        this.setTexture('wolf');
-        let x = this.direction == 1 ? this.x + 35 : this.x - 5;
-        this.dizzySprite = this.scene.physics.add.sprite(x, this.y - 30, null);
+        this.setTexture('beholder');
+        this.dizzySprite = this.scene.physics.add.sprite(this.body.left - 15, this.body.top, null);
         this.dizzySprite.setOrigin(0, 1);
         this.dizzySprite.anims.play("dizzy");
         this.dizzySprite.body.immovable = true;

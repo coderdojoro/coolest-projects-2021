@@ -45,6 +45,9 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 repeat: -1,
             });
 
+            this.x = this.x - (this.body.left - this.x);
+            this.y = this.y + (this.y - this.body.bottom);
+
             this.loaded = true;
             this.anims.play('wolf-run');
         }, this);
@@ -100,13 +103,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.body.setAccelerationX(300 * this.direction);
     }
 
-    worldCollided(wolf) {
-        if (wolf.gameObject.name != this.name) {
-            return;
-        }
-        this.direction = this.direction * -1;
-    }
-
     groundColided(wolf, tile) {
         if (this.wolfState == 'dead') {
             return;
@@ -114,22 +110,21 @@ class Wolf extends Phaser.GameObjects.Sprite {
         if (this.wolfState == 'dizzy') {
             return;
         }
-        // this.scene.add.circle(this.x + this.body.offset.x + this.body.width, this.y, 2, 0xff0000);
-        // this.scene.add.circle(this.x, this.y, 2, 0xff0000);
-        if (wolf.y == tile.pixelY + 64 || wolf.y == tile.pixelY + 32) {
+
+        if (Math.trunc(wolf.body.bottom) - tile.pixelY > 0) {
             this.direction = this.direction * -1;
         }
-        if (tile.pixelY == wolf.y) {
-            let tileX = this.x + (this.direction < 0 ? -1 * this.body.offset.x : this.body.width + this.body.offset.x + 14) * this.direction;
-            if (tileX < 0) {
-                return;
-            }
-            var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
-            if (!tileInFront) {
-                this.body.velocity.x = 0;
-                this.body.setAccelerationX(0);
-                this.direction = this.direction * -1;
-            }
+
+        var tileInFront;
+        if (this.direction < 0) {
+            tileInFront = this.scene.groundLayer.getTileAtWorldXY(this.body.left - 1, this.body.bottom);
+        } else {
+            tileInFront = this.scene.groundLayer.getTileAtWorldXY(this.body.right + 1, this.body.bottom);
+        }
+
+        if (!tileInFront) {
+            this.body.velocity.x = 0;
+            this.direction = this.direction * -1;
         }
     }
 
