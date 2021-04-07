@@ -20,8 +20,6 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
-        this.initialX = x;
-        this.initialY = y;
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
@@ -127,6 +125,11 @@ class Knight extends Phaser.GameObjects.Sprite {
                 frameRate: 30,
                 repeat: 0,
             });
+
+            this.x = this.x - (this.body.left - this.x);
+            this.y = this.y + (this.y - this.body.bottom);
+            this.initialX = this.x;
+            this.initialY = this.y;
 
             this.loaded = true;
 
@@ -453,7 +456,6 @@ class Knight extends Phaser.GameObjects.Sprite {
                 text.setColor('#1900ff');
                 text.setFontSize(22);
                 text.setStroke('#ffffff', 4);
-                //text.setTintFill(0xff0000, 0xff00ff, 0x00ffff, 0x12ee44433);
                 text.setFontFamily('Stick');
                 text.setFontStyle('bold');
                 text.setOrigin(0.5, 1);
@@ -473,7 +475,8 @@ class Knight extends Phaser.GameObjects.Sprite {
                 };
                 this.scene.tweens.add(tweenConfig);
                 this.initialX = newX;
-                this.initialY = this.y - 1;
+                this.initialY = tile.pixelY + this.height - this.body.offset.y - this.body.height;
+                //this.scene.add.circle(tile.pixelX, tile.pixelY, 4, 0x00ff00);
             }
         }
     }
@@ -490,8 +493,8 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
                 this.body.updateFromGameObject();
+                //this.scene.add.circle(this.x, this.y, 4, 0xff0000);
                 this.heroState = 'idle';
-                this.animState = 'idle';
             }, this);
         }
     }
