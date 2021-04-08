@@ -75,20 +75,20 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     groundColided(wolf, tile) {
-        if (wolf.y == tile.pixelY + 64 || wolf.y == tile.pixelY + 32) {
+        if (Math.trunc(wolf.body.bottom) - tile.pixelY > 0) {
             this.direction = this.direction * -1;
         }
-        if (tile.pixelY == wolf.y) {
-            let tileX = this.x + (this.direction < 0 ? -1 * this.body.offset.x : this.body.width + this.body.offset.x + 14) * this.direction;
-            if (tileX < 0) {
-                return;
-            }
-            var tileInFront = this.scene.groundLayer.getTileAtWorldXY(tileX, this.y + 32 / 2);
-            if (!tileInFront) {
-                this.body.velocity.x = 0;
-                this.body.setAccelerationX(0);
-                this.direction = this.direction * -1;
-            }
+
+        var tileInFront;
+        if (this.direction < 0) {
+            tileInFront = this.scene.groundLayer.getTileAtWorldXY(this.body.left - 1, this.body.bottom);
+        } else {
+            tileInFront = this.scene.groundLayer.getTileAtWorldXY(this.body.right + 1, this.body.bottom);
+        }
+
+        if (!tileInFront) {
+            this.body.velocity.x = 0;
+            this.direction = this.direction * -1;
         }
     }
 
