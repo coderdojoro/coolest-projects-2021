@@ -43,6 +43,9 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 repeat: -1,
             });
 
+            this.x = this.x - (this.body.left - this.x);
+            this.y = this.y + (this.y - this.body.bottom);
+
             this.loaded = true;
             this.anims.play('wolf-run');
         }, this);
@@ -58,6 +61,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
+        this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
 
     preUpdate(time, delta) {
@@ -97,6 +101,10 @@ class Wolf extends Phaser.GameObjects.Sprite {
             return;
         }
         this.direction = this.direction * -1;
+    }
+
+    heroOverlap(hero, wolf) {
+        console.log('wolf kill');
     }
 }
 
