@@ -365,7 +365,6 @@ class Knight extends Phaser.GameObjects.Sprite {
                 text.setColor('#1900ff');
                 text.setFontSize(22);
                 text.setStroke('#ffffff', 4);
-                //text.setTintFill(0xff0000, 0xff00ff, 0x00ffff, 0x12ee44433);
                 text.setFontFamily('Stick');
                 text.setFontStyle('bold');
                 text.setOrigin(0.5, 1);
@@ -385,16 +384,9 @@ class Knight extends Phaser.GameObjects.Sprite {
                 };
                 this.scene.tweens.add(tweenConfig);
                 this.initialX = newX;
-                this.initialY = this.y - 1;
+                this.initialY = tile.pixelY + this.height - this.body.offset.y - this.body.height;
             }
         }
-    }
-
-    onAnimationComplete() {
-        this.heroState = 'idle';
-        this.animState = 'idle';
-        this.setX(this.initialX);
-        this.setY(this.initialY);
     }
 
     kill() {
@@ -405,7 +397,13 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-death');
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, this.onAnimationComplete, this);
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                this.setX(this.initialX);
+                this.setY(this.initialY);
+                this.body.updateFromGameObject();
+                //this.scene.add.circle(this.x, this.y, 4, 0xff0000);
+                this.heroState = 'idle';
+            }, this);
         }
     }
 
