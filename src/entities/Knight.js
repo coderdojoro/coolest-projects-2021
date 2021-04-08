@@ -476,7 +476,6 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.scene.tweens.add(tweenConfig);
                 this.initialX = newX;
                 this.initialY = tile.pixelY + this.height - this.body.offset.y - this.body.height;
-                //this.scene.add.circle(tile.pixelX, tile.pixelY, 4, 0x00ff00);
             }
         }
     }
