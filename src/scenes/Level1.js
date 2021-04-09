@@ -2,6 +2,7 @@
 // @ts-check
 
 import Phaser from 'phaser';
+import Ent from '../entities/Ent.js';
 import Rogue from '../entities/Rogue.js';
 
 class Level1 extends Phaser.Scene {
@@ -32,8 +33,10 @@ class Level1 extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
-
-    this.load.image('bush-image', 'assets/tiles/level1-bush.png');
+    this.load.spritesheet('bush-image', 'assets/tiles/level1-bush.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
     this.load.image('rocks-image', 'assets/tiles/level1-rocks.png');
 
     this.load.image('background4', 'assets/wallpapers/forest/background4.png');
@@ -41,6 +44,9 @@ class Level1 extends Phaser.Scene {
     this.load.image('background2', 'assets/wallpapers/forest/background2.png');
     this.load.image('background1', 'assets/wallpapers/forest/background1.png');
 
+    this.load.spritesheet('campfire', 'assets/tiles/campfire.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('flag', 'assets/tiles/flag.png', { frameWidth: 32, frameHeight: 64 });
+    this.load.spritesheet('torch', 'assets/tiles/torch.png', { frameWidth: 32, frameHeight: 32 });
   }
 
   create() {
@@ -129,6 +135,25 @@ class Level1 extends Phaser.Scene {
       repeat: 0,
     });
 
+    this.anims.create({
+      key: 'campfire',
+      frames: this.anims.generateFrameNumbers('campfire', {}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: 'flag',
+      frames: this.anims.generateFrameNumbers('flag', {}),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: 'torch',
+      frames: this.anims.generateFrameNumbers('torch', {}),
+      frameRate: 10,
+      repeat: -1,
+    });
+
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
 
     let heroX;
@@ -164,7 +189,21 @@ class Level1 extends Phaser.Scene {
     this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
     this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, this.groundTiles);
 
+    let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
+    this.hero = new Rogue(this, heroX, heroY, waterGroup);
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.type == 'water') {
+        let water = waterGroup.create(object.x, object.y, 'ground-image', object.gid - this.groundTiles.firstgid);
+        water.setOrigin(0, 1);
+        water.body.setSize(32, 10);
+        water.body.setOffset(0, 22);
+        this.physics.add.collider(this.hero, waterGroup);
+      }
+    }
+
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
+    this.entGroup = this.physics.add.group();
 
     let offX = 5;
     let offY = 13;
@@ -174,19 +213,7 @@ class Level1 extends Phaser.Scene {
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'spike') {
-        let spike;
-        if (object.gid == 363) {
-          spike = spikeGroup.create(object.x, object.y, 'ground-image', 98);
-        }
-        if (object.gid == 364) {
-          spike = spikeGroup.create(object.x, object.y, 'ground-image', 99);
-        }
-        if (object.gid == 365) {
-          spike = spikeGroup.create(object.x, object.y, 'ground-image', 100);
-        }
-        if (object.gid == 366) {
-          spike = spikeGroup.create(object.x, object.y, 'ground-image', 101);
-        }
+        let spike = spikeGroup.create(object.x, object.y, 'ground-image', object.gid - this.groundTiles.firstgid);
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
 
@@ -206,51 +233,46 @@ class Level1 extends Phaser.Scene {
           console.error("spike at incorrect angle: " + object.rotation);
         }
       }
-    }
-
-    let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
-    let hero = new Rogue(this, heroX, heroY, waterGroup);
-
-    for (let a = 0; a < objects.length; a++) {
-      let object = objects[a];
-      if (object.type == 'water') {
-        let water;
-        if (object.gid == 272) {
-          // water = this.physics.add.staticSprite(object.x, object.y, 'ground-image', 7);
-          water = waterGroup.create(object.x, object.y, 'ground-image', 7);
-        }
-        if (object.gid == 282) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 17);
-        }
-        if (object.gid == 300) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 35);
-        }
-        if (object.gid == 326) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 61);
-        }
-        if (object.gid == 344) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 79);
-        }
-
-        water.setOrigin(0, 1);
-        water.body.setSize(32, 10);
-        water.body.setOffset(0, 22);
-        this.physics.add.collider(hero, waterGroup);
-
+      if (object.type == 'campfire') {
+        let campfire = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
+        campfire.setOrigin(0, 1);
+        campfire.anims.play("campfire");
+        campfire.body.immovable = true;
+        campfire.body.setAllowGravity(false);
+      }
+      if (object.type == 'flag') {
+        let flag = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
+        flag.setOrigin(0, 1);
+        flag.anims.play("flag");
+        flag.body.immovable = true;
+        flag.body.setAllowGravity(false);
+      }
+      if (object.type == 'torch') {
+        let torch = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
+        torch.setOrigin(0, 1);
+        torch.anims.play("torch");
+        torch.body.immovable = true;
+        torch.body.setAllowGravity(false);
+      }
+      if (object.type == 'ent') {
+        let ent = new Ent(this, object.x, object.y);
+        this.physics.add.collider(ent, this.groundLayer, ent.groundColided, null, ent);
+        ent.setName('ent-' + object.gid);
+        this.entGroup.add(ent, false);
       }
     }
 
     this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
-    this.physics.add.collider(hero, this.groundLayer);
+    this.physics.add.collider(this.hero, this.groundLayer);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.rocksTiles.firstgid, this.rocksTiles.firstgid + this.rocksTiles.total, true);
 
-    this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
+    this.physics.add.overlap(this.hero, spikeGroup, this.hero.kill, null, this.hero);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-    this.cameras.main.startFollow(hero);
+    this.cameras.main.startFollow(this.hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);

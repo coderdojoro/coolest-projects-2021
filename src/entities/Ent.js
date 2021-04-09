@@ -5,36 +5,36 @@ class Ent extends Phaser.GameObjects.Sprite {
 
     loaded = false;
 
-    beholderState = 'walk';
+    entState = 'walk';
 
     constructor(scene, x, y) {
-        super(scene, x, y, scene.make.renderTexture({ width: 154, height: 101 }).texture);
+        super(scene, x, y, scene.make.renderTexture({ width: 240, height: 189 }).texture);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.scene.load.image('beholder', 'assets/beholder/beholder.png');
-        this.scene.load.spritesheet('beholderwalk-spritesheet', 'assets/beholder/walk.png', { frameWidth: 154, frameHeight: 101 });
-        this.scene.load.spritesheet('beholderattack-spritesheet', 'assets/beholder/attack.png', { frameWidth: 154, frameHeight: 101 });
-        this.scene.load.spritesheet('beholderdeath-spritesheet', 'assets/beholder/death.png', { frameWidth: 154, frameHeight: 101 });
+        this.scene.load.image('ent', 'assets/ent/ent.png');
+        this.scene.load.spritesheet('entwalk-spritesheet', 'assets/ent/walk.png', { frameWidth: 240, frameHeight: 189 });
+        this.scene.load.spritesheet('entattack-spritesheet', 'assets/ent/attack.png', { frameWidth: 240, frameHeight: 189 });
+        this.scene.load.spritesheet('entdeath-spritesheet', 'assets/ent/death.png', { frameWidth: 240, frameHeight: 189 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
-                key: 'beholder-walk',
-                frames: this.scene.anims.generateFrameNumbers('beholderwalk-spritesheet', {}),
+                key: 'ent-walk',
+                frames: this.scene.anims.generateFrameNumbers('entwalk-spritesheet', {}),
                 frameRate: 5,
                 repeat: -1
             });
             this.scene.anims.create({
-                key: 'beholder-attack',
-                frames: this.scene.anims.generateFrameNumbers('beholderattack-spritesheet', {}),
+                key: 'ent-attack',
+                frames: this.scene.anims.generateFrameNumbers('entattack-spritesheet', {}),
                 frameRate: 8,
                 repeat: 0
             });
             this.scene.anims.create({
-                key: 'beholder-death',
-                frames: this.scene.anims.generateFrameNumbers('beholderdeath-spritesheet', {}),
+                key: 'ent-death',
+                frames: this.scene.anims.generateFrameNumbers('entdeath-spritesheet', {}),
                 frameRate: 8,
                 repeat: 0
             });
@@ -49,15 +49,15 @@ class Ent extends Phaser.GameObjects.Sprite {
             this.y = this.y + (this.y - this.body.bottom);
 
             this.loaded = true;
-            this.anims.play('beholder-walk');
+            this.anims.play('ent-walk');
         }, this);
 
         this.scene.load.start();
 
         this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(34, 56);
-        this.body.setOffset(60, 37);
+        this.body.setSize(29, 95);
+        this.body.setOffset(103, 80);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);
@@ -75,18 +75,18 @@ class Ent extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        if (this.beholderState == 'dead') {
+        if (this.entState == 'dead') {
             return;
         }
-        if (this.beholderState == 'dizzy') {
+        if (this.entState == 'dizzy') {
             if (Date.now() - this.dizzySatrt > 3000) {
-                this.beholderState = 'walk';
-                this.anims.play('beholder-walk');
+                this.entState = 'walk';
+                this.anims.play('ent-walk');
                 this.dizzySprite.destroy();
             }
             return;
         }
-        if (this.beholderState == 'attack') {
+        if (this.entState == 'attack') {
             return;
         }
 
@@ -115,15 +115,15 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.body.setAccelerationX(100 * this.direction);
     }
 
-    groundColided(beholder, tile) {
-        if (this.beholderState == 'dead') {
+    groundColided(ent, tile) {
+        if (this.entState == 'dead') {
             return;
         }
-        if (this.beholderState == 'dizzy') {
+        if (this.entState == 'dizzy') {
             return;
         }
 
-        if (Math.trunc(beholder.body.bottom) - tile.pixelY > 0) {
+        if (Math.trunc(ent.body.bottom) - tile.pixelY > 0) {
             this.direction = this.direction * -1;
         }
 
@@ -140,25 +140,25 @@ class Ent extends Phaser.GameObjects.Sprite {
         }
     }
 
-    worldColided(beholder) {
-        if (this.beholderState == 'dead') {
+    worldColided(ent) {
+        if (this.entState == 'dead') {
             return;
         }
-        if (beholder.gameObject.name != this.name) {
+        if (ent.gameObject.name != this.name) {
             return;
         }
         this.direction = this.direction * -1;
     }
 
-    heroOverlap(hero, beholder) {
-        if (this.beholderState == 'dead') {
+    heroOverlap(hero, ent) {
+        if (this.entState == 'dead') {
             return;
         }
-        if (this.beholderState == 'dizzy') {
+        if (this.entState == 'dizzy') {
             return;
         }
 
-        if (this.beholderState != 'attack' && hero.heroState != 'dead') {
+        if (this.entState != 'attack' && hero.heroState != 'dead') {
             if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
                 this.setFlipX(false);
                 this.direction = 1;
@@ -171,23 +171,23 @@ class Ent extends Phaser.GameObjects.Sprite {
     }
 
     attackHero() {
-        this.beholderState = 'attack';
+        this.entState = 'attack';
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
-        this.anims.play('beholder-attack');
+        this.anims.play('ent-attack');
         this.scene.hero.kill();
         this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-            this.beholderState = 'walk';
-            this.anims.play('beholder-walk');
+            this.entState = 'walk';
+            this.anims.play('ent-walk');
         }, this);
     }
 
     kill() {
-        if (this.beholderState == 'dead') {
+        if (this.entState == 'dead') {
             return;
         }
-        this.beholderState = 'dead';
-        this.anims.play('beholder-death');
+        this.entState = 'dead';
+        this.anims.play('ent-death');
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
         if (this.dizzySprite) {
@@ -196,18 +196,18 @@ class Ent extends Phaser.GameObjects.Sprite {
     }
 
     makeDizzy() {
-        if (this.beholderState == 'dead') {
+        if (this.entState == 'dead') {
             return;
         }
         this.dizzySatrt = Date.now();
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
-        if (this.beholderState == 'dizzy') {
+        if (this.entState == 'dizzy') {
             return;
         }
-        this.beholderState = 'dizzy';
+        this.entState = 'dizzy';
         this.anims.stop();
-        this.setTexture('beholder');
+        this.setTexture('ent');
         this.dizzySprite = this.scene.physics.add.sprite(this.body.left - 15, this.body.top, null);
         this.dizzySprite.setOrigin(0, 1);
         this.dizzySprite.anims.play("dizzy");
