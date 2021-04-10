@@ -56,8 +56,8 @@ class Ent extends Phaser.GameObjects.Sprite {
 
         this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
-        this.body.setSize(29, 95);
-        this.body.setOffset(103, 80);
+        this.body.setSize(31, 95);
+        this.body.setOffset(107, 80);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);
@@ -92,14 +92,14 @@ class Ent extends Phaser.GameObjects.Sprite {
 
         let frontX;
         if (this.direction < 0) {
-            frontX = this.body.left - 58;
+            frontX = this.body.left - 80;//101
         } else {
             frontX = this.body.right;
         }
 
         let overlapsWithHero = Phaser.Geom.Rectangle.Overlaps(
             new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
-            new Phaser.Geom.Rectangle(frontX, this.body.top + 9, 58, 22)
+            new Phaser.Geom.Rectangle(frontX, this.body.top + 34, 80, 61)
         );
 
         if (overlapsWithHero && this.scene.hero.heroState != 'dead') {

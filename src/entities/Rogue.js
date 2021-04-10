@@ -18,23 +18,127 @@ class Rogue extends Phaser.GameObjects.Sprite {
     lastSpecialFire = 0;
 
     constructor(scene, x, y, waterGroup) {
-        super(scene, x, y, 'hero');
-        this.initialX = x;
-        this.initialY = y;
+        super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
         this.waterGroup = waterGroup;
 
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
 
-        if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
-            return;
-        }
+        this.scene.load.image('hero', 'assets/rogue/rogue.png');
+        this.scene.load.spritesheet('idle-spritesheet', 'assets/rogue/idle.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('walk-spritesheet', 'assets/rogue/walk.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('run-spritesheet', 'assets/rogue/run.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('jump-spritesheet', 'assets/rogue/jump.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('double-jump-spritesheet', 'assets/rogue/double-jump.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('fall-spritesheet', 'assets/rogue/fall.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('death-spritesheet', 'assets/rogue/death.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('landing-spritesheet', `assets/rogue/landing.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('attack-spritesheet', `assets/rogue/attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('special-attack-spritesheet', `assets/rogue/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
+        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+            this.scene.anims.create({
+                key: 'hero-idle',
+                frames: [
+                    { frame: 0, key: 'hero', duration: 5000 },
+                    ...this.scene.anims.generateFrameNumbers('idle-spritesheet', {})
+                ],
+                frameRate: 6,
+                repeat: -1
+            });
+
+            this.scene.anims.create({
+                key: 'hero-walk',
+                frames: this.scene.anims.generateFrameNumbers('walk-spritesheet', {}),
+                frameRate: 6,
+                repeat: -1
+            });
+
+            this.scene.anims.create({
+                key: 'hero-run',
+                frames: this.scene.anims.generateFrameNumbers('run-spritesheet', {}),
+                frameRate: 6,
+                repeat: -1,
+            });
+
+            this.scene.anims.create({
+                key: 'hero-jump',
+                frames: this.scene.anims.generateFrameNumbers('jump-spritesheet', {}),
+                frameRate: 6,
+                repeat: 0
+            });
+            this.scene.anims.create({
+                key: 'hero-double-jump',
+                frames: this.scene.anims.generateFrameNumbers('double-jump-spritesheet', {}),
+                frameRate: 20,
+                repeat: 0
+            });
+            this.scene.anims.create({
+                key: 'hero-fall',
+                frames: this.scene.anims.generateFrameNumbers('fall-spritesheet', {}),
+                frameRate: 10,//5
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-death',
+                frames: this.scene.anims.generateFrameNumbers('death-spritesheet', {}),
+                frameRate: 10,//5
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-landing',
+                frames: this.scene.anims.generateFrameNumbers('landing-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-attack',
+                frames: this.scene.anims.generateFrameNumbers('attack-spritesheet', {}),
+                frameRate: 10,//7
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-special-attack',
+                frames: this.scene.anims.generateFrameNumbers('special-attack-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-walk-attack',
+                frames: this.scene.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'hero-run-attack',
+                frames: this.scene.anims.generateFrameNumbers('run-attack-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+            this.scene.anims.create({
+                key: 'slash',
+                frames: this.scene.anims.generateFrameNumbers('slash-spritesheet', {}),
+                frameRate: 10,
+                repeat: 0,
+            });
+
+            this.x = this.x - (this.body.left - this.x);
+            this.y = this.y + (this.y - this.body.bottom);
+            this.initialX = this.x;
+            this.initialY = this.y;
+
+            this.loaded = true;
+
+        }, this);
+
+        this.scene.load.start();
 
         this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
         this.body.setSize(30, 54);
         this.body.setOffset(70, 57);
-        this.anims.play('hero-idle');
         this.body.setDragX(1100);
         this.body.setGravityY(300);
 
@@ -76,6 +180,10 @@ class Rogue extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
+        if (!this.loaded) {
+            return;
+        }
+
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
         }
@@ -89,7 +197,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
             this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.setAccelerationX(0);
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
@@ -256,7 +364,9 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.animState = 'landing';
             this.anims.play('hero-landing');
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                this.heroState = 'idle';
+                if (this.heroState != 'dead') {
+                    this.heroState = 'idle';
+                }
             })
         }
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
@@ -309,16 +419,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.body.setAcceleration(0);
             this.lastSpecialFire = Date.now();
         }
-
-        // console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
-
-    }
-
-    onAnimationComplete() {
-        this.heroState = 'idle';
-        this.animState = 'idle';
-        this.setX(this.initialX);
-        this.setY(this.initialY);
     }
 
     kill() {
@@ -329,7 +429,12 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-death');
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, this.onAnimationComplete, this);
+            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                this.setX(this.initialX);
+                this.setY(this.initialY);
+                this.body.updateFromGameObject();
+                this.heroState = 'idle';
+            }, this);
         }
     }
 
