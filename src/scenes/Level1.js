@@ -4,6 +4,7 @@
 import Phaser from 'phaser';
 import Ent from '../entities/Ent.js';
 import Rogue from '../entities/Rogue.js';
+import Spider from '../entities/Spider.js';
 
 class Level1 extends Phaser.Scene {
 
@@ -115,6 +116,7 @@ class Level1 extends Phaser.Scene {
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
     this.entGroup = this.physics.add.group();
+    this.spiderGroup = this.physics.add.group();
 
     let offX = 5;
     let offY = 13;
@@ -163,6 +165,12 @@ class Level1 extends Phaser.Scene {
         this.physics.add.collider(ent, this.groundLayer, ent.groundColided, null, ent);
         ent.setName('ent-' + object.gid);
         this.entGroup.add(ent, false);
+      }
+      if (object.type == 'spider') {
+        let spider = new Spider(this, object.x, object.y);
+        this.physics.add.collider(spider, this.groundLayer, spider.groundColided, null, spider);
+        spider.setName('ent-' + object.gid);
+        this.spiderGroup.add(spider, false);
       }
     }
 
