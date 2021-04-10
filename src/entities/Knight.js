@@ -171,15 +171,15 @@ class Knight extends Phaser.GameObjects.Sprite {
             let enemies;
             if (this.flipX) {
                 enemies = this.scene.physics.overlapRect(
-                    this.x + this.body.offset.x - 50,
-                    this.y - 128 + this.body.offset.y - 20,
+                    this.body.left - 50,
+                    this.body.top - 20,
                     50,
                     70
                 );
             } else {
                 enemies = this.scene.physics.overlapRect(
-                    this.x + this.body.offset.x + this.body.width,
-                    this.y - 128 + this.body.offset.y - 20,
+                    this.body.right,
+                    this.body.top - 20,
                     50,
                     70
                 );

@@ -1,5 +1,8 @@
 // @ts-check
 
+import Ent from "./Ent";
+import Spider from "./Spider";
+
 class Rogue extends Phaser.GameObjects.Sprite {
 
     keyLeft;
@@ -11,7 +14,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
     waterGroup;
 
     heroState = 'fall';
-    animState = 'fall';
+    animState;
     fireState = "none";
 
     lastFire = 0;
@@ -186,6 +189,31 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
+        }
+
+        if (this.fireState == 'fire') {
+            let enemies;
+            if (this.flipX) {
+                enemies = this.scene.physics.overlapRect(
+                    this.body.left - 25,
+                    this.body.top,
+                    25,
+                    54
+                );
+            } else {
+                enemies = this.scene.physics.overlapRect(
+                    this.body.right,
+                    this.body.top,
+                    25,
+                    54
+                );
+            }
+
+            for (let obj of enemies) {
+                if (obj.gameObject instanceof Ent || obj.gameObject instanceof Spider) {
+                    obj.gameObject.kill();
+                }
+            }
         }
 
         if (this.isInWater()) {
