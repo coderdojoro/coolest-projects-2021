@@ -40,7 +40,6 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 34, frameHeight: 34 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
-            console.log("LOAD COMPLETE");
             this.scene.anims.create({
                 key: 'hero-idle',
                 frames: [
@@ -492,7 +491,6 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
                 this.body.updateFromGameObject();
-                //this.scene.add.circle(this.x, this.y, 4, 0xff0000);
                 this.heroState = 'idle';
             }, this);
         }
