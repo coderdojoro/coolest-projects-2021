@@ -151,7 +151,7 @@ class Level1 extends Phaser.Scene {
       if (object.type == 'campfire') {
         let campfire = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         campfire.setOrigin(0, 1);
-        campfire.anims.play("campfire");
+        campfire.anims.play({ key: 'campfire', startFrame: Phaser.Math.Between(0, 5) });
         campfire.body.immovable = true;
         campfire.body.setAllowGravity(false);
       }
