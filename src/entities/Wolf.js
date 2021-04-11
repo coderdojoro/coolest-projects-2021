@@ -62,9 +62,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.setScale(1.5);
 
         this.body.onWorldBounds = true;
-        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);
-
-
+        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
         this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
 
