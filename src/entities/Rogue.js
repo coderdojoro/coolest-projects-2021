@@ -235,6 +235,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
+            this.fireState = 'none';
+            this.animState = 'none';
             this.body.setVelocityX(0);
             this.body.setAccelerationX(0);
         }
@@ -473,6 +475,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.body.setAcceleration(0);
             this.lastSpecialFire = Date.now();
         }
+
+        console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
     }
 
     entitySlashOverlap(entity, slash) {

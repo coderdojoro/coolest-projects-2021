@@ -194,6 +194,8 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
+            this.fireState = 'none';
+            this.animState = 'none';
             this.body.setVelocityX(0);
             this.body.setAccelerationX(0);
         }
@@ -385,7 +387,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                     if (tileUnderRight && !tileOverRight) {
                         let slash = slashGroup.create(tileXRight - 1, this.body.bottom + 1, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
                         slash.setOrigin(0, 1);
-                        slash.anims.play('earthattack', false, 20 - a * 2);
+                        slash.anims.play({ key: 'earthattack', startFrame: 20 - a * 2 });
                         lastSlash = slash;
                     }
                     let tileXLeft = xLeft - 32 * a;
@@ -394,7 +396,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                     if (tileUnderLeft && !tileOverLeft) {
                         let slash = slashGroup.create(tileXLeft - 1, this.body.bottom + 1, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
                         slash.setOrigin(0, 1);
-                        slash.anims.play('earthattack', false, 20 - a * 2);
+                        slash.anims.play({ key: 'earthattack', startFrame: 20 - a * 2 });
                         lastSlash = slash;
                     }
                 }
