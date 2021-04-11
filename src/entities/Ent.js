@@ -18,6 +18,8 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('entattack-spritesheet', 'assets/ent/attack.png', { frameWidth: 240, frameHeight: 189 });
         this.scene.load.spritesheet('entdeath-spritesheet', 'assets/ent/death.png', { frameWidth: 240, frameHeight: 189 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
+        this.scene.load.audio("ent-attack-sound", "assets/ent/attack.mp3");
+        this.scene.load.audio("ent-death-sound", "assets/ent/death.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -44,6 +46,16 @@ class Ent extends Phaser.GameObjects.Sprite {
                 frameRate: 8,
                 repeat: -1,
             });
+            this.attackSound = this.scene.sound.add("ent-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.deathkSound = this.scene.sound.add("ent-death-sound", {
+                loop: false,
+                volume: 1
+            });
+
+
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
@@ -174,6 +186,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.entState = 'attack';
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
+        this.attackSound.play();
         this.anims.play('ent-attack');
         this.scene.hero.kill();
         this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
@@ -188,6 +201,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         }
         this.entState = 'dead';
         this.anims.play('ent-death');
+        this.deathkSound.play();
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
         if (this.dizzySprite) {
