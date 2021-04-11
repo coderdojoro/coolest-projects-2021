@@ -126,7 +126,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
     }
 
-    worldColided(wolf) {
+    worldCollided(wolf) {
         if (this.wolfState == 'dead') {
             return;
         }
