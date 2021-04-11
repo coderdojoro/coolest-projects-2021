@@ -188,7 +188,7 @@ class Spider extends Phaser.GameObjects.Sprite {
         this.anims.play('spider-attack');
         this.attackSound.play();
         this.scene.hero.kill();
-        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.spiderState = 'walk';
             this.anims.play('spider-walk');
         }, this);

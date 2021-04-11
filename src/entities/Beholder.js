@@ -176,7 +176,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.body.setAccelerationX(0);
         this.anims.play('beholder-attack');
         this.scene.hero.kill();
-        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.beholderState = 'walk';
             this.anims.play('beholder-walk');
         }, this);

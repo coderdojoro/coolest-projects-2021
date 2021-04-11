@@ -189,7 +189,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.attackSound.play();
         this.anims.play('ent-attack');
         this.scene.hero.kill();
-        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.entState = 'walk';
             this.anims.play('ent-walk');
         }, this);

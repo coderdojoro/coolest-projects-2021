@@ -157,7 +157,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
             this.body.setAccelerationX(0);
             this.anims.play('wolf-attack');
             hero.kill();
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.wolfState = 'run';
                 this.anims.play('wolf-run');
                 this.setX(this.x + 40 * this.direction);
