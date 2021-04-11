@@ -41,6 +41,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
+
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'hero-idle',
@@ -411,18 +412,30 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
             setTimeout(() => {
                 this.anims.play('hero-special-attack');
+                let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
                 let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash1.setOrigin(0, 1);
                 slash1.anims.play('slash');
+                slashGroup.add(slash1, false);
                 let slash2 = this.scene.add.sprite(this.x - 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash2.setFlipX(true);
                 slash2.setOrigin(0, 1);
                 slash2.anims.play('slash');
+                slashGroup.add(slash2, false);
+
+                let entCollider = this.scene.physics.add.overlap(this.scene.entGroup, slashGroup, this.entitySlashOverlap, null, this);
+                let spiderCollider = this.scene.physics.add.overlap(this.scene.spiderGroup, slashGroup, this.entitySlashOverlap, null, this);
+
                 this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                     this.setTexture('hero');
-                    slash1.destroy();
-                    slash2.destroy();
                 }, this);
+
+                slash2.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                    this.scene.physics.world.removeCollider(entCollider);
+                    this.scene.physics.world.removeCollider(spiderCollider);
+                    slashGroup.destroy(true);
+                }, this);
+
             }, 350);
 
             const tweenConfig = {
@@ -435,9 +448,11 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 repeat: 0,
                 onComplete: () => {
                     this.fireState = 'none';
-                    this.heroState = 'idle';
-                    this.animState = 'idle';
-                    this.anims.play('hero-idle');
+                    if (this.heroState != "dead") {
+                        this.heroState = 'idle';
+                        this.animState = 'idle';
+                        this.anims.play('hero-idle');
+                    }
                 },
                 onCompleteScope: this
             }
@@ -446,6 +461,15 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.body.setVelocityX(0);
             this.body.setAcceleration(0);
             this.lastSpecialFire = Date.now();
+        }
+    }
+
+    entitySlashOverlap(entity, slash) {
+        if (slash.anims.currentFrame.index < 4) {
+            return;
+        }
+        if (entity instanceof Ent || entity instanceof Spider) {
+            entity.kill();
         }
     }
 
