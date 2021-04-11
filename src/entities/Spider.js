@@ -18,6 +18,8 @@ class Spider extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('spiderattack-spritesheet', 'assets/spider/attack.png', { frameWidth: 128, frameHeight: 128 });
         this.scene.load.spritesheet('spiderdeath-spritesheet', 'assets/spider/death.png', { frameWidth: 128, frameHeight: 128 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
+        this.scene.load.audio("spider-attack-sound", "assets/spider/attack.mp3");
+        this.scene.load.audio("spider-death-sound", "assets/spider/death.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -43,6 +45,14 @@ class Spider extends Phaser.GameObjects.Sprite {
                 frames: this.scene.anims.generateFrameNumbers('dizzy-spritesheet', {}),
                 frameRate: 8,
                 repeat: -1,
+            });
+            this.attackSound = this.scene.sound.add("spider-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.deathSound = this.scene.sound.add("spider-death-sound", {
+                loop: false,
+                volume: 1
             });
 
             this.x = this.x - (this.body.left - this.x);
@@ -176,6 +186,7 @@ class Spider extends Phaser.GameObjects.Sprite {
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
         this.anims.play('spider-attack');
+        this.attackSound.play();
         this.scene.hero.kill();
         this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
             this.spiderState = 'walk';
@@ -189,6 +200,7 @@ class Spider extends Phaser.GameObjects.Sprite {
         }
         this.spiderState = 'dead';
         this.anims.play('spider-death');
+        this.deathSound.play();
         this.body.velocity.x = 0;
         this.body.setAccelerationX(0);
         if (this.dizzySprite) {

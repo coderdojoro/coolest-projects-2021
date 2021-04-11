@@ -41,6 +41,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
+        this.scene.load.audio("rogue-attack-sound", "assets/rogue/attack.mp3");
+        this.scene.load.audio("rogue-death-sound", "assets/rogue/death.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -126,6 +128,14 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 frames: this.scene.anims.generateFrameNumbers('slash-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0,
+            });
+            this.attackSound = this.scene.sound.add("rogue-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.dathSound = this.scene.sound.add("rogue-death-sound", {
+                loop: false,
+                volume: 1
             });
 
             this.x = this.x - (this.body.left - this.x);
@@ -401,6 +411,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
             this.anims.play('hero-attack');
+            this.attackSound.play();
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
             }, this);
@@ -479,6 +490,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.heroState = "dead";
             this.fireState = 'none';
             this.anims.play('hero-death');
+            //this.dathSound.play();
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
             this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
