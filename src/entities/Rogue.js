@@ -13,7 +13,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
     waterGroup;
 
-    heroState = 'fall';
+    heroState = 'idle';
     animState;
     fireState = "none";
 
@@ -43,6 +43,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
         this.scene.load.audio("rogue-attack-sound", "assets/rogue/attack.mp3");
         this.scene.load.audio("rogue-death-sound", "assets/rogue/death.mp3");
+        this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
+        this.scene.load.audio("rogue-slash-sound", "assets/rogue/slash.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -137,11 +139,22 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 loop: false,
                 volume: 1
             });
+            this.jumpSound = this.scene.sound.add("rogue-jump-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.slashSound = this.scene.sound.add("rogue-slash-sound", {
+                loop: false,
+                volume: 1
+            });
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
             this.initialX = this.x;
             this.initialY = this.y;
+
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
 
             this.loaded = true;
 
@@ -155,6 +168,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.body.setOffset(70, 57);
         this.body.setDragX(1100);
         this.body.setGravityY(300);
+        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -390,11 +404,13 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
             this.anims.play('hero-jump');
             this.animState = 'jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'double-jump' && this.animState != 'double-jump' && this.fireState == 'none') {
             this.anims.play('hero-double-jump');
             this.animState = 'double-jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
@@ -429,6 +445,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash1.setOrigin(0, 1);
                 slash1.anims.play('slash');
+                this.slashSound.play();
                 slashGroup.add(slash1, false);
                 let slash2 = this.scene.add.sprite(this.x - 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash2.setFlipX(true);
@@ -447,6 +464,10 @@ class Rogue extends Phaser.GameObjects.Sprite {
                     this.scene.physics.world.removeCollider(entCollider);
                     this.scene.physics.world.removeCollider(spiderCollider);
                     slashGroup.destroy(true);
+                    // this.slashSound.once(Phaser.Sound.Events.LOOPED, () => {
+                    //     this.slashSound.stop();
+                    // }, this);
+
                 }, this);
 
             }, 350);
@@ -476,7 +497,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.lastSpecialFire = Date.now();
         }
 
-        console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
+        //console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
     }
 
     entitySlashOverlap(entity, slash) {
@@ -488,13 +509,13 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
     }
 
-    kill() {
+    kill(playDeathSound) {
         if (this.heroState != "dead") {
             this.animState = "dead";
             this.heroState = "dead";
             this.fireState = 'none';
             this.anims.play('hero-death');
-            //this.dathSound.play();
+            this.dathSound.play();
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
