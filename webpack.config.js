@@ -15,7 +15,7 @@ module.exports = (env, argv) => ({
   output: {
     path: path.resolve(process.cwd(), 'dist'),
   },
-  devtool: argv.mode === 'development' ? 'eval-cheap-module-source-map' : false,
+  devtool: argv.mode === 'development' ? 'eval-cheap-module-source-map' : false, //source-map
   module: {
     rules: [
       {
