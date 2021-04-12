@@ -30,6 +30,8 @@ class Level2 extends Phaser.Scene {
 
     this.load.spritesheet('brazier', 'assets/tiles/brazier.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('banner', 'assets/tiles/banner.png', { frameWidth: 32, frameHeight: 64 });
+
+    this.load.audio("music-lvl2", "assets/music-lvl2.mp3");
   }
 
   create() {
@@ -161,6 +163,12 @@ class Level2 extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
+
+    this.music = this.sound.add("music-lvl2", {
+      loop: true,
+      volume: 0.3
+    });
+    this.music.play();
 
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});

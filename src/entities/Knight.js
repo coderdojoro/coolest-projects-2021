@@ -9,7 +9,7 @@ class Knight extends Phaser.GameObjects.Sprite {
     keyFire;
     keySpecialFire;
 
-    heroState = 'fall';
+    heroState = 'idle';
     animState;
     fireState = "none";
 
@@ -130,6 +130,9 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.initialX = this.x;
             this.initialY = this.y;
 
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
+
             this.loaded = true;
 
         }, this);
@@ -142,6 +145,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.body.setOffset(72, 59);
         this.body.setDragX(1100);
         this.body.setGravityY(700);
+        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
