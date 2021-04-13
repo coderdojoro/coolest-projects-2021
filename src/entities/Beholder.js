@@ -60,7 +60,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.body.setOffset(60, 37);
 
         this.body.onWorldBounds = true;
-        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);
+        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
 
         this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
@@ -140,7 +140,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
         }
     }
 
-    worldColided(beholder) {
+    worldCollided(beholder) {
         if (this.beholderState == 'dead') {
             return;
         }
