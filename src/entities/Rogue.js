@@ -251,8 +251,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.heroState = 'landing';
             this.fireState = 'none';
             this.animState = 'none';
-            this.body.setVelocityX(0);
-            this.body.setAccelerationX(0);
+            this.body.stop();
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
@@ -439,7 +438,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'special' && this.animState != 'special-fire') {
             this.animState = 'special-fire';
 
-            setTimeout(() => {
+            this.scene.time.delayedCall(350, () => {
                 this.anims.play('hero-special-attack');
                 let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
                 let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
@@ -470,7 +469,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
                 }, this);
 
-            }, 350);
+            }, null, this);
 
             const tweenConfig = {
                 targets: this.scene.cameras.main,

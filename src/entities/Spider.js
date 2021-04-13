@@ -115,6 +115,7 @@ class Spider extends Phaser.GameObjects.Sprite {
 
         if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
             this.attackHero();
+            return;
         }
 
         if (this.direction < 0) {
@@ -146,7 +147,7 @@ class Spider extends Phaser.GameObjects.Sprite {
         }
 
         if (!tileInFront) {
-            this.body.velocity.x = 0;
+            this.body.setVelocityX(0);
             this.direction = this.direction * -1;
         }
     }
@@ -183,8 +184,7 @@ class Spider extends Phaser.GameObjects.Sprite {
 
     attackHero() {
         this.spiderState = 'attack';
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         this.anims.play('spider-attack');
         this.attackSound.play();
         this.scene.hero.kill();
@@ -201,8 +201,7 @@ class Spider extends Phaser.GameObjects.Sprite {
         this.spiderState = 'dead';
         this.anims.play('spider-death');
         this.deathSound.play();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
         }
@@ -213,8 +212,7 @@ class Spider extends Phaser.GameObjects.Sprite {
             return;
         }
         this.dizzySatrt = Date.now();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.spiderState == 'dizzy') {
             return;
         }

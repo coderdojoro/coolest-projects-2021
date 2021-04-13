@@ -116,6 +116,7 @@ class Ent extends Phaser.GameObjects.Sprite {
 
         if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
             this.attackHero();
+            return;
         }
 
         if (this.direction < 0) {
@@ -147,7 +148,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         }
 
         if (!tileInFront) {
-            this.body.velocity.x = 0;
+            this.body.setVelocityX(0);
             this.direction = this.direction * -1;
         }
     }
@@ -184,8 +185,7 @@ class Ent extends Phaser.GameObjects.Sprite {
 
     attackHero() {
         this.entState = 'attack';
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         this.attackSound.play();
         this.anims.play('ent-attack');
         this.scene.hero.kill();
@@ -202,8 +202,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.entState = 'dead';
         this.anims.play('ent-death');
         this.deathkSound.play();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
         }
@@ -214,8 +213,7 @@ class Ent extends Phaser.GameObjects.Sprite {
             return;
         }
         this.dizzySatrt = Date.now();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.entState == 'dizzy') {
             return;
         }

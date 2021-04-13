@@ -107,6 +107,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
         if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
             this.attackHero();
+            return;
         }
 
         if (this.direction < 0) {
@@ -138,7 +139,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
 
         if (!tileInFront) {
-            this.body.velocity.x = 0;
+            this.body.setVelocityX(0);
             this.direction = this.direction * -1;
         }
     }
@@ -175,8 +176,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
     attackHero() {
         this.wolfState = 'attack';
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         this.anims.play('wolf-attack');
         this.scene.hero.kill();
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -193,8 +193,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         this.wolfState = 'dead';
         this.anims.play('wolf-death');
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
         }
@@ -205,8 +204,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
             return;
         }
         this.dizzySatrt = Date.now();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.wolfState == 'dizzy') {
             return;
         }
