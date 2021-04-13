@@ -8,15 +8,15 @@ class Wolf extends Phaser.GameObjects.Sprite {
     wolfState = 'run';
 
     constructor(scene, x, y) {
-        super(scene, x, y, scene.make.renderTexture({ width: 60, height: 48 }).texture);
+        super(scene, x, y, scene.make.renderTexture({ width: 78, height: 48 }).texture);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
         this.scene.load.image('wolf', 'assets/wolf/wolf.png');
-        this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 60, frameHeight: 48 });
-        this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
-        this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
+        this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 78, frameHeight: 48 });
+        this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 78, frameHeight: 48 });
+        this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
@@ -57,12 +57,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
         this.body.setSize(34, 22);
-        this.body.setOffset(14, 26);
+        this.body.setOffset(22, 26);
 
         this.setScale(1.5);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
+
         this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
 
@@ -90,6 +91,22 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         if (this.wolfState == 'attack') {
             return;
+        }
+
+        let frontX;
+        if (this.direction < 0) {
+            frontX = this.body.left - 22;
+        } else {
+            frontX = this.body.right;
+        }
+
+        let overlapsWithHero = Phaser.Geom.Rectangle.Overlaps(
+            new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
+            new Phaser.Geom.Rectangle(frontX, this.body.top, 22, 22)
+        );
+
+        if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
+            this.attackHero();
         }
 
         if (this.direction < 0) {
@@ -145,24 +162,29 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
 
         if (this.wolfState != 'attack' && hero.heroState != 'dead') {
-            if (this.body.x + this.body.halfWidth < hero.body.x + hero.body.halfWidth) {
+            if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
                 this.setFlipX(false);
                 this.direction = 1;
             } else {
                 this.setFlipX(true);
                 this.direction = -1;
             }
-            this.wolfState = 'attack';
-            this.body.velocity.x = 0;
-            this.body.setAccelerationX(0);
-            this.anims.play('wolf-attack');
-            hero.kill();
-            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.wolfState = 'run';
-                this.anims.play('wolf-run');
-                this.setX(this.x + 40 * this.direction);
-            }, this);
+            this.attackHero();
         }
+    }
+
+    attackHero() {
+        this.wolfState = 'attack';
+        this.body.velocity.x = 0;
+        this.body.setAccelerationX(0);
+        this.anims.play('wolf-attack');
+        this.scene.hero.kill();
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.wolfState = 'run';
+            this.anims.play('wolf-run');
+            // lupul se teleportează înapoi după atac
+            //this.setX(this.x + 22 * this.direction);
+        }, this);
     }
 
     kill() {
@@ -191,6 +213,11 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.wolfState = 'dizzy';
         this.anims.stop();
         this.setTexture('wolf');
+        if (this.direction < 0) {
+            this.setFlipX(true);
+        } else {
+            this.setFlipX(false);
+        }
         let x = this.direction == 1 ? this.x + 35 : this.x - 5;
         this.dizzySprite = this.scene.physics.add.sprite(x, this.y - 30, null);
         this.dizzySprite.setOrigin(0, 1);
