@@ -18,6 +18,8 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
+        this.scene.load.audio("wolf-attack-sound", "assets/wolf/attack.mp3");
+        this.scene.load.audio("wolf-death-sound", "assets/wolf/death.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -43,6 +45,14 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 frames: this.scene.anims.generateFrameNumbers('dizzy-spritesheet', {}),
                 frameRate: 10,
                 repeat: -1,
+            });
+            this.attackSound = this.scene.sound.add("wolf-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.deathSound = this.scene.sound.add("wolf-death-sound", {
+                loop: false,
+                volume: 1
             });
 
             this.x = this.x - (this.body.left - this.x);
@@ -177,6 +187,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
     attackHero() {
         this.wolfState = 'attack';
         this.body.stop();
+        this.attackSound.play();
         this.anims.play('wolf-attack');
         this.scene.hero.kill();
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -193,6 +204,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         this.wolfState = 'dead';
         this.anims.play('wolf-death');
+        this.deathSound.play();
         this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();

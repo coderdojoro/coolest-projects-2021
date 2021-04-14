@@ -508,7 +508,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
     }
 
-    kill(playDeathSound) {
+    kill() {
         if (this.heroState != "dead") {
             this.animState = "dead";
             this.heroState = "dead";

@@ -38,6 +38,11 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 34, frameHeight: 34 });
+        this.scene.load.audio("knight-attack-sound", "assets/knight/attack.mp3");
+        this.scene.load.audio("knight-death-sound", "assets/knight/death.mp3");
+        this.scene.load.audio("knight-jump-sound", "assets/knight/jump.mp3");
+        this.scene.load.audio("knight-slash-sound", "assets/knight/slash.mp3");
+        this.scene.load.audio("knight-ice-cracking-sound", "assets/knight/ice-cracking.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -123,6 +128,26 @@ class Knight extends Phaser.GameObjects.Sprite {
                 frames: this.scene.anims.generateFrameNumbers('earthattack-spritesheet', {}),
                 frameRate: 30,
                 repeat: 0,
+            });
+            this.attackSound = this.scene.sound.add("knight-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.dathSound = this.scene.sound.add("knight-death-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.jumpSound = this.scene.sound.add("knight-jump-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.slashSound = this.scene.sound.add("knight-slash-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.iceCrackingSound = this.scene.sound.add("knight-ice-cracking-sound", {
+                loop: false,
+                volume: 1
             });
 
             this.x = this.x - (this.body.left - this.x);
@@ -342,11 +367,13 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
             this.anims.play('hero-jump');
             this.animState = 'jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'double-jump' && this.animState != 'double-jump' && this.fireState == 'none') {
             this.anims.play('hero-double-jump');
             this.animState = 'double-jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
@@ -365,6 +392,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
             this.anims.play('hero-attack');
+            this.attackSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
             }, this);
@@ -374,10 +402,12 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'special' && this.animState != 'special-fire') {
             this.animState = 'special-fire';
             this.anims.play('hero-special-attack');
+            this.slashSound.play();
             this.body.stop();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
                 this.scene.cameras.main.shake(1200, 0.002);
+                this.iceCrackingSound.play();
                 let xRight = Math.trunc((this.body.right + 32) / 32) * 32;
                 let xLeft = Math.trunc((this.body.left - 32) / 32) * 32;
                 let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
@@ -489,6 +519,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.heroState = "dead";
             this.fireState = 'none';
             this.anims.play('hero-death');
+            this.dathSound.play();
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {

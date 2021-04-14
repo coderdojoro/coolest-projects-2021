@@ -50,12 +50,10 @@ class Ent extends Phaser.GameObjects.Sprite {
                 loop: false,
                 volume: 1
             });
-            this.deathkSound = this.scene.sound.add("ent-death-sound", {
+            this.deathSound = this.scene.sound.add("ent-death-sound", {
                 loop: false,
                 volume: 1
             });
-
-
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
@@ -201,7 +199,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         }
         this.entState = 'dead';
         this.anims.play('ent-death');
-        this.deathkSound.play();
+        this.deathSound.play();
         this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
