@@ -224,11 +224,11 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.anims.stop();
         this.setTexture('wolf');
         if (this.direction < 0) {
-            this.setFlipX(true);
-        } else {
             this.setFlipX(false);
+        } else {
+            this.setFlipX(true);
         }
-        let x = this.direction == 1 ? this.x + 35 : this.x - 5;
+        let x = this.direction == 1 ? this.body.right - 36 : this.body.left - 18;
         this.dizzySprite = this.scene.physics.add.sprite(x, this.y - 30, null);
         this.dizzySprite.setOrigin(0, 1);
         this.dizzySprite.anims.play("dizzy");
