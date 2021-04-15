@@ -104,7 +104,23 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     heroOverlap(hero, wolf) {
-        console.log('wolf kill');
+        if (hero.body.left + hero.body.halfWidth < this.body.left + this.body.halfWidth) {
+            this.setFlipX(true);
+            this.direction = -1;
+        } else {
+            this.setFlipX(false);
+            this.direction = 1;
+        }
+        this.attackHero();
+
+    }
+    attackHero() {
+        this.body.stop();
+        this.anims.play('wolf-attack');
+        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            console.log("touch");
+            this.anims.play('wolf-run');
+        }, this);
     }
 }
 
