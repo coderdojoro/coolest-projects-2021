@@ -87,8 +87,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
-            this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.stop();
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
@@ -295,8 +294,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             }
             this.scene.tweens.add(tweenConfig);
 
-            this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.stop();
             this.lastSpecialFire = Date.now();
         }
 
@@ -317,8 +315,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.heroState = "dead";
             this.fireState = 'none';
             this.anims.play('hero-death');
-            this.body.setVelocity(0, 0);
-            this.body.setAcceleration(0);
+            this.body.stop();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, this.onAnimationComplete, this);
         }
     }
