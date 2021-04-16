@@ -6,15 +6,15 @@ class Wolf extends Phaser.GameObjects.Sprite {
     loaded = false;
 
     constructor(scene, x, y) {
-        super(scene, x, y, scene.make.renderTexture({ width: 60, height: 48 }).texture);
+        super(scene, x, y, scene.make.renderTexture({ width: 78, height: 48 }).texture);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
         this.scene.load.image('wolf', 'assets/wolf/wolf.png');
-        this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 60, frameHeight: 48 });
-        this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 73, frameHeight: 48 });
-        this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 60, frameHeight: 48 });
+        this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 78, frameHeight: 48 });
+        this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 78, frameHeight: 48 });
+        this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
@@ -55,17 +55,19 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.setOrigin(0, 1);
         this.body.setCollideWorldBounds(true);
         this.body.setSize(34, 22);
-        this.body.setOffset(14, 26);
+        this.body.setOffset(22, 26);
 
-        this.setScale(1.7);
+        this.setScale(1.5);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
+
         this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+
         if (this.loaded == false) {
             return;
         }
@@ -91,7 +93,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
 
         if (!tileInFront) {
-            this.body.velocity.x = 0;
+            this.body.setVelocityX(0);
             this.direction = this.direction * -1;
         }
     }
@@ -104,20 +106,19 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     heroOverlap(hero, wolf) {
-        if (hero.body.left + hero.body.halfWidth < this.body.left + this.body.halfWidth) {
-            this.setFlipX(true);
-            this.direction = -1;
-        } else {
+        if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
             this.setFlipX(false);
             this.direction = 1;
+        } else {
+            this.setFlipX(true);
+            this.direction = -1;
         }
         this.attackHero();
-
     }
     attackHero() {
         this.body.stop();
         this.anims.play('wolf-attack');
-        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             console.log("touch");
             this.anims.play('wolf-run');
         }, this);

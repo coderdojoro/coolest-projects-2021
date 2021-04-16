@@ -273,7 +273,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == "walk" && this.fireState == 'fire' && this.animState != "walk-attack") {
             this.anims.play("hero-walk-attack");
             this.animState = "walk-attack";
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (!this.keyFire.isDown) {
                     this.fireState = 'none';
                 } else {
@@ -290,7 +290,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'run' && this.fireState == 'fire' && this.animState != 'run-attack') {
             this.animState = 'run-attack';
             this.anims.play('hero-run-attack');
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (!this.keyFire.isDown) {
                     this.fireState = 'none';
                 } else {
@@ -316,7 +316,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'landing' && this.animState != 'landing') {
             this.animState = 'landing';
             this.anims.play('hero-landing');
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (this.heroState != 'dead') {
                     this.heroState = 'idle';
                 }
@@ -325,7 +325,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
             this.anims.play('hero-attack');
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
             }, this);
             this.lastFire = Date.now();
@@ -336,7 +336,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-special-attack');
             this.body.setVelocityX(0);
             this.body.setAccelerationX(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
                 this.scene.cameras.main.shake(800, 0.002);
             }, this);
@@ -397,7 +397,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.anims.play('hero-death');
             this.body.setVelocity(0, 0);
             this.body.setAcceleration(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
                 this.body.updateFromGameObject();
