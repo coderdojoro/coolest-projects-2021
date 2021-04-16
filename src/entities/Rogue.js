@@ -21,8 +21,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
         super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
         this.waterGroup = waterGroup;
 
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        this.scene.add.existing(this);
+        this.scene.physics.add.existing(this);
 
         this.scene.load.image('hero', 'assets/rogue/rogue.png');
         this.scene.load.spritesheet('idle-spritesheet', 'assets/rogue/idle.png', { frameWidth: 171, frameHeight: 128 });
