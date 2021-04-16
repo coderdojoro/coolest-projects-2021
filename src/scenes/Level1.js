@@ -193,7 +193,7 @@ class Level1 extends Phaser.Scene {
 
     this.music = this.sound.add("music-lvl1", {
       loop: true,
-      volume: 0.3
+      volume: 0.1
     });
     this.music.play();
 
