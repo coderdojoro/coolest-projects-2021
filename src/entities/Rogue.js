@@ -185,6 +185,10 @@ class Rogue extends Phaser.GameObjects.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
+        if (!this.loaded) {
+            return;
+        }
+
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
         }
