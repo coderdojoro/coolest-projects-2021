@@ -1,4 +1,5 @@
 // @ts-check
+
 class Ent extends Phaser.GameObjects.Sprite {
 
     direction = Phaser.Math.Between(0, 1) == 0 ? -1 : 1;
