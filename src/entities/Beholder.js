@@ -18,6 +18,8 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('beholderattack-spritesheet', 'assets/beholder/attack.png', { frameWidth: 154, frameHeight: 101 });
         this.scene.load.spritesheet('beholderdeath-spritesheet', 'assets/beholder/death.png', { frameWidth: 154, frameHeight: 101 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
+        this.scene.load.audio("beholder-attack-sound", "assets/beholder/attack.mp3");
+        this.scene.load.audio("beholder-death-sound", "assets/beholder/death.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -44,6 +46,14 @@ class Beholder extends Phaser.GameObjects.Sprite {
                 frameRate: 8,
                 repeat: -1,
             });
+            this.attackSound = this.scene.sound.add("beholder-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.deathSound = this.scene.sound.add("beholder-death-sound", {
+                loop: false,
+                volume: 1
+            });
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
@@ -60,7 +70,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.body.setOffset(60, 37);
 
         this.body.onWorldBounds = true;
-        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);
+        this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldCollided, this);
 
         this.scene.physics.add.overlap(this.scene.hero, this, this.heroOverlap, null, this);
     }
@@ -104,6 +114,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
 
         if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
             this.attackHero();
+            return;
         }
 
         if (this.direction < 0) {
@@ -135,12 +146,12 @@ class Beholder extends Phaser.GameObjects.Sprite {
         }
 
         if (!tileInFront) {
-            this.body.velocity.x = 0;
+            this.body.setVelocityX(0);
             this.direction = this.direction * -1;
         }
     }
 
-    worldColided(beholder) {
+    worldCollided(beholder) {
         if (this.beholderState == 'dead') {
             return;
         }
@@ -172,11 +183,11 @@ class Beholder extends Phaser.GameObjects.Sprite {
 
     attackHero() {
         this.beholderState = 'attack';
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
+        this.attackSound.play();
         this.anims.play('beholder-attack');
         this.scene.hero.kill();
-        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.beholderState = 'walk';
             this.anims.play('beholder-walk');
         }, this);
@@ -188,8 +199,8 @@ class Beholder extends Phaser.GameObjects.Sprite {
         }
         this.beholderState = 'dead';
         this.anims.play('beholder-death');
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.deathSound.play();
+        this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
         }
@@ -200,8 +211,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
             return;
         }
         this.dizzySatrt = Date.now();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.beholderState == 'dizzy') {
             return;
         }

@@ -76,21 +76,21 @@ class Level1 extends Phaser.Scene {
     this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
     this.background1 = this.map.addTilesetImage('wallpaper1', 'background1');
 
-    this.battlegroundLayer1 = this.map.createStaticLayer('wallpaper1' /*layer name from json*/, this.background1);
+    this.battlegroundLayer1 = this.map.createLayer('wallpaper1' /*layer name from json*/, this.background1);
     this.battlegroundLayer1.setScrollFactor(0.0, 1);
-    this.battlegroundLayer2 = this.map.createStaticLayer('wallpaper2' /*layer name from json*/, this.background2);
+    this.battlegroundLayer2 = this.map.createLayer('wallpaper2' /*layer name from json*/, this.background2);
     this.battlegroundLayer2.setScrollFactor(0.2, 1);
-    this.battlegroundLayer3 = this.map.createStaticLayer('wallpaper3' /*layer name from json*/, this.background3);
+    this.battlegroundLayer3 = this.map.createLayer('wallpaper3' /*layer name from json*/, this.background3);
     this.battlegroundLayer3.setScrollFactor(0.4, 1);
-    this.battlegroundLayer4 = this.map.createStaticLayer('wallpaper4' /*layer name from json*/, this.background4);
+    this.battlegroundLayer4 = this.map.createLayer('wallpaper4' /*layer name from json*/, this.background4);
     this.battlegroundLayer4.setScrollFactor(0.6, 1);
 
     this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
     this.rocksTiles = this.map.addTilesetImage('rocks', 'rocks-image');
 
-    this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
-    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, this.groundTiles);
+    this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
+    this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, this.groundTiles);
 
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
@@ -151,7 +151,7 @@ class Level1 extends Phaser.Scene {
       if (object.type == 'campfire') {
         let campfire = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         campfire.setOrigin(0, 1);
-        campfire.anims.play("campfire");
+        campfire.anims.play({ key: 'campfire', startFrame: Phaser.Math.Between(0, 5) });
         campfire.body.immovable = true;
         campfire.body.setAllowGravity(false);
       }
@@ -176,7 +176,7 @@ class Level1 extends Phaser.Scene {
       }
     }
 
-    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
+    this.map.createLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
     this.physics.add.collider(this.hero, this.groundLayer);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);

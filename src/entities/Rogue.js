@@ -13,7 +13,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
     waterGroup;
 
-    heroState = 'fall';
+    heroState = 'idle';
     animState;
     fireState = "none";
 
@@ -43,6 +43,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
         this.scene.load.audio("rogue-attack-sound", "assets/rogue/attack.mp3");
         this.scene.load.audio("rogue-death-sound", "assets/rogue/death.mp3");
+        this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
+        this.scene.load.audio("rogue-slash-sound", "assets/rogue/slash.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -137,11 +139,22 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 loop: false,
                 volume: 1
             });
+            this.jumpSound = this.scene.sound.add("rogue-jump-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.slashSound = this.scene.sound.add("rogue-slash-sound", {
+                loop: false,
+                volume: 1
+            });
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
             this.initialX = this.x;
             this.initialY = this.y;
+
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
 
             this.loaded = true;
 
@@ -155,6 +168,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.body.setOffset(70, 57);
         this.body.setDragX(1100);
         this.body.setGravityY(300);
+        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -235,8 +249,9 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
-            this.body.setVelocityX(0);
-            this.body.setAccelerationX(0);
+            this.fireState = 'none';
+            this.animState = 'none';
+            this.body.stop();
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
@@ -359,7 +374,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == "walk" && this.fireState == 'fire' && this.animState != "walk-attack") {
             this.anims.play("hero-walk-attack");
             this.animState = "walk-attack";
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (!this.keyFire.isDown) {
                     this.fireState = 'none';
                 } else {
@@ -376,7 +391,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'run' && this.fireState == 'fire' && this.animState != 'run-attack') {
             this.animState = 'run-attack';
             this.anims.play('hero-run-attack');
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (!this.keyFire.isDown) {
                     this.fireState = 'none';
                 } else {
@@ -388,11 +403,13 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
             this.anims.play('hero-jump');
             this.animState = 'jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'double-jump' && this.animState != 'double-jump' && this.fireState == 'none') {
             this.anims.play('hero-double-jump');
             this.animState = 'double-jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
@@ -402,7 +419,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'landing' && this.animState != 'landing') {
             this.animState = 'landing';
             this.anims.play('hero-landing');
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (this.heroState != 'dead') {
                     this.heroState = 'idle';
                 }
@@ -412,7 +429,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.animState = 'fire';
             this.anims.play('hero-attack');
             this.attackSound.play();
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
             }, this);
             this.lastFire = Date.now();
@@ -421,12 +438,13 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'special' && this.animState != 'special-fire') {
             this.animState = 'special-fire';
 
-            setTimeout(() => {
+            this.scene.time.delayedCall(350, () => {
                 this.anims.play('hero-special-attack');
                 let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
                 let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash1.setOrigin(0, 1);
                 slash1.anims.play('slash');
+                this.slashSound.play();
                 slashGroup.add(slash1, false);
                 let slash2 = this.scene.add.sprite(this.x - 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash2.setFlipX(true);
@@ -437,17 +455,21 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 let entCollider = this.scene.physics.add.overlap(this.scene.entGroup, slashGroup, this.entitySlashOverlap, null, this);
                 let spiderCollider = this.scene.physics.add.overlap(this.scene.spiderGroup, slashGroup, this.entitySlashOverlap, null, this);
 
-                this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                     this.setTexture('hero');
                 }, this);
 
-                slash2.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                slash2.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                     this.scene.physics.world.removeCollider(entCollider);
                     this.scene.physics.world.removeCollider(spiderCollider);
                     slashGroup.destroy(true);
+                    // this.slashSound.once(Phaser.Sound.Events.LOOPED, () => {
+                    //     this.slashSound.stop();
+                    // }, this);
+
                 }, this);
 
-            }, 350);
+            }, null, this);
 
             const tweenConfig = {
                 targets: this.scene.cameras.main,
@@ -469,10 +491,11 @@ class Rogue extends Phaser.GameObjects.Sprite {
             }
             this.scene.tweens.add(tweenConfig);
 
-            this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.stop();
             this.lastSpecialFire = Date.now();
         }
+
+        //console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
     }
 
     entitySlashOverlap(entity, slash) {
@@ -490,10 +513,9 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.heroState = "dead";
             this.fireState = 'none';
             this.anims.play('hero-death');
-            //this.dathSound.play();
-            this.body.setVelocity(0, 0);
-            this.body.setAcceleration(0);
-            this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.dathSound.play();
+            this.body.stop();
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
                 this.body.updateFromGameObject();

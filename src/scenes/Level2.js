@@ -30,6 +30,8 @@ class Level2 extends Phaser.Scene {
 
     this.load.spritesheet('brazier', 'assets/tiles/brazier.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('banner', 'assets/tiles/banner.png', { frameWidth: 32, frameHeight: 64 });
+
+    this.load.audio("music-lvl2", "assets/music-lvl2.mp3");
   }
 
   create() {
@@ -66,21 +68,21 @@ class Level2 extends Phaser.Scene {
     this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
     this.background1 = this.map.addTilesetImage('wallpaper1', 'background1');
 
-    this.battlegroundLayer1 = this.map.createStaticLayer('wallpaper1' /*layer name from json*/, this.background1);
+    this.battlegroundLayer1 = this.map.createLayer('wallpaper1' /*layer name from json*/, this.background1);
     this.battlegroundLayer1.setScrollFactor(0.0, 1);
-    this.battlegroundLayer2 = this.map.createStaticLayer('wallpaper2' /*layer name from json*/, this.background2);
+    this.battlegroundLayer2 = this.map.createLayer('wallpaper2' /*layer name from json*/, this.background2);
     this.battlegroundLayer2.setScrollFactor(0.2, 1);
-    this.battlegroundLayer3 = this.map.createStaticLayer('wallpaper3' /*layer name from json*/, this.background3);
+    this.battlegroundLayer3 = this.map.createLayer('wallpaper3' /*layer name from json*/, this.background3);
     this.battlegroundLayer3.setScrollFactor(0.4, 1);
-    this.battlegroundLayer4 = this.map.createStaticLayer('wallpaper4' /*layer name from json*/, this.background4);
+    this.battlegroundLayer4 = this.map.createLayer('wallpaper4' /*layer name from json*/, this.background4);
     this.battlegroundLayer4.setScrollFactor(0.6, 1);
 
     this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
     this.treesTiles = this.map.addTilesetImage('trees', 'trees-image');
 
-    let backgroundLayer = this.map.createStaticLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
-    this.groundLayer = this.map.createStaticLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
     this.hero = new Knight(this, heroX, heroY);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
@@ -118,7 +120,8 @@ class Level2 extends Phaser.Scene {
       if (object.type == 'brazier') {
         let brazier = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         brazier.setOrigin(0, 1);
-        brazier.anims.play("brazier");
+        brazier.anims.play({ key: 'brazier', startFrame: Phaser.Math.Between(0, 5) });
+        //brazier.anims.play("brazier");
         brazier.body.immovable = true;
         brazier.body.setAllowGravity(false);
         brazier.setScale(2);
@@ -145,7 +148,7 @@ class Level2 extends Phaser.Scene {
       }
     }
 
-    this.map.createStaticLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
+    this.map.createLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
 
     this.physics.add.overlap(this.hero, backgroundLayer, this.hero.onBackgroundOverlap, null, this.hero);
     this.physics.add.collider(this.hero, this.groundLayer, this.hero.onGroundColided, null, this.hero);
@@ -160,6 +163,12 @@ class Level2 extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
+
+    this.music = this.sound.add("music-lvl2", {
+      loop: true,
+      volume: 0.3
+    });
+    this.music.play();
 
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
