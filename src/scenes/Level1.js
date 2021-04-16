@@ -11,20 +11,6 @@ class Level1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('hero', 'assets/rogue/rogue.png');
-    this.load.spritesheet('idle-spritesheet', 'assets/rogue/idle.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('walk-spritesheet', 'assets/rogue/walk.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('run-spritesheet', 'assets/rogue/run.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('jump-spritesheet', 'assets/rogue/jump.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('double-jump-spritesheet', 'assets/rogue/double-jump.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('fall-spritesheet', 'assets/rogue/fall.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('death-spritesheet', 'assets/rogue/death.png', { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('landing-spritesheet', `assets/rogue/landing.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('attack-spritesheet', `assets/rogue/attack.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('special-attack-spritesheet', `assets/rogue/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
-    this.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
-
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level1-tilemap.json');
 
     this.load.spritesheet('ground-image', 'assets/tiles/level1-tiles.png', {
@@ -32,94 +18,43 @@ class Level1 extends Phaser.Scene {
       frameHeight: 32,
     });
 
-    this.load.image('bush-image', 'assets/tiles/level1-bush.png');
-    this.load.image('rocks-image', 'assets/tiles/level1-rocks.png');
+    this.load.spritesheet('ground-image', 'assets/tiles/level1-tiles.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet('bush-image', 'assets/tiles/level1-bush.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
 
     this.load.image('background4', 'assets/wallpapers/forest/background4.png');
     this.load.image('background3', 'assets/wallpapers/forest/background3.png');
     this.load.image('background2', 'assets/wallpapers/forest/background2.png');
     this.load.image('background1', 'assets/wallpapers/forest/background1.png');
 
+    this.load.spritesheet('campfire', 'assets/tiles/campfire.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('flag', 'assets/tiles/flag.png', { frameWidth: 32, frameHeight: 64 });
+    this.load.spritesheet('torch', 'assets/tiles/torch.png', { frameWidth: 32, frameHeight: 32 });
   }
 
   create() {
     this.anims.create({
-      key: 'hero-idle',
-      frames: [
-        { frame: 0, key: 'hero', duration: 5000 },
-        ...this.anims.generateFrameNumbers('idle-spritesheet', {})
-      ],
-      frameRate: 6,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: 'hero-walk',
-      frames: this.anims.generateFrameNumbers('walk-spritesheet', {}),
-      frameRate: 6,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: 'hero-run',
-      frames: this.anims.generateFrameNumbers('run-spritesheet', {}),
-      frameRate: 6,
+      key: 'campfire',
+      frames: this.anims.generateFrameNumbers('campfire', {}),
+      frameRate: 10,
       repeat: -1,
     });
-
     this.anims.create({
-      key: 'hero-jump',
-      frames: this.anims.generateFrameNumbers('jump-spritesheet', {}),
-      frameRate: 6,
-      repeat: 0
-    });
-    this.anims.create({
-      key: 'hero-double-jump',
-      frames: this.anims.generateFrameNumbers('double-jump-spritesheet', {}),
-      frameRate: 20,
-      repeat: 0
-    });
-    this.anims.create({
-      key: 'hero-fall',
-      frames: this.anims.generateFrameNumbers('fall-spritesheet', {}),
-      frameRate: 10,//5
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-death',
-      frames: this.anims.generateFrameNumbers('death-spritesheet', {}),
-      frameRate: 10,//5
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-landing',
-      frames: this.anims.generateFrameNumbers('landing-spritesheet', {}),
+      key: 'flag',
+      frames: this.anims.generateFrameNumbers('flag', {}),
       frameRate: 10,
-      repeat: 0,
+      repeat: -1,
     });
     this.anims.create({
-      key: 'hero-attack',
-      frames: this.anims.generateFrameNumbers('attack-spritesheet', {}),
-      frameRate: 10,//7
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-special-attack',
-      frames: this.anims.generateFrameNumbers('special-attack-spritesheet', {}),
+      key: 'torch',
+      frames: this.anims.generateFrameNumbers('torch', {}),
       frameRate: 10,
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-walk-attack',
-      frames: this.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
-      frameRate: 10,
-      repeat: 0,
-    });
-    this.anims.create({
-      key: 'hero-run-attack',
-      frames: this.anims.generateFrameNumbers('run-attack-spritesheet', {}),
-      frameRate: 10,
-      repeat: 0,
+      repeat: -1,
     });
 
     this.map = this.make.tilemap({ key: 'level1-tilemap' });
