@@ -1,4 +1,5 @@
 // @ts-check
+
 class Spider extends Phaser.GameObjects.Sprite {
 
     direction = Phaser.Math.Between(0, 1) == 0 ? -1 : 1;
