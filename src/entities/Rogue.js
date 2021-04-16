@@ -491,8 +491,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             }
             this.scene.tweens.add(tweenConfig);
 
-            this.body.setVelocityX(0);
-            this.body.setAcceleration(0);
+            this.body.stop();
             this.lastSpecialFire = Date.now();
         }
 
@@ -515,8 +514,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.fireState = 'none';
             this.anims.play('hero-death');
             this.dathSound.play();
-            this.body.setVelocity(0, 0);
-            this.body.setAcceleration(0);
+            this.body.stop();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
