@@ -50,12 +50,10 @@ class Ent extends Phaser.GameObjects.Sprite {
                 loop: false,
                 volume: 1
             });
-            this.deathkSound = this.scene.sound.add("ent-death-sound", {
+            this.deathSound = this.scene.sound.add("ent-death-sound", {
                 loop: false,
                 volume: 1
             });
-
-
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
@@ -116,6 +114,7 @@ class Ent extends Phaser.GameObjects.Sprite {
 
         if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
             this.attackHero();
+            return;
         }
 
         if (this.direction < 0) {
@@ -147,7 +146,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         }
 
         if (!tileInFront) {
-            this.body.velocity.x = 0;
+            this.body.setVelocityX(0);
             this.direction = this.direction * -1;
         }
     }
@@ -184,12 +183,11 @@ class Ent extends Phaser.GameObjects.Sprite {
 
     attackHero() {
         this.entState = 'attack';
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         this.attackSound.play();
         this.anims.play('ent-attack');
         this.scene.hero.kill();
-        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.entState = 'walk';
             this.anims.play('ent-walk');
         }, this);
@@ -201,9 +199,8 @@ class Ent extends Phaser.GameObjects.Sprite {
         }
         this.entState = 'dead';
         this.anims.play('ent-death');
-        this.deathkSound.play();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.deathSound.play();
+        this.body.stop();
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
         }
@@ -214,8 +211,7 @@ class Ent extends Phaser.GameObjects.Sprite {
             return;
         }
         this.dizzySatrt = Date.now();
-        this.body.velocity.x = 0;
-        this.body.setAccelerationX(0);
+        this.body.stop();
         if (this.entState == 'dizzy') {
             return;
         }
