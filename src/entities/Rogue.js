@@ -504,10 +504,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
     }
 
-    entitySlashOverlap(entity, slash) {
-
-    }
-
     kill() {
         if (this.heroState != "dead") {
             this.animState = "dead";
