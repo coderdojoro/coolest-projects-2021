@@ -17,15 +17,11 @@ class Level1 extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
-
-    this.load.spritesheet('ground-image', 'assets/tiles/level1-tiles.png', {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
     this.load.spritesheet('bush-image', 'assets/tiles/level1-bush.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
+    this.load.image('rocks-image', 'assets/tiles/level1-rocks.png');
 
     this.load.image('background4', 'assets/wallpapers/forest/background4.png');
     this.load.image('background3', 'assets/wallpapers/forest/background3.png');
