@@ -463,9 +463,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
                     this.scene.physics.world.removeCollider(entCollider);
                     this.scene.physics.world.removeCollider(spiderCollider);
                     slashGroup.destroy(true);
-                    // this.slashSound.once(Phaser.Sound.Events.LOOPED, () => {
-                    //     this.slashSound.stop();
-                    // }, this);
 
                 }, this);
 
