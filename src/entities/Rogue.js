@@ -1,5 +1,8 @@
 // @ts-check
 
+import Ent from "./Ent";
+import Spider from "./Spider";
+
 class Rogue extends Phaser.GameObjects.Sprite {
 
     keyLeft;
@@ -10,8 +13,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
     waterGroup;
 
-    heroState = 'fall';
-    animState = 'fall';
+    heroState = 'idle';
+    animState;
     fireState = "none";
 
     lastFire = 0;
@@ -38,6 +41,11 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
+
+        this.scene.load.audio("rogue-attack-sound", "assets/rogue/attack.mp3");
+        this.scene.load.audio("rogue-death-sound", "assets/rogue/death.mp3");
+        this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
+        this.scene.load.audio("rogue-slash-sound", "assets/rogue/slash.mp3");
 
         this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -124,6 +132,22 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 frameRate: 10,
                 repeat: 0,
             });
+            this.attackSound = this.scene.sound.add("rogue-attack-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.dathSound = this.scene.sound.add("rogue-death-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.jumpSound = this.scene.sound.add("rogue-jump-sound", {
+                loop: false,
+                volume: 1
+            });
+            this.slashSound = this.scene.sound.add("rogue-slash-sound", {
+                loop: false,
+                volume: 1
+            });
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
@@ -193,6 +217,31 @@ class Rogue extends Phaser.GameObjects.Sprite {
             return;
         }
 
+        if (this.fireState == 'fire') {
+            let enemies;
+            if (this.flipX) {
+                enemies = this.scene.physics.overlapRect(
+                    this.body.left - 25,
+                    this.body.top,
+                    25,
+                    54
+                );
+            } else {
+                enemies = this.scene.physics.overlapRect(
+                    this.body.right,
+                    this.body.top,
+                    25,
+                    54
+                );
+            }
+
+            for (let obj of enemies) {
+                if (obj.gameObject instanceof Ent || obj.gameObject instanceof Spider) {
+                    obj.gameObject.kill();
+                }
+            }
+        }
+
         if (this.isInWater()) {
             this.body.setDragX(5500);
         } else {
@@ -201,6 +250,8 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
         if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
+            this.fireState = 'none';
+            this.animState = 'none';
             this.body.stop();
         }
 
@@ -353,11 +404,13 @@ class Rogue extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
             this.anims.play('hero-jump');
             this.animState = 'jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'double-jump' && this.animState != 'double-jump' && this.fireState == 'none') {
             this.anims.play('hero-double-jump');
             this.animState = 'double-jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
@@ -368,12 +421,15 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.animState = 'landing';
             this.anims.play('hero-landing');
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.heroState = 'idle';
+                if (this.heroState != 'dead') {
+                    this.heroState = 'idle';
+                }
             })
         }
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
             this.anims.play('hero-attack');
+            this.attackSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
             }, this);
@@ -385,9 +441,31 @@ class Rogue extends Phaser.GameObjects.Sprite {
 
             this.scene.time.delayedCall(350, () => {
                 this.anims.play('hero-special-attack');
+                let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
+                let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
+                slash1.setOrigin(0, 1);
+                slash1.anims.play('slash');
+                this.slashSound.play();
+                slashGroup.add(slash1, false);
+                let slash2 = this.scene.add.sprite(this.x - 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
+                slash2.setFlipX(true);
+                slash2.setOrigin(0, 1);
+                slash2.anims.play('slash');
+                slashGroup.add(slash2, false);
+
+                let entCollider = this.scene.physics.add.overlap(this.scene.entGroup, slashGroup, this.entitySlashOverlap, null, this);
+                let spiderCollider = this.scene.physics.add.overlap(this.scene.spiderGroup, slashGroup, this.entitySlashOverlap, null, this);
+
                 this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                     this.setTexture('hero');
                 }, this);
+
+                slash2.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+                    this.scene.physics.world.removeCollider(entCollider);
+                    this.scene.physics.world.removeCollider(spiderCollider);
+                    slashGroup.destroy(true);
+                }, this);
+
             }, null, this);
 
             const tweenConfig = {
@@ -413,6 +491,10 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
 
         // console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
+
+    }
+
+    entitySlashOverlap(entity, slash) {
 
     }
 

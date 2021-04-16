@@ -89,6 +89,8 @@ class Level1 extends Phaser.Scene {
     this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, this.groundTiles);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
+    this.entGroup = this.physics.add.group();
+    this.spiderGroup = this.physics.add.group();
 
     let offX = 5;
     let offY = 13;
