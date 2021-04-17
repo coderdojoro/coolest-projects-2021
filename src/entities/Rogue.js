@@ -41,6 +41,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/rogue/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/rogue/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('slash-spritesheet', `assets/rogue/slash.png`, { frameWidth: 169, frameHeight: 61 });
+
         this.scene.load.audio("rogue-attack-sound", "assets/rogue/attack.mp3");
         this.scene.load.audio("rogue-death-sound", "assets/rogue/death.mp3");
         this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
@@ -463,10 +464,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
                     this.scene.physics.world.removeCollider(entCollider);
                     this.scene.physics.world.removeCollider(spiderCollider);
                     slashGroup.destroy(true);
-                    // this.slashSound.once(Phaser.Sound.Events.LOOPED, () => {
-                    //     this.slashSound.stop();
-                    // }, this);
-
                 }, this);
 
             }, null, this);
