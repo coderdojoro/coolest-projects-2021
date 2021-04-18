@@ -89,7 +89,7 @@ class Level1 extends Phaser.Scene {
     this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
     this.rocksTiles = this.map.addTilesetImage('rocks', 'rocks-image');
 
-    this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
+    let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
     this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, this.groundTiles);
 
     for (let a = 0; a < objects.length; a++) {
@@ -178,6 +178,7 @@ class Level1 extends Phaser.Scene {
 
     this.map.createLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
+    this.physics.add.overlap(this.hero, backgroundLayer, this.hero.onBackgroundOverlap, null, this.hero);
     this.physics.add.collider(this.hero, this.groundLayer);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
