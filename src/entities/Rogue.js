@@ -504,6 +504,38 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
     }
 
+    onBackgroundOverlap(hero, tile) {
+        if (tile.properties.tileType == 'checkpoint') {
+            let newX = tile.pixelX - this.body.offset.x - this.body.halfWidth;
+            if (this.initialX < tile.pixelX && newX - this.initialX > 32 * 3) {
+                let text = this.scene.add.text(tile.pixelX, -50, 'CHECK POINT');
+                text.setColor('#1900ff');
+                text.setFontSize(22);
+                text.setStroke('#ffffff', 4);
+                text.setFontFamily('Stick');
+                text.setFontStyle('bold');
+                text.setOrigin(0.5, 1);
+                let tweenConfig = {
+                    targets: text,
+                    y: tile.pixelY,
+                    duration: 5000,
+                    ease: 'Elastic',
+                    easeParams: [0.01, 0.8],
+                    yoyo: true,
+                    hold: 2500,
+                    repeat: 0,
+                    onComplete: () => {
+                        text.destroy();
+                    },
+                    onCompleteScope: this
+                };
+                this.scene.tweens.add(tweenConfig);
+                this.initialX = newX;
+                this.initialY = tile.pixelY + this.height - this.body.offset.y - this.body.height;
+            }
+        }
+    }
+
     kill() {
         if (this.heroState != "dead") {
             this.animState = "dead";
