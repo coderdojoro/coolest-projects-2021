@@ -41,6 +41,7 @@ class StartScreen extends Phaser.Scene {
     });
 
     lvl1.once(Phaser.Input.Events.POINTER_DOWN, function (pointer) {
+      lvl1.removeAllListeners();
       this.scene.start("Level1");
     }, this);
 
@@ -53,12 +54,11 @@ class StartScreen extends Phaser.Scene {
     });
 
     lvl2.once(Phaser.Input.Events.POINTER_DOWN, function (pointer) {
+      lvl2.removeAllListeners();
       this.scene.start("Level2");
     }, this);
 
   }
-
-
 }
 
 export default StartScreen;

@@ -22,7 +22,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("ent-attack-sound", "assets/ent/attack.mp3");
         this.scene.load.audio("ent-death-sound", "assets/ent/death.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'ent-walk',
                 frames: this.scene.anims.generateFrameNumbers('entwalk-spritesheet', {}),
