@@ -47,7 +47,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
         this.scene.load.audio("rogue-slash-sound", "assets/rogue/slash.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'hero-idle',
                 frames: [
