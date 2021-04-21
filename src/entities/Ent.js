@@ -59,6 +59,9 @@ class Ent extends Phaser.GameObjects.Sprite {
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
 
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
+
             this.loaded = true;
             this.anims.play('ent-walk');
         }, this);
