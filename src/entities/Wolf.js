@@ -4,6 +4,8 @@ class Wolf extends Phaser.GameObjects.Sprite {
     direction = Phaser.Math.Between(0, 1) == 0 ? -1 : 1;
 
     loaded = false;
+    wolfState = 'run';
+
 
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 78, height: 48 }).texture);
@@ -16,8 +18,10 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('wolfdeath-spritesheet', 'assets/wolf/death.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
+        this.scene.load.audio('wolf-attack-sound', 'assets/wolf/attack.mp3');
+        this.scene.load.audio('wolf-death-sound', 'assets/wolf/death.mp3');
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'wolf-run',
                 frames: this.scene.anims.generateFrameNumbers('wolfrun-spritesheet', {}),
@@ -42,6 +46,28 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 frameRate: 10,
                 repeat: -1,
             });
+            this.attackSound = this.scene.sound.add('wolf-attack-sound', {
+                loop: false,
+                volume: 1
+            });
+            this.attackSound = this.scene.sound.add('wolf-death-sound', {
+                loop: false,
+                volume: 1
+            });
+            let frontX;
+            if (this.direction < 0) {
+                frontX = this.body.left_ = this.body.left - 22;
+            } else {
+                frontX = this.body.right;
+            }
+            let overlapWithHero = Phaser.Geom.Rectangle.Overlaps(
+                new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
+                new Phaser.Geom.Rectangle(frontX, this.body.top, 22, 22)
+            );
+            if (overlapWithHero && this.scene.hero.state != 'dead') {
+                this.attackHero();
+                return;
+            }
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
@@ -117,6 +143,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
     attackHero() {
         this.body.stop();
+        console.log("atacked");
         this.anims.play('wolf-attack');
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             console.log("touch");
