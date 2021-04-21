@@ -92,8 +92,8 @@ class Level2 extends Phaser.Scene {
     this.hero = new Knight(this, heroX, heroY, heroFinishX, heroFinishY);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
-    this.wolfGroup = this.physics.add.group();
-    this.beholderGroup = this.physics.add.group();
+    this.wolfGroup = this.physics.add.group({ allowGravity: false });
+    this.beholderGroup = this.physics.add.group({ allowGravity: false });
 
     let offX = 5;
     let offY = 8
@@ -183,6 +183,7 @@ class Level2 extends Phaser.Scene {
   finish() {
     this.music.stop();
     this.scene.start("StartScreen");
+    this.scene.remove();
   }
 
 

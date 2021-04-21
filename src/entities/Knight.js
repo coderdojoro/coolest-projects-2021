@@ -24,6 +24,14 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(31, 50);
+        this.body.setOffset(72, 59);
+        this.body.setDragX(1100);
+        this.body.setGravityY(700);
+        this.body.setAllowGravity(false);
+
         this.scene.load.image('hero', 'assets/knight/knight.png');
         this.scene.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
@@ -173,14 +181,6 @@ class Knight extends Phaser.GameObjects.Sprite {
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(31, 50);
-        this.body.setOffset(72, 59);
-        this.body.setDragX(1100);
-        this.body.setGravityY(700);
-        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -527,18 +527,12 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
         if (tile.properties.tileType == 'finish' && this.heroState != 'dead') {
             this.body.stop();
-            // this.body.setAllowGravity(false);
-            // this.anims.play('hero-run');
-            //this.anims.play('hero-climb');
             this.anims.play('hero-fall');
             this.heroState = 'dead';
-            // this.setX(this.finishX);
-            // this.setY(this.finishY);
-
             const tweenConfig = {
                 targets: this,
-                x: this.finishX + 130,
-                y: this.finishY - 50,
+                x: this.finishX,
+                y: this.finishY,
                 scale: 0.4,
                 duration: 5000,
                 ease: 'Quad.easeOut',
@@ -564,9 +558,14 @@ class Knight extends Phaser.GameObjects.Sprite {
                         text2.setFontStyle('bold');
                         text2.setOrigin(0.5);
 
-                        this.scene.input.keyboard.once('keydown', () => {
+                        this.scene.input.keyboard.once(Phaser.Input.Keyboard.Events.ANY_KEY_DOWN, () => {
                             this.scene.finish();
                         });
+
+                        this.scene.input.once(Phaser.Input.Events.POINTER_DOWN, () => {
+                            this.scene.finish();
+                        });
+
                     }, null, this);
 
                 },
@@ -576,9 +575,6 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.scene.physics.world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, function worldStep() {
                 if (this.body.onFloor()) {
                     this.scene.physics.world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, worldStep);
-                    //this.body.setAccelerationX(500 * this.flipX ? -1 : 1);
-                    this.setX(this.finishX);
-                    this.setY(this.finishY);
                     this.body.setAllowGravity(false);
                     this.anims.play('hero-climb');
                     this.scene.tweens.add(tweenConfig);
