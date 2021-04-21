@@ -27,6 +27,14 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(30, 54);
+        this.body.setOffset(70, 57);
+        this.body.setDragX(1100);
+        this.body.setGravityY(300);
+        this.body.setAllowGravity(false);
+
         this.scene.load.image('hero', 'assets/rogue/rogue.png');
         this.scene.load.spritesheet('idle-spritesheet', 'assets/rogue/idle.png', { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-spritesheet', 'assets/rogue/walk.png', { frameWidth: 171, frameHeight: 128 });
@@ -47,7 +55,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
         this.scene.load.audio("rogue-slash-sound", "assets/rogue/slash.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'hero-idle',
                 frames: [
@@ -162,14 +170,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(30, 54);
-        this.body.setOffset(70, 57);
-        this.body.setDragX(1100);
-        this.body.setGravityY(300);
-        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);

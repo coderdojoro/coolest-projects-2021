@@ -53,6 +53,8 @@ class Level2 extends Phaser.Scene {
 
     let heroX;
     let heroY;
+    let heroFinishX;
+    let heroFinishY;
 
     let objects = this.map.getObjectLayer('Objects').objects;
     for (let a = 0; a < objects.length; a++) {
@@ -60,6 +62,10 @@ class Level2 extends Phaser.Scene {
       if (object.name == 'StartHero') {
         heroX = object.x;
         heroY = object.y;
+      }
+      if (object.name == 'EndHero') {
+        heroFinishX = object.x;
+        heroFinishY = object.y;
       }
     }
 
@@ -83,11 +89,11 @@ class Level2 extends Phaser.Scene {
 
     let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
     this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.treesTiles]);
-    this.hero = new Knight(this, heroX, heroY);
+    this.hero = new Knight(this, heroX, heroY, heroFinishX, heroFinishY);
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
-    this.wolfGroup = this.physics.add.group();
-    this.beholderGroup = this.physics.add.group();
+    this.wolfGroup = this.physics.add.group({ allowGravity: false });
+    this.beholderGroup = this.physics.add.group({ allowGravity: false });
 
     let offX = 5;
     let offY = 8
@@ -172,7 +178,12 @@ class Level2 extends Phaser.Scene {
 
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
+  }
 
+  finish() {
+    this.music.stop();
+    this.scene.start("StartScreen");
+    this.scene.remove();
   }
 
 

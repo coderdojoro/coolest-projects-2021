@@ -117,8 +117,8 @@ class Level1 extends Phaser.Scene {
     }
 
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
-    this.entGroup = this.physics.add.group();
-    this.spiderGroup = this.physics.add.group();
+    this.entGroup = this.physics.add.group({ allowGravity: false });
+    this.spiderGroup = this.physics.add.group({ allowGravity: false });
 
     let offX = 5;
     let offY = 13;
