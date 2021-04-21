@@ -22,7 +22,7 @@ class Spider extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("spider-attack-sound", "assets/spider/attack.mp3");
         this.scene.load.audio("spider-death-sound", "assets/spider/death.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'spider-walk',
                 frames: this.scene.anims.generateFrameNumbers('spiderwalk-spritesheet', {}),
@@ -58,6 +58,9 @@ class Spider extends Phaser.GameObjects.Sprite {
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
+
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
 
             this.loaded = true;
             this.anims.play('spider-walk');

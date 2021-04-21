@@ -2,6 +2,8 @@
 // @ts-check
 
 import Phaser from 'phaser';
+import Level1 from './Level1';
+import Level2 from './Level2';
 
 class StartScreen extends Phaser.Scene {
 
@@ -41,6 +43,7 @@ class StartScreen extends Phaser.Scene {
     });
 
     lvl1.once(Phaser.Input.Events.POINTER_DOWN, function (pointer) {
+      this.scene.add("Level1", Level1);
       this.scene.start("Level1");
     }, this);
 
@@ -53,12 +56,11 @@ class StartScreen extends Phaser.Scene {
     });
 
     lvl2.once(Phaser.Input.Events.POINTER_DOWN, function (pointer) {
+      this.scene.add("Level2", Level2);
       this.scene.start("Level2");
     }, this);
 
   }
-
-
 }
 
 export default StartScreen;
