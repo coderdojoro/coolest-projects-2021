@@ -185,6 +185,8 @@ class Level2 extends Phaser.Scene {
     this.scene.start("StartScreen");
     this.scene.remove();
   }
+
+
 }
 
 export default Level2;
