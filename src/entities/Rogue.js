@@ -27,6 +27,14 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(30, 54);
+        this.body.setOffset(70, 57);
+        this.body.setDragX(1100);
+        this.body.setGravityY(300);
+        this.body.setAllowGravity(false);
+
         this.scene.load.image('hero', 'assets/rogue/rogue.png');
         this.scene.load.spritesheet('idle-spritesheet', 'assets/rogue/idle.png', { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-spritesheet', 'assets/rogue/walk.png', { frameWidth: 171, frameHeight: 128 });
@@ -47,7 +55,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("rogue-jump-sound", "assets/rogue/jump.mp3");
         this.scene.load.audio("rogue-slash-sound", "assets/rogue/slash.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'hero-idle',
                 frames: [
@@ -162,14 +170,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(30, 54);
-        this.body.setOffset(70, 57);
-        this.body.setDragX(1100);
-        this.body.setGravityY(300);
-        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -501,6 +501,38 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
         if (entity instanceof Ent || entity instanceof Spider) {
             entity.kill();
+        }
+    }
+
+    onBackgroundOverlap(hero, tile) {
+        if (tile.properties.tileType == 'checkpoint') {
+            let newX = tile.pixelX - this.body.offset.x - this.body.halfWidth;
+            if (this.initialX < tile.pixelX && newX - this.initialX > 32 * 3) {
+                let text = this.scene.add.text(tile.pixelX, -50, 'CHECK POINT');
+                text.setColor('#1900ff');
+                text.setFontSize(22);
+                text.setStroke('#ffffff', 4);
+                text.setFontFamily('Stick');
+                text.setFontStyle('bold');
+                text.setOrigin(0.5, 1);
+                let tweenConfig = {
+                    targets: text,
+                    y: tile.pixelY,
+                    duration: 5000,
+                    ease: 'Elastic',
+                    easeParams: [0.01, 0.8],
+                    yoyo: true,
+                    hold: 2500,
+                    repeat: 0,
+                    onComplete: () => {
+                        text.destroy();
+                    },
+                    onCompleteScope: this
+                };
+                this.scene.tweens.add(tweenConfig);
+                this.initialX = newX;
+                this.initialY = tile.pixelY + this.height - this.body.offset.y - this.body.height;
+            }
         }
     }
 

@@ -21,7 +21,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("beholder-attack-sound", "assets/beholder/attack.mp3");
         this.scene.load.audio("beholder-death-sound", "assets/beholder/death.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'beholder-walk',
                 frames: this.scene.anims.generateFrameNumbers('beholderwalk-spritesheet', {}),
@@ -57,6 +57,9 @@ class Beholder extends Phaser.GameObjects.Sprite {
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
+
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
 
             this.loaded = true;
             this.anims.play('beholder-walk');

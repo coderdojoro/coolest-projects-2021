@@ -21,7 +21,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("wolf-attack-sound", "assets/wolf/attack.mp3");
         this.scene.load.audio("wolf-death-sound", "assets/wolf/death.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'wolf-run',
                 frames: this.scene.anims.generateFrameNumbers('wolfrun-spritesheet', {}),
@@ -57,6 +57,9 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
+
+            this.body.updateFromGameObject();
+            this.body.setAllowGravity(true);
 
             this.loaded = true;
             this.anims.play('wolf-run');
