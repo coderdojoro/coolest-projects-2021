@@ -85,19 +85,19 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
 
         let frontX;
-            if (this.direction < 0) {
-                frontX = this.body.left_ = this.body.left - 22;
-            } else {
-                frontX = this.body.right;
-            }
-            let overlapWithHero = Phaser.Geom.Rectangle.Overlaps(
-                new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
-                new Phaser.Geom.Rectangle(frontX, this.body.top, 22, 22)
-            );
-            if (overlapWithHero && this.scene.hero.state != 'dead') {
-                this.attackHero();
-                return;
-            }
+        if (this.direction < 0) {
+            frontX = this.body.left_ = this.body.left - 22;
+        } else {
+            frontX = this.body.right;
+        }
+        let overlapWithHero = Phaser.Geom.Rectangle.Overlaps(
+            new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
+            new Phaser.Geom.Rectangle(frontX, this.body.top, 22, 22)
+        );
+        if (overlapWithHero && this.scene.hero.state != 'dead') {
+            this.attackHero();
+            return;
+        }
 
         if (this.direction < 0) {
             this.setFlipX(true);
