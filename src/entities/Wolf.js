@@ -50,7 +50,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 loop: false,
                 volume: 1
             });
-            this.attackSound = this.scene.sound.add('wolf-death-sound', {
+            this.deathSound = this.scene.sound.add('wolf-death-sound', {
                 loop: false,
                 volume: 1
             });
