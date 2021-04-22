@@ -18,11 +18,19 @@ class Knight extends Phaser.GameObjects.Sprite {
     lastFire = 0;
     lastSpecialFire = 0;
 
-    constructor(scene, x, y) {
+    constructor(scene, x, y, finishX, finishY) {
         super(scene, x, y, scene.make.renderTexture({ width: 171, height: 128 }).texture);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
+
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(31, 50);
+        this.body.setOffset(72, 59);
+        this.body.setDragX(1100);
+        this.body.setGravityY(700);
+        this.body.setAllowGravity(false);
 
         this.scene.load.image('hero', 'assets/knight/knight.png');
         this.scene.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
@@ -37,6 +45,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('climb-spritesheet', `assets/knight/climb.png`, { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 34, frameHeight: 34 });
         this.scene.load.audio("knight-attack-sound", "assets/knight/attack.mp3");
         this.scene.load.audio("knight-death-sound", "assets/knight/death.mp3");
@@ -44,7 +53,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.audio("knight-slash-sound", "assets/knight/slash.mp3");
         this.scene.load.audio("knight-ice-cracking-sound", "assets/knight/ice-cracking.mp3");
 
-        this.scene.load.on(Phaser.Loader.Events.COMPLETE, () => {
+        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
                 key: 'hero-idle',
                 frames: [
@@ -129,6 +138,12 @@ class Knight extends Phaser.GameObjects.Sprite {
                 frameRate: 30,
                 repeat: 0,
             });
+            this.scene.anims.create({
+                key: 'hero-climb',
+                frames: this.scene.anims.generateFrameNumbers('climb-spritesheet', {}),
+                frameRate: 6,
+                repeat: -1,
+            });
             this.attackSound = this.scene.sound.add("knight-attack-sound", {
                 loop: false,
                 volume: 1
@@ -155,6 +170,9 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.initialX = this.x;
             this.initialY = this.y;
 
+            this.finishX = finishX - (this.body.offset.x);
+            this.finishY = finishY + (this.height - this.body.offset.y - this.body.height);
+
             this.body.updateFromGameObject();
             this.body.setAllowGravity(true);
 
@@ -163,14 +181,6 @@ class Knight extends Phaser.GameObjects.Sprite {
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(31, 50);
-        this.body.setOffset(72, 59);
-        this.body.setDragX(1100);
-        this.body.setGravityY(700);
-        this.body.setAllowGravity(false);
 
         this.keyLeft = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyRight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -193,6 +203,10 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
 
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
+            return;
+        }
+
+        if (this.heroState == "dead") {
             return;
         }
 
@@ -221,19 +235,19 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (this.heroState != 'landing' && this.heroState != "dead" && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
+        if (this.heroState != 'landing' && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
             this.heroState = 'landing';
             this.fireState = 'none';
             this.animState = 'none';
             this.body.stop();
         }
 
-        if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
+        if (this.fireState != 'special' && this.heroState != 'landing' && this.keyLeft.isUp && this.keyRight.isUp && this.isOnFloor()) {
             this.body.setAccelerationX(0);
             this.heroState = 'idle';
         }
 
-        if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isDown && this.isOnFloor()) {
+        if (this.fireState != 'special' && this.heroState != 'landing' && this.keyLeft.isDown && this.isOnFloor()) {
             this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(-100);
@@ -244,7 +258,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.heroState = 'walk';
         }
 
-        if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyRight.isDown && this.isOnFloor()) {
+        if (this.fireState != 'special' && this.heroState != 'landing' && this.keyRight.isDown && this.isOnFloor()) {
             this.body.setMaxVelocity(200, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(100);
@@ -255,7 +269,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.heroState = "walk";
         }
 
-        if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyLeft.isDown && this.keyShift.isDown && this.isOnFloor()) {
+        if (this.fireState != 'special' && this.heroState != 'landing' && this.keyLeft.isDown && this.keyShift.isDown && this.isOnFloor()) {
             this.body.setMaxVelocity(400, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(-100);
@@ -266,7 +280,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.heroState = 'run';
         }
 
-        if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && this.keyRight.isDown && this.keyShift.isDown && this.isOnFloor()) {
+        if (this.fireState != 'special' && this.heroState != 'landing' && this.keyRight.isDown && this.keyShift.isDown && this.isOnFloor()) {
             this.body.setMaxVelocity(400, 600);
             if (this.onIce) {
                 this.body.setAccelerationX(100);
@@ -279,7 +293,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         let justDown = Phaser.Input.Keyboard.JustDown(this.keyJump);
 
-        if (this.fireState != 'special' && this.heroState != 'landing' && this.heroState != "dead" && justDown && this.heroState != 'jump' && this.isOnFloor()) {
+        if (this.fireState != 'special' && this.heroState != 'landing' && justDown && this.heroState != 'jump' && this.isOnFloor()) {
             this.body.setVelocityY(-400);
             justDown = false;
             this.heroState = 'jump';
@@ -289,7 +303,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (this.fireState != 'special' && this.heroState != "dead" && justDown && (this.heroState == 'jump' || this.heroState == 'fall')) {
+        if (this.fireState != 'special' && justDown && (this.heroState == 'jump' || this.heroState == 'fall')) {
             this.body.setVelocityY(-500);
             this.heroState = 'double-jump';
             if (!this.keyRight.isDown && !this.keyLeft.isDown) {
@@ -297,7 +311,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (this.heroState != "dead" && !this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall') {
+        if (!this.body.onFloor() && !(this.heroState == 'jump' || this.heroState == 'double-jump') && this.body.velocity.y > 0 && this.heroState != 'fall') {
             this.heroState = 'fall';
             this.body.setVelocityX(0);
         }
@@ -314,12 +328,12 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (this.fireState != 'fire' && this.heroState != 'landing' && this.fireState != 'special' && this.heroState != "dead" && this.keyFire.isDown && Date.now() - this.lastFire > 600) {
+        if (this.fireState != 'fire' && this.heroState != 'landing' && this.fireState != 'special' && this.keyFire.isDown && Date.now() - this.lastFire > 600) {
             this.fireState = 'fire';
             this.lastFire = Date.now();
         }
 
-        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFloor() && this.heroState != 'landing' && this.heroState != "dead" && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 5000) {
+        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFloor() && this.heroState != 'landing' && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 5000) {
             this.fireState = 'special';
             this.lastSpecialFire = Date.now();
         }
@@ -510,6 +524,63 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.initialX = newX;
                 this.initialY = tile.pixelY + this.height - this.body.offset.y - this.body.height;
             }
+        }
+        if (tile.properties.tileType == 'finish' && this.heroState != 'dead') {
+            this.body.stop();
+            this.anims.play('hero-fall');
+            this.heroState = 'dead';
+            const tweenConfig = {
+                targets: this,
+                x: this.finishX,
+                y: this.finishY,
+                scale: 0.4,
+                duration: 5000,
+                ease: 'Quad.easeOut',
+                repeat: 0,
+                onComplete: () => {
+                    this.setVisible(false);
+                    let screenCenterX = this.scene.cameras.main.worldView.x + this.scene.cameras.main.width / 2;
+                    let screenCenterY = this.scene.cameras.main.worldView.y + this.scene.cameras.main.height / 2;
+                    let text = this.scene.add.text(screenCenterX, screenCenterY - 100, 'Congratulations! Level finished!');
+                    text.setColor('#1900ff');
+                    text.setFontSize(77);
+                    text.setStroke('#ffffff', 4);
+                    text.setFontFamily('Stick');
+                    text.setFontStyle('bold');
+                    text.setOrigin(0.5);
+
+                    this.scene.time.delayedCall(2000, () => {
+                        let text2 = this.scene.add.text(screenCenterX, screenCenterY + 20, 'Press any key to continue...');
+                        text2.setColor('#5a017d');
+                        text2.setFontSize(32);
+                        text2.setStroke('#ffffff', 4);
+                        text2.setFontFamily('Stick');
+                        text2.setFontStyle('bold');
+                        text2.setOrigin(0.5);
+
+                        this.scene.input.keyboard.once(Phaser.Input.Keyboard.Events.ANY_KEY_DOWN, () => {
+                            this.scene.finish();
+                        });
+
+                        this.scene.input.once(Phaser.Input.Events.POINTER_DOWN, () => {
+                            this.scene.finish();
+                        });
+
+                    }, null, this);
+
+                },
+                onCompleteScope: this
+            }
+
+            this.scene.physics.world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, function worldStep() {
+                if (this.body.onFloor()) {
+                    this.scene.physics.world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, worldStep);
+                    this.body.setAllowGravity(false);
+                    this.anims.play('hero-climb');
+                    this.scene.tweens.add(tweenConfig);
+                }
+            }, this);
+
         }
     }
 
