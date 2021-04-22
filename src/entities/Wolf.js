@@ -6,9 +6,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
     loaded = false;
     wolfState = 'run';
 
-
-    wolfState = 'run';
-
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 78, height: 48 }).texture);
 
