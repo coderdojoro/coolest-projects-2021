@@ -40,14 +40,13 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
         this.scene.load.spritesheet('death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('landing-spritesheet', 'assets/knight/landing.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('attack-spritesheet', 'assets/knight/attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('special-attack-spritesheet', 'assets/knight/special-attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('walk-attack-spritesheet', 'assets/knight/walk-attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('run-attack-spritesheet', 'assets/knight/run-attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('climb-spritesheet', 'assets/knight/climb.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('earthattack-spritesheet', 'assets/knight/iceattack.png', { frameWidth: 34, frameHeight: 34 });
-
+        this.scene.load.spritesheet('landing-spritesheet', `assets/knight/landing.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('attack-spritesheet', `assets/knight/attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('special-attack-spritesheet', `assets/knight/special-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('walk-attack-spritesheet', `assets/knight/walk-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('run-attack-spritesheet', `assets/knight/run-attack.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('climb-spritesheet', `assets/knight/climb.png`, { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('earthattack-spritesheet', `assets/knight/iceattack.png`, { frameWidth: 34, frameHeight: 34 });
         this.scene.load.audio("knight-attack-sound", "assets/knight/attack.mp3");
         this.scene.load.audio("knight-death-sound", "assets/knight/death.mp3");
         this.scene.load.audio("knight-jump-sound", "assets/knight/jump.mp3");
@@ -58,7 +57,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.scene.anims.create({
                 key: 'hero-idle',
                 frames: [
-                    { frame: 0, key: 'hero', duration: 5000 },
+                    { frame: 0, key: 'hero', duration: 10000 },
                     ...this.scene.anims.generateFrameNumbers('idle-spritesheet', {})
                 ],
                 frameRate: 6,
@@ -329,7 +328,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             }
         }
 
-        if (this.fireState != 'fire' && this.heroState != 'landing' && this.fireState != 'special' && this.keyFire.isDown && Date.now() - this.lastFire > 800) {
+        if (this.fireState != 'fire' && this.heroState != 'landing' && this.fireState != 'special' && this.keyFire.isDown && Date.now() - this.lastFire > 600) {
             this.fireState = 'fire';
             this.lastFire = Date.now();
         }

@@ -15,21 +15,20 @@ class Level1 extends Phaser.Scene {
   preload() {
     this.load.tilemapTiledJSON('level1-tilemap', 'assets/level1-tilemap.json');
 
-    this.load.spritesheet('lvl1-ground-image', 'assets/tiles/level1-tiles.png', {
+    this.load.spritesheet('ground-image', 'assets/tiles/level1-tiles.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.spritesheet('lvl1-bush-image', 'assets/tiles/level1-bush.png', {
+    this.load.spritesheet('bush-image', 'assets/tiles/level1-bush.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.image('lvl1-rocks-image', 'assets/tiles/level1-rocks.png');
-    this.load.image('lvl1-hut-image', 'assets/tiles/level1-hut.png');
+    this.load.image('rocks-image', 'assets/tiles/level1-rocks.png');
 
-    this.load.image('lvl1-background4', 'assets/wallpapers/forest/background4.png');
-    this.load.image('lvl1-background3', 'assets/wallpapers/forest/background3.png');
-    this.load.image('lvl1-background2', 'assets/wallpapers/forest/background2.png');
-    this.load.image('lvl1-background1', 'assets/wallpapers/forest/background1.png');
+    this.load.image('background4', 'assets/wallpapers/forest/background4.png');
+    this.load.image('background3', 'assets/wallpapers/forest/background3.png');
+    this.load.image('background2', 'assets/wallpapers/forest/background2.png');
+    this.load.image('background1', 'assets/wallpapers/forest/background1.png');
 
     this.load.spritesheet('campfire', 'assets/tiles/campfire.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('flag', 'assets/tiles/flag.png', { frameWidth: 32, frameHeight: 64 });
@@ -62,26 +61,20 @@ class Level1 extends Phaser.Scene {
 
     let heroX;
     let heroY;
-    let heroFinishX;
-    let heroFinishY;
 
-    let objects = this.map.getObjectLayer('Objects').objects;
+    let objects = this.map.getObjectLayer('objects').objects;
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.name == 'StartHero') {
         heroX = object.x;
         heroY = object.y;
       }
-      if (object.name == 'EndHero') {
-        heroFinishX = object.x;
-        heroFinishY = object.y;
-      }
     }
 
-    this.background4 = this.map.addTilesetImage('wallpaper4', 'lvl1-background4');
-    this.background3 = this.map.addTilesetImage('wallpaper3', 'lvl1-background3');
-    this.background2 = this.map.addTilesetImage('wallpaper2', 'lvl1-background2');
-    this.background1 = this.map.addTilesetImage('wallpaper1', 'lvl1-background1');
+    this.background4 = this.map.addTilesetImage('wallpaper4', 'background4');
+    this.background3 = this.map.addTilesetImage('wallpaper3', 'background3');
+    this.background2 = this.map.addTilesetImage('wallpaper2', 'background2');
+    this.background1 = this.map.addTilesetImage('wallpaper1', 'background1');
 
     this.battlegroundLayer1 = this.map.createLayer('wallpaper1' /*layer name from json*/, this.background1);
     this.battlegroundLayer1.setScrollFactor(0.0, 1);
@@ -92,18 +85,17 @@ class Level1 extends Phaser.Scene {
     this.battlegroundLayer4 = this.map.createLayer('wallpaper4' /*layer name from json*/, this.background4);
     this.battlegroundLayer4.setScrollFactor(0.6, 1);
 
-    this.groundTiles = this.map.addTilesetImage('ground', 'lvl1-ground-image');
-    this.bushTiles = this.map.addTilesetImage('bush', 'lvl1-bush-image');
-    this.rocksTiles = this.map.addTilesetImage('rocks', 'lvl1-rocks-image');
-    this.hutTiles = this.map.addTilesetImage('hut', 'lvl1-hut-image');
+    this.groundTiles = this.map.addTilesetImage('ground', 'ground-image');
+    this.bushTiles = this.map.addTilesetImage('bush', 'bush-image');
+    this.rocksTiles = this.map.addTilesetImage('rocks', 'rocks-image');
 
-    let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles, this.hutTiles]);
+    let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
     this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, this.groundTiles);
 
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'torch') {
-        let torch = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
+        let torch = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         torch.setOrigin(0, 1);
         torch.anims.play("torch");
         torch.body.immovable = true;
@@ -112,11 +104,11 @@ class Level1 extends Phaser.Scene {
     }
 
     let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
-    this.hero = new Rogue(this, heroX, heroY, heroFinishX, heroFinishY, waterGroup);
+    this.hero = new Rogue(this, heroX, heroY, waterGroup);
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'water') {
-        let water = waterGroup.create(object.x, object.y, 'lvl1-ground-image', object.gid - this.groundTiles.firstgid);
+        let water = waterGroup.create(object.x, object.y, 'ground-image', object.gid - this.groundTiles.firstgid);
         water.setOrigin(0, 1);
         water.body.setSize(32, 10);
         water.body.setOffset(0, 22);
@@ -136,7 +128,7 @@ class Level1 extends Phaser.Scene {
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'spike') {
-        let spike = spikeGroup.create(object.x, object.y, 'lvl1-ground-image', object.gid - this.groundTiles.firstgid);
+        let spike = spikeGroup.create(object.x, object.y, 'ground-image', object.gid - this.groundTiles.firstgid);
         spike.setOrigin(0, 1);
         spike.setAngle(object.rotation);
 
@@ -157,14 +149,14 @@ class Level1 extends Phaser.Scene {
         }
       }
       if (object.type == 'campfire') {
-        let campfire = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
+        let campfire = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         campfire.setOrigin(0, 1);
         campfire.anims.play({ key: 'campfire', startFrame: Phaser.Math.Between(0, 5) });
         campfire.body.immovable = true;
         campfire.body.setAllowGravity(false);
       }
       if (object.type == 'flag') {
-        let flag = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
+        let flag = this.physics.add.sprite(object.x, object.y, 'bush-image', object.gid - this.bushTiles.firstgid);
         flag.setOrigin(0, 1);
         flag.anims.play("flag");
         flag.body.immovable = true;
@@ -211,11 +203,7 @@ class Level1 extends Phaser.Scene {
 
   }
 
-  finish() {
-    this.music.stop();
-    this.scene.start("StartScreen");
-    this.scene.remove();
-  }
+
 }
 
 export default Level1;
