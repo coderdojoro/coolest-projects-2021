@@ -233,7 +233,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
         let x = this.direction == 1 ? this.body.right - 36 : this.body.left - 18;
         this.dizzySprite = this.scene.physics.add.sprite(x, this.y - 30, null);
         this.dizzySprite.setOrigin(0, 1);
-        this.dizzySprite.anims.play("dizzy");
+        this.dizzySprite.anims.play('dizzy');
         this.dizzySprite.body.immovable = true;
         this.dizzySprite.body.setAllowGravity(false);
     }

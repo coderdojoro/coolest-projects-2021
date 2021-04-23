@@ -35,7 +35,7 @@ class Level1 extends Phaser.Scene {
     this.load.spritesheet('flag', 'assets/tiles/flag.png', { frameWidth: 32, frameHeight: 64 });
     this.load.spritesheet('torch', 'assets/tiles/torch.png', { frameWidth: 32, frameHeight: 32 });
 
-    this.load.audio("music-lvl1", "assets/music-lvl1.mp3");
+    this.load.audio('music-lvl1', 'assets/music-lvl1.mp3');
   }
 
   create() {
@@ -105,7 +105,7 @@ class Level1 extends Phaser.Scene {
       if (object.type == 'torch') {
         let torch = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
         torch.setOrigin(0, 1);
-        torch.anims.play("torch");
+        torch.anims.play('torch');
         torch.body.immovable = true;
         torch.body.setAllowGravity(false);
       }
@@ -153,7 +153,7 @@ class Level1 extends Phaser.Scene {
           spike.body.setSize(height, width);
           spike.body.setOffset(- 32 + offY, 32 - offX - width);
         } else {
-          console.error("spike at incorrect angle: " + object.rotation);
+          console.error('spike at incorrect angle: ' + object.rotation);
         }
       }
       if (object.type == 'campfire') {
@@ -166,7 +166,7 @@ class Level1 extends Phaser.Scene {
       if (object.type == 'flag') {
         let flag = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
         flag.setOrigin(0, 1);
-        flag.anims.play("flag");
+        flag.anims.play('flag');
         flag.body.immovable = true;
         flag.body.setAllowGravity(false);
       }
@@ -200,7 +200,7 @@ class Level1 extends Phaser.Scene {
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
 
-    this.music = this.sound.add("music-lvl1", {
+    this.music = this.sound.add('music-lvl1', {
       loop: true,
       volume: 0.1
     });
@@ -208,12 +208,11 @@ class Level1 extends Phaser.Scene {
 
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
-
   }
 
   finish() {
     this.music.stop();
-    this.scene.start("StartScreen");
+    this.scene.start('StartScreen');
     this.scene.remove();
   }
 }

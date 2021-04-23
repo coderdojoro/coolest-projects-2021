@@ -18,8 +18,8 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('beholderattack-spritesheet', 'assets/beholder/attack.png', { frameWidth: 154, frameHeight: 101 });
         this.scene.load.spritesheet('beholderdeath-spritesheet', 'assets/beholder/death.png', { frameWidth: 154, frameHeight: 101 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
-        this.scene.load.audio("beholder-attack-sound", "assets/beholder/attack.mp3");
-        this.scene.load.audio("beholder-death-sound", "assets/beholder/death.mp3");
+        this.scene.load.audio('beholder-attack-sound', 'assets/beholder/attack.mp3');
+        this.scene.load.audio('beholder-death-sound', 'assets/beholder/death.mp3');
 
         this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -46,11 +46,11 @@ class Beholder extends Phaser.GameObjects.Sprite {
                 frameRate: 8,
                 repeat: -1,
             });
-            this.attackSound = this.scene.sound.add("beholder-attack-sound", {
+            this.attackSound = this.scene.sound.add('beholder-attack-sound', {
                 loop: false,
                 volume: 1
             });
-            this.deathSound = this.scene.sound.add("beholder-death-sound", {
+            this.deathSound = this.scene.sound.add('beholder-death-sound', {
                 loop: false,
                 volume: 1
             });
@@ -223,7 +223,7 @@ class Beholder extends Phaser.GameObjects.Sprite {
         this.setTexture('beholder');
         this.dizzySprite = this.scene.physics.add.sprite(this.body.left - 15, this.body.top, null);
         this.dizzySprite.setOrigin(0, 1);
-        this.dizzySprite.anims.play("dizzy");
+        this.dizzySprite.anims.play('dizzy');
         this.dizzySprite.body.immovable = true;
         this.dizzySprite.body.setAllowGravity(false);
     }
