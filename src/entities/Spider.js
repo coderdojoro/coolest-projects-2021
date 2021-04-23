@@ -14,6 +14,11 @@ class Spider extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(49, 38);
+        this.body.setOffset(40, 45);
+
         this.scene.load.image('spider', 'assets/spider/spider.png');
         this.scene.load.spritesheet('spiderwalk-spritesheet', 'assets/spider/walk.png', { frameWidth: 128, frameHeight: 128 });
         this.scene.load.spritesheet('spiderattack-spritesheet', 'assets/spider/attack.png', { frameWidth: 128, frameHeight: 128 });
@@ -56,22 +61,21 @@ class Spider extends Phaser.GameObjects.Sprite {
                 volume: 1
             });
 
+            this.body.updateFromGameObject();
+
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
 
             this.body.updateFromGameObject();
-            this.body.setAllowGravity(true);
+            setTimeout(() => {
+                this.body.setAllowGravity(true);
+            }, 100);
 
             this.loaded = true;
             this.anims.play('spider-walk');
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(49, 38);
-        this.body.setOffset(40, 45);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);

@@ -173,13 +173,13 @@ class Level1 extends Phaser.Scene {
       if (object.type == 'ent') {
         let ent = new Ent(this, object.x, object.y);
         this.physics.add.collider(ent, this.groundLayer, ent.groundColided, null, ent);
-        ent.setName('ent-' + object.gid);
+        ent.setName('ent-' + object.id);
         this.entGroup.add(ent, false);
       }
       if (object.type == 'spider') {
         let spider = new Spider(this, object.x, object.y);
         this.physics.add.collider(spider, this.groundLayer, spider.groundColided, null, spider);
-        spider.setName('ent-' + object.gid);
+        spider.setName('ent-' + object.id);
         this.spiderGroup.add(spider, false);
       }
     }
