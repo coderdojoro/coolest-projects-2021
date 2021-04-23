@@ -13,7 +13,7 @@ class Level2 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.tilemapTiledJSON('level1-tilemap', 'assets/level2-tilemap.json');
+    this.load.tilemapTiledJSON('level2-tilemap', 'assets/level2-tilemap.json');
 
     this.load.image('ground-image', 'assets/tiles/level2-tiles.png');
     this.load.spritesheet('bush-image', 'assets/tiles/level2-bush.png', {
@@ -49,7 +49,7 @@ class Level2 extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.map = this.make.tilemap({ key: 'level1-tilemap' });
+    this.map = this.make.tilemap({ key: 'level2-tilemap' });
 
     let heroX;
     let heroY;
