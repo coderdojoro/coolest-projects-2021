@@ -14243,18 +14243,6 @@
                  "y":703.333333333333
                 }, 
                 {
-                 "height":0,
-                 "id":1054,
-                 "name":"StartHero",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":18478.6666666667,
-                 "y":373.333333333333
-                }, 
-                {
                  "gid":407,
                  "height":32,
                  "id":1059,
@@ -14331,6 +14319,18 @@
                  "width":0,
                  "x":19147,
                  "y":729
+                }, 
+                {
+                 "height":0,
+                 "id":1065,
+                 "name":"StartHero",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":3488,
+                 "y":928
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -14339,7 +14339,7 @@
          "y":0
         }],
  "nextlayerid":9,
- "nextobjectid":1065,
+ "nextobjectid":1066,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
