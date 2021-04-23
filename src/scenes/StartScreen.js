@@ -24,7 +24,7 @@ class StartScreen extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor("#3E424B");
+    this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor('#3E424B');
     this.add.image(640, 100, 'game-title');
     this.add.image(1030, 380, 'instructions');
     this.add.image(640, 680, 'createdby');
@@ -43,8 +43,8 @@ class StartScreen extends Phaser.Scene {
     });
 
     lvl1.once(Phaser.Input.Events.POINTER_DOWN, function (pointer) {
-      this.scene.add("Level1", Level1);
-      this.scene.start("Level1");
+      this.scene.add('Level1', Level1);
+      this.scene.start('Level1');
     }, this);
 
     lvl2.on(Phaser.Input.Events.POINTER_OVER, function (pointer) {
@@ -56,8 +56,8 @@ class StartScreen extends Phaser.Scene {
     });
 
     lvl2.once(Phaser.Input.Events.POINTER_DOWN, function (pointer) {
-      this.scene.add("Level2", Level2);
-      this.scene.start("Level2");
+      this.scene.add('Level2', Level2);
+      this.scene.start('Level2');
     }, this);
 
   }

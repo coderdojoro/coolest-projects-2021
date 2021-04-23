@@ -19,8 +19,8 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.scene.load.spritesheet('entattack-spritesheet', 'assets/ent/attack.png', { frameWidth: 240, frameHeight: 189 });
         this.scene.load.spritesheet('entdeath-spritesheet', 'assets/ent/death.png', { frameWidth: 240, frameHeight: 189 });
         this.scene.load.spritesheet('dizzy-spritesheet', 'assets/dizzy.png', { frameWidth: 70, frameHeight: 25 });
-        this.scene.load.audio("ent-attack-sound", "assets/ent/attack.mp3");
-        this.scene.load.audio("ent-death-sound", "assets/ent/death.mp3");
+        this.scene.load.audio('ent-attack-sound', 'assets/ent/attack.mp3');
+        this.scene.load.audio('ent-death-sound', 'assets/ent/death.mp3');
 
         this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
@@ -47,11 +47,11 @@ class Ent extends Phaser.GameObjects.Sprite {
                 frameRate: 8,
                 repeat: -1,
             });
-            this.attackSound = this.scene.sound.add("ent-attack-sound", {
+            this.attackSound = this.scene.sound.add('ent-attack-sound', {
                 loop: false,
                 volume: 1
             });
-            this.deathSound = this.scene.sound.add("ent-death-sound", {
+            this.deathSound = this.scene.sound.add('ent-death-sound', {
                 loop: false,
                 volume: 1
             });
@@ -224,7 +224,7 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.setTexture('ent');
         this.dizzySprite = this.scene.physics.add.sprite(this.body.left - 15, this.body.top, null);
         this.dizzySprite.setOrigin(0, 1);
-        this.dizzySprite.anims.play("dizzy");
+        this.dizzySprite.anims.play('dizzy');
         this.dizzySprite.body.immovable = true;
         this.dizzySprite.body.setAllowGravity(false);
     }

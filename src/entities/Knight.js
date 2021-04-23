@@ -11,7 +11,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
     heroState = 'idle';
     animState;
-    fireState = "none";
+    fireState = 'none';
 
     loaded = false;
 
@@ -32,136 +32,136 @@ class Knight extends Phaser.GameObjects.Sprite {
         this.body.setGravityY(700);
         this.body.setAllowGravity(false);
 
-        this.scene.load.image('hero', 'assets/knight/knight.png');
-        this.scene.load.spritesheet('idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('run-spritesheet', 'assets/knight/run.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('jump-spritesheet', 'assets/knight/jump.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('landing-spritesheet', 'assets/knight/landing.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('attack-spritesheet', 'assets/knight/attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('special-attack-spritesheet', 'assets/knight/special-attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('walk-attack-spritesheet', 'assets/knight/walk-attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('run-attack-spritesheet', 'assets/knight/run-attack.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('climb-spritesheet', 'assets/knight/climb.png', { frameWidth: 171, frameHeight: 128 });
-        this.scene.load.spritesheet('earthattack-spritesheet', 'assets/knight/iceattack.png', { frameWidth: 34, frameHeight: 34 });
+        this.scene.load.image('knight', 'assets/knight/knight.png');
+        this.scene.load.spritesheet('knight-idle-spritesheet', 'assets/knight/idle.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-walk-spritesheet', 'assets/knight/walk.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-run-spritesheet', 'assets/knight/run.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-jump-spritesheet', 'assets/knight/jump.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-double-jump-spritesheet', 'assets/knight/double-jump.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-fall-spritesheet', 'assets/knight/fall.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-death-spritesheet', 'assets/knight/death.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-landing-spritesheet', 'assets/knight/landing.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-attack-spritesheet', 'assets/knight/attack.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-special-attack-spritesheet', 'assets/knight/special-attack.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-walk-attack-spritesheet', 'assets/knight/walk-attack.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-run-attack-spritesheet', 'assets/knight/run-attack.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-climb-spritesheet', 'assets/knight/climb.png', { frameWidth: 171, frameHeight: 128 });
+        this.scene.load.spritesheet('knight-earthattack-spritesheet', 'assets/knight/iceattack.png', { frameWidth: 34, frameHeight: 34 });
 
-        this.scene.load.audio("knight-attack-sound", "assets/knight/attack.mp3");
-        this.scene.load.audio("knight-death-sound", "assets/knight/death.mp3");
-        this.scene.load.audio("knight-jump-sound", "assets/knight/jump.mp3");
-        this.scene.load.audio("knight-slash-sound", "assets/knight/slash.mp3");
-        this.scene.load.audio("knight-ice-cracking-sound", "assets/knight/ice-cracking.mp3");
+        this.scene.load.audio('knight-attack-sound', 'assets/knight/attack.mp3');
+        this.scene.load.audio('knight-death-sound', 'assets/knight/death.mp3');
+        this.scene.load.audio('knight-jump-sound', 'assets/knight/jump.mp3');
+        this.scene.load.audio('knight-slash-sound', 'assets/knight/slash.mp3');
+        this.scene.load.audio('knight-ice-cracking-sound', 'assets/knight/ice-cracking.mp3');
 
         this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             this.scene.anims.create({
-                key: 'hero-idle',
+                key: 'knight-idle',
                 frames: [
-                    { frame: 0, key: 'hero', duration: 5000 },
-                    ...this.scene.anims.generateFrameNumbers('idle-spritesheet', {})
+                    { frame: 0, key: 'knight', duration: 5000 },
+                    ...this.scene.anims.generateFrameNumbers('knight-idle-spritesheet', {})
                 ],
                 frameRate: 6,
                 repeat: -1
             });
 
             this.scene.anims.create({
-                key: 'hero-walk',
-                frames: this.scene.anims.generateFrameNumbers('walk-spritesheet', {}),
+                key: 'knight-walk',
+                frames: this.scene.anims.generateFrameNumbers('knight-walk-spritesheet', {}),
                 frameRate: 6,
                 repeat: -1
             });
 
             this.scene.anims.create({
-                key: 'hero-run',
-                frames: this.scene.anims.generateFrameNumbers('run-spritesheet', {}),
+                key: 'knight-run',
+                frames: this.scene.anims.generateFrameNumbers('knight-run-spritesheet', {}),
                 frameRate: 6,
                 repeat: -1,
             });
 
             this.scene.anims.create({
-                key: 'hero-jump',
-                frames: this.scene.anims.generateFrameNumbers('jump-spritesheet', {}),
+                key: 'knight-jump',
+                frames: this.scene.anims.generateFrameNumbers('knight-jump-spritesheet', {}),
                 frameRate: 6,
                 repeat: 0
             });
             this.scene.anims.create({
-                key: 'hero-double-jump',
-                frames: this.scene.anims.generateFrameNumbers('double-jump-spritesheet', {}),
+                key: 'knight-double-jump',
+                frames: this.scene.anims.generateFrameNumbers('knight-double-jump-spritesheet', {}),
                 frameRate: 20,
                 repeat: 0
             });
             this.scene.anims.create({
-                key: 'hero-fall',
-                frames: this.scene.anims.generateFrameNumbers('fall-spritesheet', {}),
+                key: 'knight-fall',
+                frames: this.scene.anims.generateFrameNumbers('knight-fall-spritesheet', {}),
                 frameRate: 10,//5
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-death',
-                frames: this.scene.anims.generateFrameNumbers('death-spritesheet', {}),
+                key: 'knight-death',
+                frames: this.scene.anims.generateFrameNumbers('knight-death-spritesheet', {}),
                 frameRate: 10,//5
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-landing',
-                frames: this.scene.anims.generateFrameNumbers('landing-spritesheet', {}),
+                key: 'knight-landing',
+                frames: this.scene.anims.generateFrameNumbers('knight-landing-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-attack',
-                frames: this.scene.anims.generateFrameNumbers('attack-spritesheet', {}),
+                key: 'knight-attack',
+                frames: this.scene.anims.generateFrameNumbers('knight-attack-spritesheet', {}),
                 frameRate: 25,//7
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-special-attack',
-                frames: this.scene.anims.generateFrameNumbers('special-attack-spritesheet', {}),
+                key: 'knight-special-attack',
+                frames: this.scene.anims.generateFrameNumbers('knight-special-attack-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-walk-attack',
-                frames: this.scene.anims.generateFrameNumbers('walk-attack-spritesheet', {}),
+                key: 'knight-walk-attack',
+                frames: this.scene.anims.generateFrameNumbers('knight-walk-attack-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-run-attack',
-                frames: this.scene.anims.generateFrameNumbers('run-attack-spritesheet', {}),
+                key: 'knight-run-attack',
+                frames: this.scene.anims.generateFrameNumbers('knight-run-attack-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'earthattack',
-                frames: this.scene.anims.generateFrameNumbers('earthattack-spritesheet', {}),
+                key: 'knight-earthattack',
+                frames: this.scene.anims.generateFrameNumbers('knight-earthattack-spritesheet', {}),
                 frameRate: 30,
                 repeat: 0,
             });
             this.scene.anims.create({
-                key: 'hero-climb',
-                frames: this.scene.anims.generateFrameNumbers('climb-spritesheet', {}),
+                key: 'knight-climb',
+                frames: this.scene.anims.generateFrameNumbers('knight-climb-spritesheet', {}),
                 frameRate: 6,
                 repeat: -1,
             });
-            this.attackSound = this.scene.sound.add("knight-attack-sound", {
+            this.attackSound = this.scene.sound.add('knight-attack-sound', {
                 loop: false,
                 volume: 1
             });
-            this.dathSound = this.scene.sound.add("knight-death-sound", {
+            this.dathSound = this.scene.sound.add('knight-death-sound', {
                 loop: false,
                 volume: 1
             });
-            this.jumpSound = this.scene.sound.add("knight-jump-sound", {
+            this.jumpSound = this.scene.sound.add('knight-jump-sound', {
                 loop: false,
                 volume: 1
             });
-            this.slashSound = this.scene.sound.add("knight-slash-sound", {
+            this.slashSound = this.scene.sound.add('knight-slash-sound', {
                 loop: false,
                 volume: 1
             });
-            this.iceCrackingSound = this.scene.sound.add("knight-ice-cracking-sound", {
+            this.iceCrackingSound = this.scene.sound.add('knight-ice-cracking-sound', {
                 loop: false,
                 volume: 1
             });
@@ -207,7 +207,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        if (this.heroState == "dead") {
+        if (this.heroState == 'dead') {
             return;
         }
 
@@ -267,7 +267,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.body.setAccelerationX(500);
             }
             this.setFlipX(false);
-            this.heroState = "walk";
+            this.heroState = 'walk';
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.keyLeft.isDown && this.keyShift.isDown && this.isOnFloor()) {
@@ -339,65 +339,65 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.lastSpecialFire = Date.now();
         }
 
-        if (this.heroState == "idle" && this.animState != 'idle' && this.fireState == 'none') {
-            this.anims.play('hero-idle');
+        if (this.heroState == 'idle' && this.animState != 'idle' && this.fireState == 'none') {
+            this.anims.play('knight-idle');
             this.animState = 'idle';
 
         }
 
-        if (this.heroState == "walk" && this.fireState == 'none' && this.animState != "walk") {
-            this.anims.play('hero-walk');
-            this.animState = "walk";
+        if (this.heroState == 'walk' && this.fireState == 'none' && this.animState != 'walk') {
+            this.anims.play('knight-walk');
+            this.animState = 'walk';
         }
 
-        if (this.heroState == "walk" && this.fireState == 'fire' && this.animState != "walk-attack") {
-            this.anims.play("hero-walk-attack");
-            this.animState = "walk-attack";
+        if (this.heroState == 'walk' && this.fireState == 'fire' && this.animState != 'walk-attack') {
+            this.anims.play('knight-walk-attack');
+            this.animState = 'walk-attack';
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (!this.keyFire.isDown) {
                     this.fireState = 'none';
                 } else {
-                    this.animState = "enter-loop";
+                    this.animState = 'enter-loop';
                 }
             }, this);
         }
 
         if (this.heroState == 'run' && this.fireState == 'none' && this.animState != 'run') {
             this.animState = 'run';
-            this.anims.play('hero-run');
+            this.anims.play('knight-run');
         }
 
         if (this.heroState == 'run' && this.fireState == 'fire' && this.animState != 'run-attack') {
             this.animState = 'run-attack';
-            this.anims.play('hero-run-attack');
+            this.anims.play('knight-run-attack');
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (!this.keyFire.isDown) {
                     this.fireState = 'none';
                 } else {
-                    this.animState = "enter-loop";
+                    this.animState = 'enter-loop';
                 }
             }, this);
         }
 
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
-            this.anims.play('hero-jump');
+            this.anims.play('knight-jump');
             this.animState = 'jump';
             this.jumpSound.play();
         }
 
         if (this.heroState == 'double-jump' && this.animState != 'double-jump' && this.fireState == 'none') {
-            this.anims.play('hero-double-jump');
+            this.anims.play('knight-double-jump');
             this.animState = 'double-jump';
             this.jumpSound.play();
         }
 
         if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
             this.animState = 'fall';
-            this.anims.play('hero-fall');
+            this.anims.play('knight-fall');
         }
         if (this.heroState == 'landing' && this.animState != 'landing') {
             this.animState = 'landing';
-            this.anims.play('hero-landing');
+            this.anims.play('knight-landing');
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (this.heroState != 'dead') {
                     this.heroState = 'idle';
@@ -406,7 +406,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
-            this.anims.play('hero-attack');
+            this.anims.play('knight-attack');
             this.attackSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
@@ -416,7 +416,7 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         if (this.fireState == 'special' && this.animState != 'special-fire') {
             this.animState = 'special-fire';
-            this.anims.play('hero-special-attack');
+            this.anims.play('knight-special-attack');
             this.slashSound.play();
             this.body.stop();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -434,7 +434,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                     if (tileUnderRight && !tileOverRight) {
                         let slash = slashGroup.create(tileXRight - 1, this.body.bottom + 1, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
                         slash.setOrigin(0, 1);
-                        slash.anims.play({ key: 'earthattack', startFrame: 20 - a * 2 });
+                        slash.anims.play({ key: 'knight-earthattack', startFrame: 20 - a * 2 });
                         lastSlash = slash;
                     }
                     let tileXLeft = xLeft - 32 * a;
@@ -443,7 +443,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                     if (tileUnderLeft && !tileOverLeft) {
                         let slash = slashGroup.create(tileXLeft - 1, this.body.bottom + 1, this.scene.make.renderTexture({ width: 32, height: 32 }).texture);
                         slash.setOrigin(0, 1);
-                        slash.anims.play({ key: 'earthattack', startFrame: 20 - a * 2 });
+                        slash.anims.play({ key: 'knight-earthattack', startFrame: 20 - a * 2 });
                         lastSlash = slash;
                     }
                 }
@@ -473,7 +473,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.lastFire = Date.now();
         }
 
-        // console.log('heroState:' + this.heroState + ' animsState:' + this.animState + " fireState:" + this.fireState);
+        // console.log('heroState:' + this.heroState + ' animsState:' + this.animState + ' fireState:' + this.fireState);
 
     }
 
@@ -528,7 +528,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         }
         if (tile.properties.tileType == 'finish' && this.heroState != 'dead') {
             this.body.stop();
-            this.anims.play('hero-fall');
+            this.anims.play('knight-fall');
             this.heroState = 'dead';
             const tweenConfig = {
                 targets: this,
@@ -577,7 +577,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                 if (this.body.onFloor()) {
                     this.scene.physics.world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, worldStep);
                     this.body.setAllowGravity(false);
-                    this.anims.play('hero-climb');
+                    this.anims.play('knight-climb');
                     this.scene.tweens.add(tweenConfig);
                 }
             }, this);
@@ -586,11 +586,11 @@ class Knight extends Phaser.GameObjects.Sprite {
     }
 
     kill() {
-        if (this.heroState != "dead") {
-            this.animState = "dead";
-            this.heroState = "dead";
+        if (this.heroState != 'dead') {
+            this.animState = 'dead';
+            this.heroState = 'dead';
             this.fireState = 'none';
-            this.anims.play('hero-death');
+            this.anims.play('knight-death');
             this.dathSound.play();
             this.body.stop();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -601,7 +601,6 @@ class Knight extends Phaser.GameObjects.Sprite {
             }, this);
         }
     }
-
 }
 
 export default Knight;
