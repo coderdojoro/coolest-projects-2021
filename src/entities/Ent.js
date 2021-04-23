@@ -14,6 +14,11 @@ class Ent extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(31, 95);
+        this.body.setOffset(107, 80);
+
         this.scene.load.image('ent', 'assets/ent/ent.png');
         this.scene.load.spritesheet('entwalk-spritesheet', 'assets/ent/walk.png', { frameWidth: 240, frameHeight: 189 });
         this.scene.load.spritesheet('entattack-spritesheet', 'assets/ent/attack.png', { frameWidth: 240, frameHeight: 189 });
@@ -56,22 +61,21 @@ class Ent extends Phaser.GameObjects.Sprite {
                 volume: 1
             });
 
+            this.body.updateFromGameObject();
+
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
 
             this.body.updateFromGameObject();
-            this.body.setAllowGravity(true);
+            setTimeout(() => {
+                this.body.setAllowGravity(true);
+            }, 100);
 
             this.loaded = true;
             this.anims.play('ent-walk');
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(31, 95);
-        this.body.setOffset(107, 80);
 
         this.body.onWorldBounds = true;
         this.body.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.worldColided, this);

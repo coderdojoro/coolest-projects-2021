@@ -143,13 +143,13 @@ class Level2 extends Phaser.Scene {
       if (object.type == 'wolf') {
         let wolf = new Wolf(this, object.x, object.y);
         this.physics.add.collider(wolf, this.groundLayer, wolf.groundColided, null, wolf);
-        wolf.setName('wolf-' + object.gid);
+        wolf.setName('wolf-' + object.id);
         this.wolfGroup.add(wolf, false);
       }
       if (object.type == 'beholder') {
         let beholder = new Beholder(this, object.x, object.y);
         this.physics.add.collider(beholder, this.groundLayer, beholder.groundColided, null, beholder);
-        beholder.setName('beholder-' + object.gid);
+        beholder.setName('beholder-' + object.id);
         this.beholderGroup.add(beholder, false);
       }
     }

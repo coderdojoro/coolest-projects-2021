@@ -166,6 +166,8 @@ class Knight extends Phaser.GameObjects.Sprite {
                 volume: 1
             });
 
+            this.body.updateFromGameObject();
+
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
             this.initialX = this.x;
