@@ -317,7 +317,7 @@ class Rogue extends Phaser.GameObjects.Sprite {
             } else {
                 this.body.setMaxVelocity(800, 1200);
                 this.body.setAccelerationX(500);
-            }   
+            }
             this.setFlipX(false);
             this.heroState = 'run';
         }
