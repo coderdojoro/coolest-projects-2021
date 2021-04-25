@@ -17,22 +17,27 @@ class StartScreen extends Phaser.Scene {
     this.load.image('level1-glow', 'assets/start-screen/level1-glow.png');
     this.load.image('level2', 'assets/start-screen/level2.png');
     this.load.image('level2-glow', 'assets/start-screen/level2-glow.png');
-    this.load.image('createdby', 'assets/start-screen/createdby.png');
+    this.load.image('createdby', 'assets/start-screen/createdby-small.png');
     this.load.image('instructions', 'assets/start-screen/instructions.png');
-
-
+    this.load.image('logo-coolest-projects', 'assets/start-screen/logo-coolest-projects.png');
   }
 
   create() {
     this.cameras.main.backgroundColor = Phaser.Display.Color.HexStringToColor('#3E424B');
-    this.add.image(640, 100, 'game-title');
-    this.add.image(1030, 380, 'instructions');
+
+    let rectangle = this.add.rectangle(880, 100, 390, 500, 0x464a53);
+    rectangle.setOrigin(0, 0);
+
+    this.add.image(620, 140, 'game-title');
+    this.add.image(1075, 350, 'instructions');
     this.add.image(640, 680, 'createdby');
+    this.add.image(140, 150, 'logo-coolest-projects');
+
     let text = this.add.text(-500, -500, 'Preload checkpoint font');
     text.setFontFamily('Stick');
 
-    let lvl1 = this.add.sprite(380, 320, 'level1').setInteractive();
-    let lvl2 = this.add.sprite(380, 400, 'level2').setInteractive();
+    let lvl1 = this.add.sprite(420, 390, 'level1').setInteractive();
+    let lvl2 = this.add.sprite(420, 470, 'level2').setInteractive();
 
     lvl1.on(Phaser.Input.Events.POINTER_OVER, function (pointer) {
       lvl1.setTexture('level1-glow');
