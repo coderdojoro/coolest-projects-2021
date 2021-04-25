@@ -176,37 +176,6 @@ class Level1 extends Phaser.Scene {
       }
     }
 
-    let hero = new Rogue(this, heroX, heroY, waterGroup);
-
-    for (let a = 0; a < objects.length; a++) {
-      let object = objects[a];
-      if (object.type == 'water') {
-        let water;
-        if (object.gid == 272) {
-          // water = this.physics.add.staticSprite(object.x, object.y, 'ground-image', 7);
-          water = waterGroup.create(object.x, object.y, 'ground-image', 7);
-        }
-        if (object.gid == 282) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 17);
-        }
-        if (object.gid == 300) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 35);
-        }
-        if (object.gid == 326) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 61);
-        }
-        if (object.gid == 344) {
-          water = waterGroup.create(object.x, object.y, 'ground-image', 79);
-        }
-
-        water.setOrigin(0, 1);
-        water.body.setSize(32, 10);
-        water.body.setOffset(0, 22);
-        this.physics.add.collider(hero, waterGroup);
-
-      }
-    }
-
     this.map.createLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
     this.physics.add.overlap(this.hero, backgroundLayer, this.hero.onBackgroundOverlap, null, this.hero);
