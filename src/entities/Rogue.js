@@ -510,7 +510,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
         }
 
         //console.log('heroState:' + this.heroState + ' animsState:' + this.animState + ' fireState:' + this.fireState);
-
     }
 
     entitySlashOverlap(entity, slash) {
