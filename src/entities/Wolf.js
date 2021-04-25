@@ -69,7 +69,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 this.body.setAllowGravity(true);
             }, 100);
 
-
             this.loaded = true;
             this.anims.play('wolf-run');
         }, this);
