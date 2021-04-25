@@ -231,7 +231,6 @@ class Level1 extends Phaser.Scene {
 
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
-
   }
 
   finish() {
@@ -239,8 +238,6 @@ class Level1 extends Phaser.Scene {
     this.scene.start('StartScreen');
     this.scene.remove();
   }
-
-
 }
 
 export default Level1;
