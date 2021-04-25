@@ -92,6 +92,30 @@ class Level1 extends Phaser.Scene {
     let backgroundLayer = this.map.createLayer('background' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles, this.hutTiles]);
     this.groundLayer = this.map.createLayer('ground' /*layer name from json*/, this.groundTiles);
 
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.type == 'torch') {
+        let torch = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
+        torch.setOrigin(0, 1);
+        torch.anims.play('torch');
+        torch.body.immovable = true;
+        torch.body.setAllowGravity(false);
+      }
+    }
+
+    let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
+    this.hero = new Rogue(this, heroX, heroY, heroFinishX, heroFinishY, waterGroup);
+    for (let a = 0; a < objects.length; a++) {
+      let object = objects[a];
+      if (object.type == 'water') {
+        let water = waterGroup.create(object.x, object.y, 'lvl1-ground-image', object.gid - this.groundTiles.firstgid);
+        water.setOrigin(0, 1);
+        water.body.setSize(32, 10);
+        water.body.setOffset(0, 22);
+        this.physics.add.collider(this.hero, waterGroup);
+      }
+    }
+
     let spikeGroup = this.physics.add.group({ immovable: true, allowGravity: false });
     this.entGroup = this.physics.add.group({ allowGravity: false });
     this.spiderGroup = this.physics.add.group({ allowGravity: false });
@@ -124,9 +148,34 @@ class Level1 extends Phaser.Scene {
           console.error('spike at incorrect angle: ' + object.rotation);
         }
       }
+      if (object.type == 'campfire') {
+        let campfire = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
+        campfire.setOrigin(0, 1);
+        campfire.anims.play({ key: 'campfire', startFrame: Phaser.Math.Between(0, 5) });
+        campfire.body.immovable = true;
+        campfire.body.setAllowGravity(false);
+      }
+      if (object.type == 'flag') {
+        let flag = this.physics.add.sprite(object.x, object.y, 'lvl1-bush-image', object.gid - this.bushTiles.firstgid);
+        flag.setOrigin(0, 1);
+        flag.anims.play('flag');
+        flag.body.immovable = true;
+        flag.body.setAllowGravity(false);
+      }
+      if (object.type == 'ent') {
+        let ent = new Ent(this, object.x, object.y);
+        this.physics.add.collider(ent, this.groundLayer, ent.groundColided, null, ent);
+        ent.setName('ent-' + object.id);
+        this.entGroup.add(ent, false);
+      }
+      if (object.type == 'spider') {
+        let spider = new Spider(this, object.x, object.y);
+        this.physics.add.collider(spider, this.groundLayer, spider.groundColided, null, spider);
+        spider.setName('ent-' + object.id);
+        this.spiderGroup.add(spider, false);
+      }
     }
 
-    let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
     let hero = new Rogue(this, heroX, heroY, waterGroup);
 
     for (let a = 0; a < objects.length; a++) {
@@ -160,22 +209,35 @@ class Level1 extends Phaser.Scene {
 
     this.map.createLayer('foreground' /*layer name from json*/, [this.groundTiles, this.bushTiles, this.rocksTiles]);
 
-    this.physics.add.collider(hero, this.groundLayer);
+    this.physics.add.overlap(this.hero, backgroundLayer, this.hero.onBackgroundOverlap, null, this.hero);
+    this.physics.add.collider(this.hero, this.groundLayer);
     this.groundLayer.setCollisionBetween(this.groundTiles.firstgid, this.groundTiles.firstgid + this.groundTiles.total, true);
     this.groundLayer.setCollisionBetween(this.bushTiles.firstgid, this.bushTiles.firstgid + this.bushTiles.total, true);
     this.groundLayer.setCollisionBetween(this.rocksTiles.firstgid, this.rocksTiles.firstgid + this.rocksTiles.total, true);
 
-    this.physics.add.overlap(hero, spikeGroup, hero.kill, null, hero);
+    this.physics.add.overlap(this.hero, spikeGroup, this.hero.kill, null, this.hero);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-    this.cameras.main.startFollow(hero);
+    this.cameras.main.startFollow(this.hero);
     this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     //ca să nu dea cu capul de cer
     this.physics.world.setBoundsCollision(true, true, false, true);
 
+    this.music = this.sound.add('music-lvl1', {
+      loop: true,
+      volume: 0.1
+    });
+    this.music.play();
+
     // var debug = this.add.graphics();
     // this.groundLayer.renderDebug(debug, {});
 
+  }
+
+  finish() {
+    this.music.stop();
+    this.scene.start('StartScreen');
+    this.scene.remove();
   }
 
 
