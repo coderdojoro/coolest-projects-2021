@@ -401,7 +401,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.animState = 'landing';
             this.anims.play('knight-landing');
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                if (this.heroState != 'dead') {
+                if (this.heroState != 'dead' &&) {
                     this.heroState = 'idle';
                 }
             })
@@ -593,8 +593,8 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.heroState = 'dead';
             this.fireState = 'none';
             this.anims.play('knight-death');
-            this.dathSound.play();
             this.body.stop();
+            this.dathSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
