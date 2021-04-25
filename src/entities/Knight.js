@@ -398,7 +398,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.body.stop();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
-                this.scene.cameras.main.shake(800, 0.002);
+                this.scene.cameras.main.shake(1200, 0.002);
             }, this);
             this.lastFire = Date.now();
         }
@@ -465,7 +465,6 @@ class Knight extends Phaser.GameObjects.Sprite {
             }, this);
         }
     }
-
 }
 
 export default Knight;
