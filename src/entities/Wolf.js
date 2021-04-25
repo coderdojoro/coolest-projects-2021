@@ -13,6 +13,11 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
+        this.setOrigin(0, 1);
+        this.body.setCollideWorldBounds(true);
+        this.body.setSize(34, 22);
+        this.body.setOffset(22, 26);
+
         this.scene.load.image('wolf', 'assets/wolf/wolf.png');
         this.scene.load.spritesheet('wolfrun-spritesheet', 'assets/wolf/run.png', { frameWidth: 78, frameHeight: 48 });
         this.scene.load.spritesheet('wolfattack-spritesheet', 'assets/wolf/attack.png', { frameWidth: 78, frameHeight: 48 });
@@ -55,19 +60,21 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 volume: 1
             });
 
+            this.body.updateFromGameObject();
+
             this.x = this.x - (this.body.left - this.x);
             this.y = this.y + (this.y - this.body.bottom);
+
+            this.body.updateFromGameObject();
+            setTimeout(() => {
+                this.body.setAllowGravity(true);
+            }, 100);
 
             this.loaded = true;
             this.anims.play('wolf-run');
         }, this);
 
         this.scene.load.start();
-
-        this.setOrigin(0, 1);
-        this.body.setCollideWorldBounds(true);
-        this.body.setSize(34, 22);
-        this.body.setOffset(22, 26);
 
         this.setScale(1.5);
 
@@ -86,15 +93,15 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
         let frontX;
         if (this.direction < 0) {
-            frontX = this.body.left_ = this.body.left - 22;
+            frontX = this.body.left - 22;
         } else {
             frontX = this.body.right;
         }
-        let overlapWithHero = Phaser.Geom.Rectangle.Overlaps(
+        let overlapsWithHero = Phaser.Geom.Rectangle.Overlaps(
             new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
             new Phaser.Geom.Rectangle(frontX, this.body.top, 22, 22)
         );
-        if (overlapWithHero && this.scene.hero.state != 'dead') {
+        if (overlapsWithHero && this.scene.hero.state != 'dead') {
             this.attackHero();
             return;
         }

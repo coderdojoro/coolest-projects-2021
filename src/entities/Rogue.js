@@ -461,20 +461,20 @@ class Rogue extends Phaser.GameObjects.Sprite {
                 let slashGroup = this.scene.physics.add.group({ immovable: true, allowGravity: false });
                 let slash1 = this.scene.add.sprite(this.x + 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash1.setOrigin(0, 1);
-                slash1.anims.play('slash');
+                slash1.anims.play('rogue-slash');
                 this.slashSound.play();
                 slashGroup.add(slash1, false);
                 let slash2 = this.scene.add.sprite(this.x - 120, this.y - 16, this.scene.make.renderTexture({ width: 169, height: 61 }).texture);
                 slash2.setFlipX(true);
                 slash2.setOrigin(0, 1);
-                slash2.anims.play('slash');
+                slash2.anims.play('rogue-slash');
                 slashGroup.add(slash2, false);
 
                 let entCollider = this.scene.physics.add.overlap(this.scene.entGroup, slashGroup, this.entitySlashOverlap, null, this);
                 let spiderCollider = this.scene.physics.add.overlap(this.scene.spiderGroup, slashGroup, this.entitySlashOverlap, null, this);
 
                 this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                    this.setTexture('hero');
+                    this.setTexture('rogue');
                 }, this);
 
                 slash2.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
@@ -533,7 +533,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
             }, this);
         }
     }
-
 }
 
 export default Rogue;
