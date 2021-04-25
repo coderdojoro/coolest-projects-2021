@@ -2975,6 +2975,19 @@
          "tilecount":85,
          "tileheight":32,
          "tilewidth":32
+        }, 
+        {
+         "columns":23,
+         "firstgid":11354,
+         "image":"..\/..\/..\/coolest-projects-2021\/src\/assets\/tiles\/level1-hut.png",
+         "imageheight":320,
+         "imagewidth":736,
+         "margin":0,
+         "name":"hut",
+         "spacing":0,
+         "tilecount":230,
+         "tileheight":32,
+         "tilewidth":32
         }],
  "tilewidth":32,
  "type":"map",
