@@ -5,5 +5,5 @@ import Level1 from './scenes/Level1';
 import Level2 from './scenes/Level2';
 
 new Phaser.Game(Object.assign(config, {
-  scene: [StartScreen, Level1, Level2],
+  scene: [StartScreen]
 }));
