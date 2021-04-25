@@ -127,7 +127,6 @@ class Level2 extends Phaser.Scene {
         let brazier = this.physics.add.sprite(object.x, object.y, 'lvl2-bush-image', object.gid - this.bushTiles.firstgid);
         brazier.setOrigin(0, 1);
         brazier.anims.play({ key: 'brazier', startFrame: Phaser.Math.Between(0, 5) });
-        //brazier.anims.play('brazier');
         brazier.body.immovable = true;
         brazier.body.setAllowGravity(false);
         brazier.setScale(2);
