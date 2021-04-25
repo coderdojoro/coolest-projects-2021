@@ -400,6 +400,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'landing' && this.animState != 'landing') {
             this.animState = 'landing';
             this.anims.play('knight-landing');
+            this.attackSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 if (this.heroState != 'dead') {
                     this.heroState = 'idle';
