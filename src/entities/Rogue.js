@@ -180,7 +180,6 @@ class Rogue extends Phaser.GameObjects.Sprite {
             this.body.setAllowGravity(true);
 
             this.loaded = true;
-
         }, this);
 
         this.scene.load.start();
