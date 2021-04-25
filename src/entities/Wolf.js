@@ -6,7 +6,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
     loaded = false;
     wolfState = 'run';
 
-
     constructor(scene, x, y) {
         super(scene, x, y, scene.make.renderTexture({ width: 78, height: 48 }).texture);
 
@@ -97,11 +96,13 @@ class Wolf extends Phaser.GameObjects.Sprite {
         } else {
             frontX = this.body.right;
         }
+
         let overlapsWithHero = Phaser.Geom.Rectangle.Overlaps(
             new Phaser.Geom.Rectangle(this.scene.hero.body.left, this.scene.hero.body.top, this.scene.hero.body.width, this.scene.hero.body.height),
             new Phaser.Geom.Rectangle(frontX, this.body.top, 22, 22)
         );
-        if (overlapsWithHero && this.scene.hero.state != 'dead') {
+
+        if (overlapsWithHero && this.scene.hero.heroState != 'dead') {
             this.attackHero();
             return;
         }
