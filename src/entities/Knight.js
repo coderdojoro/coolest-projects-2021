@@ -172,9 +172,6 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.initialX = this.x;
             this.initialY = this.y;
 
-            this.finishX = finishX - (this.body.offset.x);
-            this.finishY = finishY + (this.height - this.body.offset.y - this.body.height);
-
             this.body.updateFromGameObject();
             this.body.setAllowGravity(true);
 

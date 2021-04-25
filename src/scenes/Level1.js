@@ -104,7 +104,7 @@ class Level1 extends Phaser.Scene {
     }
 
     let waterGroup = this.physics.add.group({ immovable: true, allowGravity: false });
-    this.hero = new Rogue(this, heroX, heroY, heroFinishX, heroFinishY, waterGroup);
+    this.hero = new Rogue(this, heroX, heroY, waterGroup);
     for (let a = 0; a < objects.length; a++) {
       let object = objects[a];
       if (object.type == 'water') {
