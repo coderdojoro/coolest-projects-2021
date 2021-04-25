@@ -358,11 +358,13 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'jump' && this.animState != 'jump' && this.fireState == 'none') {
             this.anims.play('knight-jump');
             this.animState = 'jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'double-jump' && this.animState != 'double-jump' && this.fireState == 'none') {
             this.anims.play('knight-double-jump');
             this.animState = 'double-jump';
+            this.jumpSound.play();
         }
 
         if (this.heroState == 'fall' && this.animState != 'fall' && this.fireState == 'none') {
@@ -372,8 +374,9 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.heroState == 'landing' && this.animState != 'landing') {
             this.animState = 'landing';
             this.anims.play('knight-landing');
+            this.attackSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                if (this.heroState != 'dead' &&) {
+                if (this.heroState != 'dead') {
                     this.heroState = 'idle';
                 }
             })
@@ -381,6 +384,7 @@ class Knight extends Phaser.GameObjects.Sprite {
         if (this.fireState == 'fire' && this.animState != 'fire' && this.animState != 'run-attack' && this.animState != 'walk-attack') {
             this.animState = 'fire';
             this.anims.play('knight-attack');
+            this.attackSound.play();
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.fireState = 'none';
             }, this);
@@ -457,7 +461,6 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.setX(this.initialX);
                 this.setY(this.initialY);
                 this.body.updateFromGameObject();
-                //this.scene.add.circle(this.x, this.y, 4, 0xff0000);
                 this.heroState = 'idle';
             }, this);
         }
