@@ -236,6 +236,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                     obj.gameObject.kill();
                 }
             }
+
         }
 
         if (this.heroState != 'landing' && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
