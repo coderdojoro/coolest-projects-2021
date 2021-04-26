@@ -151,14 +151,21 @@ class Wolf extends Phaser.GameObjects.Sprite {
         }
         this.attackHero();
     }
+
     attackHero() {
+        this.wolfState = 'attack';
         this.body.stop();
-        console.log("atacked");
+        this.attackSound.play();
         this.anims.play('wolf-attack');
+        this.scene.hero.kill();
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            console.log("touch");
+            this.wolfState = 'run';
             this.anims.play('wolf-run');
         }, this);
+    }
+
+    kill() {
+        console.log('kill');
     }
 }
 

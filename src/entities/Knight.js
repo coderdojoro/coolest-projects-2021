@@ -1,4 +1,5 @@
 // @ts-check
+import Beholder from "./Beholder";
 import Wolf from "./Wolf";
 
 class Knight extends Phaser.GameObjects.Sprite {
@@ -207,6 +208,32 @@ class Knight extends Phaser.GameObjects.Sprite {
 
         if (this.heroState == 'dead') {
             return;
+        }
+
+        if (this.fireState == 'fire') {
+            let enemies;
+            if (this.flipX) {
+                enemies = this.scene.physics.overlapRect(
+                    this.body.left - 50,
+                    this.body.top - 20,
+                    50,
+                    70
+                );
+            } else {
+                enemies = this.scene.physics.overlapRect(
+                    this.body.right,
+                    this.body.top - 20,
+                    50,
+                    70
+                );
+            }
+
+            for (let obj of enemies) {
+                if (obj.gameObject instanceof Wolf || obj.gameObject instanceof Beholder) {
+                    obj.gameObject.kill();
+                }
+            }
+
         }
 
         if (this.heroState != 'landing' && this.isOnFloor() && (this.heroState == 'double-jump' || this.heroState == 'fall')) {
