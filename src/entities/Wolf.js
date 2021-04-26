@@ -198,8 +198,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.wolfState = 'run';
             this.anims.play('wolf-run');
-            // lupul se teleportează înapoi după atac
-            //this.setX(this.x + 22 * this.direction);
         }, this);
     }
 
