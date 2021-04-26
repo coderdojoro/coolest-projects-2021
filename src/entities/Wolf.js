@@ -85,7 +85,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-        console.log(this.wolfState);
 
         if (this.loaded == false) {
             return;
@@ -93,12 +92,15 @@ class Wolf extends Phaser.GameObjects.Sprite {
         if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
             return;
         }
+
         if (this.wolfState == 'dead') {
             return;
         }
+
         if (this.wolfState == 'attack') {
             return;
         }
+
         let frontX;
         if (this.direction < 0) {
             frontX = this.body.left - 22;
@@ -154,6 +156,10 @@ class Wolf extends Phaser.GameObjects.Sprite {
         if (this.wolfState == 'dead') {
             return;
         }
+        if (this.wolfState == 'dizzy') {
+            return;
+        }
+
         if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
             this.setFlipX(false);
             this.direction = 1;
