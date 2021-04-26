@@ -160,40 +160,41 @@ class Wolf extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
-            this.setFlipX(false);
-            this.direction = 1;
-        } else {
-            this.setFlipX(true);
-            this.direction = -1;
+        if (this.wolfState != 'attack' && hero.heroState != 'dead') {
+            if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
+                this.setFlipX(false);
+                this.direction = 1;
+            } else {
+                this.setFlipX(true);
+                this.direction = -1;
+            }
+            this.attackHero();
         }
-        this.attackHero();
+
+        attackHero() {
+            this.wolfState = 'attack';
+            this.body.stop();
+            this.attackSound.play();
+            this.anims.play('wolf-attack');
+            this.scene.hero.kill();
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+                this.wolfState = 'run';
+                this.anims.play('wolf-run');
+            }, this);
+        }
+
+        kill() {
+            if (this.wolfState == 'dead') {
+                return;
+            }
+            this.wolfState = 'dead';
+            this.anims.play('wolf-death');
+            this.deathSound.play();
+            this.body.stop();
+            if (this.dizzySprite) {
+                this.dizzySprite.destroy();
+            }
+        }
     }
 
-    attackHero() {
-        this.wolfState = 'attack';
-        this.body.stop();
-        this.attackSound.play();
-        this.anims.play('wolf-attack');
-        this.scene.hero.kill();
-        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            this.wolfState = 'run';
-            this.anims.play('wolf-run');
-        }, this);
-    }
-
-    kill() {
-        if (this.wolfState == 'dead') {
-            return;
-        }
-        this.wolfState = 'dead';
-        this.anims.play('wolf-death');
-        this.deathSound.play();
-        this.body.stop();
-        if (this.dizzySprite) {
-            this.dizzySprite.destroy();
-        }
-    }
-}
-
-export default Wolf;
+    export default Wolf;
