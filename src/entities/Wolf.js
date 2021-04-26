@@ -241,4 +241,4 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
 }
 
-    export default Wolf;
+export default Wolf;
