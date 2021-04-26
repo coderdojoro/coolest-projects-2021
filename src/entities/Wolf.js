@@ -39,7 +39,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 repeat: 0
             });
             this.scene.anims.create({
-                key: 'wolf-dead',
+                key: 'wolf-death',
                 frames: this.scene.anims.generateFrameNumbers('wolfdeath-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0
@@ -181,7 +181,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
             return;
         }
         this.wolfState = 'dead';
-        this.anims.play('wolf-dead');
+        this.anims.play('wolf-death');
         this.deathSound.play();
         this.body.stop();
         if (this.dizzySprite) {
