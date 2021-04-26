@@ -170,31 +170,32 @@ class Wolf extends Phaser.GameObjects.Sprite {
             }
             this.attackHero();
         }
-
-        attackHero() {
-            this.wolfState = 'attack';
-            this.body.stop();
-            this.attackSound.play();
-            this.anims.play('wolf-attack');
-            this.scene.hero.kill();
-            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.wolfState = 'run';
-                this.anims.play('wolf-run');
-            }, this);
-        }
-
-        kill() {
-            if (this.wolfState == 'dead') {
-                return;
-            }
-            this.wolfState = 'dead';
-            this.anims.play('wolf-death');
-            this.deathSound.play();
-            this.body.stop();
-            if (this.dizzySprite) {
-                this.dizzySprite.destroy();
-            }
-        }
     }
 
-    export default Wolf;
+    attackHero() {
+        this.wolfState = 'attack';
+        this.body.stop();
+        this.attackSound.play();
+        this.anims.play('wolf-attack');
+        this.scene.hero.kill();
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.wolfState = 'run';
+            this.anims.play('wolf-run');
+        }, this);
+    }
+
+    kill() {
+        if (this.wolfState == 'dead') {
+            return;
+        }
+        this.wolfState = 'dead';
+        this.anims.play('wolf-death');
+        this.deathSound.play();
+        this.body.stop();
+        if (this.dizzySprite) {
+            this.dizzySprite.destroy();
+        }
+    }
+}
+
+export default Wolf;
