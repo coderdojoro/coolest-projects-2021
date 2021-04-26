@@ -187,7 +187,6 @@ class Wolf extends Phaser.GameObjects.Sprite {
         if (this.dizzySprite) {
             this.dizzySprite.destroy();
         }
-
     }
 }
 
