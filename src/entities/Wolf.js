@@ -39,7 +39,7 @@ class Wolf extends Phaser.GameObjects.Sprite {
                 repeat: 0
             });
             this.scene.anims.create({
-                key: 'wolf-death',
+                key: 'wolf-dead',
                 frames: this.scene.anims.generateFrameNumbers('wolfdeath-spritesheet', {}),
                 frameRate: 10,
                 repeat: 0
@@ -85,11 +85,20 @@ class Wolf extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+        console.log(this.wolfState);
 
         if (this.loaded == false) {
             return;
         }
-
+        if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
+            return;
+        }
+        if (this.wolfState == 'dead') {
+            return;
+        }
+        if (this.wolfState == 'attack') {
+            return;
+        }
         let frontX;
         if (this.direction < 0) {
             frontX = this.body.left - 22;
@@ -142,6 +151,9 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     heroOverlap(hero, wolf) {
+        if (this.wolfState == 'dead') {
+            return;
+        }
         if (this.body.left + this.body.halfWidth < hero.body.left + hero.body.halfWidth) {
             this.setFlipX(false);
             this.direction = 1;
@@ -165,7 +177,17 @@ class Wolf extends Phaser.GameObjects.Sprite {
     }
 
     kill() {
-        console.log('kill');
+        if (this.wolfState == 'dead') {
+            return;
+        }
+        this.wolfState = 'dead';
+        this.anims.play('wolf-dead');
+        this.deathSound.play();
+        this.body.stop();
+        if (this.dizzySprite) {
+            this.dizzySprite.destroy();
+        }
+
     }
 }
 
