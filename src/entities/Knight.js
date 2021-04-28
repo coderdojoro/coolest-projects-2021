@@ -337,7 +337,7 @@ class Knight extends Phaser.GameObjects.Sprite {
             this.lastFire = Date.now();
         }
 
-        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFloor() && this.heroState != 'landing' && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 5000) {
+        if (this.fireState != 'special' && this.fireState != 'fire' && this.isOnFloor() && this.heroState != 'landing' && this.keySpecialFire.isDown && Date.now() - this.lastSpecialFire > 6000) {
             this.fireState = 'special';
             this.lastSpecialFire = Date.now();
         }
