@@ -259,7 +259,7 @@ class Knight extends Phaser.GameObjects.Sprite {
                 this.body.setAccelerationX(-500);
             }
             this.setFlipX(true);
-            this.heroState = 'walk' ;
+            this.heroState = 'walk';
         }
 
         if (this.fireState != 'special' && this.heroState != 'landing' && this.keyRight.isDown && this.isOnFloor()) {
